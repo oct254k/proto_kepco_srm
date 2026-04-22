@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { Role } from "@/lib/types";
 import { ROLE_LABELS } from "@/lib/types";
@@ -31,8 +32,10 @@ export default function LoginPage() {
       <div style={{ minHeight: "100vh", background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ background: "#fff", borderRadius: 12, padding: 40, width: 520, boxShadow: "0 8px 40px rgba(0,0,0,0.12)" }}>
           <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div style={{ fontSize: 23, fontWeight: 700, color: "#01ACC8" }}>🔷 SRM 켑코이에스 전자입찰시스템</div>
-            <div style={{ fontSize: 19, fontWeight: 600, color: "#222", marginTop: 8 }}>협력업체 신규 가입</div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}>
+              <Image src="/logo.png" alt="KEPCO-ES 로고" width={140} height={37} style={{ objectFit: "contain" }} priority />
+            </div>
+            <div style={{ fontSize: 19, fontWeight: 600, color: "#222", marginTop: 4 }}>협력업체 신규 가입</div>
           </div>
           <Stepper steps={SIGNUP_STEPS} current={signupStep} />
           <div style={{ minHeight: 160, padding: "20px 0", fontSize: 17, color: "#555", textAlign: "center" }}>
@@ -58,8 +61,10 @@ export default function LoginPage() {
     <div style={{ minHeight: "100vh", background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ background: "#fff", borderRadius: 12, padding: 40, width: 440, boxShadow: "0 8px 40px rgba(0,0,0,0.12)" }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{ fontSize: 25, fontWeight: 700, color: "#01ACC8" }}>🔷 SRM</div>
-          <div style={{ fontSize: 17, color: "#555", marginTop: 4 }}>켑코이에스 전자입찰시스템</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}>
+            <Image src="/logo.png" alt="KEPCO-ES 로고" width={150} height={40} style={{ objectFit: "contain" }} priority />
+          </div>
+          <div style={{ fontSize: 17, color: "#555" }}>구매시스템</div>
         </div>
 
         <Tabs
