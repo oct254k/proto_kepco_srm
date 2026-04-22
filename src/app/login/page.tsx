@@ -10,10 +10,10 @@ import Stepper from "@/components/Stepper";
 
 const ROLES: Role[] = ["B", "V", "C", "A"];
 const SIGNUP_STEPS = [
-  { label: "이용약관 동의" },
-  { label: "기업정보 입력" },
-  { label: "담당자 정보" },
-  { label: "가입 완료" },
+  { label: "기본정보" },
+  { label: "계정정보" },
+  { label: "동의" },
+  { label: "신청" },
 ];
 
 export default function LoginPage() {

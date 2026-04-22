@@ -23,6 +23,7 @@ function BidDetailDrawer({ bid, open, onClose }: { bid: Bid | null; open: boolea
             { id: "info", label: "공고정보" },
             { id: "items", label: "품목목록" },
             { id: "vendors", label: "참여업체현황" },
+            { id: "selfcheck", label: "자가심사현황" },
             { id: "history", label: "공고이력" },
           ]}
         >
@@ -100,6 +101,36 @@ function BidDetailDrawer({ bid, open, onClose }: { bid: Bid | null; open: boolea
                     </tbody>
                   </table>
                 )
+              )}
+              {tab === "selfcheck" && (
+                <div>
+                  <div style={{ background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: 6, padding: "8px 12px", marginBottom: 14, fontSize: 15, color: "#92400E" }}>
+                    📋 사업담당자는 조회 전용입니다.
+                  </div>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 16 }}>
+                    <thead>
+                      <tr style={{ background: "#f5f5f5" }}>
+                        {["업체명", "심사항목", "제출일", "결과"].map((h) => (
+                          <th key={h} style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {participants.length === 0 ? (
+                        <tr><td colSpan={4} style={{ padding: 24, textAlign: "center", color: "#888" }}>자가심사 데이터가 없습니다.</td></tr>
+                      ) : participants.map((p) => (
+                        <tr key={p.id}>
+                          <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0" }}>{p.vendorName}</td>
+                          <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>적격심사 체크리스트</td>
+                          <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>2026-04-20</td>
+                          <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>
+                            <StatusBadge status="제출완료" />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
               {tab === "history" && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>

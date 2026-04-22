@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DataTable from "@/components/DataTable";
 import type { Column } from "@/components/DataTable";
@@ -8,6 +8,7 @@ import StatusBadge from "@/components/StatusBadge";
 import PageHeader from "@/components/PageHeader";
 import EmptyState from "@/components/EmptyState";
 import Tabs from "@/components/Tabs";
+import Drawer from "@/components/Drawer";
 import { useToast } from "@/components/Toast";
 import { V_BID_HISTORY, BID_METHOD_LABELS } from "@/lib/mock/contracts";
 
@@ -47,8 +48,102 @@ function StatCard({ label, value, color = "#01ACC8" }: StatCardProps) {
   );
 }
 
+// ── 상세 Drawer (4탭) ────────────────────────────────────────
+type BidRow = typeof V_BID_HISTORY[number];
+function BidDetailDrawer({ bid, open, onClose }: { bid: BidRow | null; open: boolean; onClose: () => void }) {
+  if (!bid) return null;
+  return (
+    <Drawer open={open} onClose={onClose} title={`${bid.id} · ${bid.title}`} width={600}>
+      <Tabs
+        tabs={[
+          { id: "part", label: "참여정보" },
+          { id: "selfcheck", label: "자가심사결과" },
+          { id: "amount", label: "투찰결과" },
+          { id: "eval", label: "평가결과" },
+        ]}
+      >
+        {(tab) => (
+          <div>
+            {tab === "part" && (
+              <div style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: "8px 12px" }}>
+                {[
+                  ["공고번호", bid.id],
+                  ["공고명", bid.title],
+                  ["선정방법", BID_METHOD_LABELS[bid.method] ?? bid.method],
+                  ["참여일", bid.participatedAt],
+                  ["상태", bid.status],
+                ].map(([k, v]) => (
+                  <React.Fragment key={k as string}>
+                    <span style={{ fontSize: 16, color: "#888" }}>{k}</span>
+                    <span style={{ fontSize: 16, color: "#333", fontWeight: 500 }}>
+                      {k === "상태" ? <StatusBadge status={v as string} /> : v}
+                    </span>
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
+            {tab === "selfcheck" && (
+              bid.status === "IN_PROGRESS" ? (
+                <div style={{ color: "#888", fontSize: 16 }}>자가심사 진행 중입니다.</div>
+              ) : (
+                <div>
+                  <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 10, color: "#333" }}>적격심사 결과</div>
+                  {["시공능력평가 보유여부", "재무건전성 기준 충족", "관련 면허 보유"].map((item) => (
+                    <div key={item} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: "1px solid #f0f0f0" }}>
+                      <span style={{ fontSize: 16, flex: 1, color: "#444" }}>{item}</span>
+                      <StatusBadge status="통과" />
+                    </div>
+                  ))}
+                </div>
+              )
+            )}
+            {tab === "amount" && (
+              bid.myAmount === 0 ? (
+                <div style={{ color: "#888", fontSize: 16 }}>투찰 전 또는 미참여 상태입니다.</div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: "8px 12px" }}>
+                  {[
+                    ["투찰금액", `${bid.myAmount.toLocaleString()}원`],
+                    ["예정가 대비", "99.7%"],
+                    ["순위", "2위 / 3업체"],
+                    ["결과", bid.status === "AWARDED" ? "낙찰" : "미낙찰"],
+                  ].map(([k, v]) => (
+                    <React.Fragment key={k as string}>
+                      <span style={{ fontSize: 16, color: "#888" }}>{k}</span>
+                      <span style={{ fontSize: 16, color: "#333", fontWeight: 500 }}>{v}</span>
+                    </React.Fragment>
+                  ))}
+                </div>
+              )
+            )}
+            {tab === "eval" && (
+              bid.status === "AWARDED" || bid.status === "CLOSED" ? (
+                <div>
+                  <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 10, color: "#333" }}>심사 평가결과</div>
+                  {[
+                    { item: "가격 점수", score: 95 },
+                    { item: "기술 점수", score: 88 },
+                    { item: "신용평가", score: 90 },
+                  ].map((e) => (
+                    <div key={e.item} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: "1px solid #f0f0f0" }}>
+                      <span style={{ fontSize: 16, flex: 1, color: "#444" }}>{e.item}</span>
+                      <span style={{ fontSize: 16, fontWeight: 600, color: "#01ACC8" }}>{e.score}점</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message="평가결과가 아직 확정되지 않았습니다." />
+              )
+            )}
+          </div>
+        )}
+      </Tabs>
+    </Drawer>
+  );
+}
+
 // ── 탭 1: 입찰참여현황 ───────────────────────────────────────
-function BidParticipationTab() {
+function BidParticipationTab({ onRowClick }: { onRowClick: (row: Record<string, unknown>) => void }) {
   const cols: Column[] = [
     { key: "id", label: "공고번호", width: "130px", align: "center" },
     { key: "title", label: "공고명", align: "left" },
@@ -127,6 +222,7 @@ function BidParticipationTab() {
         sectionLabel="입찰참여 목록"
         showExcel={false}
         showCheckbox={false}
+        onRowClick={onRowClick}
       />
 
       {/* 집계 카드 */}
@@ -141,7 +237,7 @@ function BidParticipationTab() {
 }
 
 // ── 탭 2: 투찰현황 ───────────────────────────────────────────
-function BidAmountTab() {
+function BidAmountTab({ onRowClick }: { onRowClick: (row: Record<string, unknown>) => void }) {
   const biddedItems = V_BID_HISTORY.filter((b) => b.myAmount > 0);
 
   const cols: Column[] = [
@@ -192,6 +288,7 @@ function BidAmountTab() {
           sectionLabel="투찰 목록"
           showExcel={false}
           showCheckbox={false}
+          onRowClick={onRowClick}
         />
       )}
     </div>
@@ -199,7 +296,7 @@ function BidAmountTab() {
 }
 
 // ── 탭 3: 낙찰확인 ───────────────────────────────────────────
-function AwardTab() {
+function AwardTab({ onRowClick }: { onRowClick: (row: Record<string, unknown>) => void }) {
   const router = useRouter();
   const awardedItems = V_BID_HISTORY.filter((b) => b.status === "AWARDED");
 
@@ -254,6 +351,7 @@ function AwardTab() {
           sectionLabel="낙찰 목록"
           showExcel={false}
           showCheckbox={false}
+          onRowClick={onRowClick}
         />
       )}
     </>
@@ -278,7 +376,7 @@ const MOCK_EVALUATIONS = [
   },
 ];
 
-function EvalTab() {
+function EvalTab({ onRowClick }: { onRowClick: (row: Record<string, unknown>) => void }) {
   const evalItems = MOCK_EVALUATIONS;
 
   const cols: Column[] = [
@@ -356,6 +454,7 @@ function EvalTab() {
           sectionLabel="평가결과"
           showExcel={false}
           showCheckbox={false}
+          onRowClick={onRowClick}
         />
       )}
     </div>
@@ -365,6 +464,16 @@ function EvalTab() {
 // ── 메인 페이지 ─────────────────────────────────────────────
 export default function VBidHistoryPage() {
   const toast = useToast();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedBid, setSelectedBid] = useState<BidRow | null>(null);
+
+  function handleRowClick(row: Record<string, unknown>) {
+    const bid = V_BID_HISTORY.find((b) => b.id === (row.id as string));
+    if (bid) {
+      setSelectedBid(bid);
+      setDrawerOpen(true);
+    }
+  }
 
   // 낙찰 확정 미확인 건 존재 시 4초 후 Toast
   useEffect(() => {
@@ -398,14 +507,20 @@ export default function VBidHistoryPage() {
         <Tabs tabs={pageTabs}>
           {(active) => (
             <div>
-              {active === "participation" && <BidParticipationTab />}
-              {active === "amount" && <BidAmountTab />}
-              {active === "award" && <AwardTab />}
-              {active === "eval" && <EvalTab />}
+              {active === "participation" && <BidParticipationTab onRowClick={handleRowClick} />}
+              {active === "amount" && <BidAmountTab onRowClick={handleRowClick} />}
+              {active === "award" && <AwardTab onRowClick={handleRowClick} />}
+              {active === "eval" && <EvalTab onRowClick={handleRowClick} />}
             </div>
           )}
         </Tabs>
       </div>
+
+      <BidDetailDrawer
+        bid={selectedBid}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      />
     </div>
   );
 }

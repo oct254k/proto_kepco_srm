@@ -22,11 +22,11 @@ const btn = (variant: "primary" | "secondary" | "danger" | "ghost" = "primary"):
 });
 
 const PIPELINE_STEPS = [
-  { label: "공고확인" },
+  { label: "공고목록" },
   { label: "참여신청" },
-  { label: "심사" },
+  { label: "자가심사" },
   { label: "투찰" },
-  { label: "결과확인" },
+  { label: "결과조회" },
 ];
 
 // ── Step 0: 공고확인 ──────────────────────────────────────────

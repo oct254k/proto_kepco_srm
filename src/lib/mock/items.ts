@@ -107,3 +107,66 @@ export const MOCK_MANUALS: ManualDoc[] = [
   { id: "MD003", title: "계약담당자 이용 가이드 v1.5", category: "사용자", version: "1.5", updatedAt: "2026-02-20", fileSize: "4.1MB" },
   { id: "MD004", title: "시스템 관리자 가이드 v1.0", category: "관리자", version: "1.0", updatedAt: "2026-01-10", fileSize: "2.5MB" },
 ];
+
+// ─── 관리자 시스템환경 대시보드 ────────────────────────────────────────────────
+export const A_SYSTEM_STATS = {
+  internalUsers: 47,
+  vendors: 318,
+  activeBids: 12,
+  monthlyContracts: 5,
+};
+
+// ─── 시스템 요청사항 ───────────────────────────────────────────────────────────
+export interface SystemRequest {
+  id: string;
+  title: string;
+  type: "버그신고" | "개선요청" | "문의";
+  requester: string;
+  dept: string;
+  registeredAt: string;
+  status: "PENDING" | "IN_REVIEW" | "RESOLVED" | "CLOSED";
+  content: string;
+}
+
+export const ADMIN_SYSTEM_REQUESTS: SystemRequest[] = [
+  {
+    id: "SRQ-001",
+    title: "발주요청 임시저장 후 재진입 시 데이터 초기화 오류",
+    type: "버그신고",
+    requester: "김영희",
+    dept: "발전사업부",
+    registeredAt: "2026-04-20",
+    status: "IN_REVIEW",
+    content: "발주요청 Stepper에서 임시저장 후 재진입하면 1단계로 초기화됩니다. 재현: 2단계에서 임시저장 → 목록으로 이동 → 다시 열기.",
+  },
+  {
+    id: "SRQ-002",
+    title: "견적 비교 화면 정렬 기능 추가 요청",
+    type: "개선요청",
+    requester: "박민준",
+    dept: "구매팀",
+    registeredAt: "2026-04-18",
+    status: "PENDING",
+    content: "견적 비교 탭에서 금액 기준 정렬 기능이 없어 불편합니다. 컬럼 헤더 클릭으로 정렬 가능하게 해주세요.",
+  },
+  {
+    id: "SRQ-003",
+    title: "입찰 공고 마감일 변경 프로세스 안내",
+    type: "문의",
+    requester: "이지연",
+    dept: "기술팀",
+    registeredAt: "2026-04-15",
+    status: "RESOLVED",
+    content: "이미 공고된 입찰의 마감일을 변경해야 하는 경우 어떤 절차를 거쳐야 하는지 안내 요청드립니다.",
+  },
+  {
+    id: "SRQ-004",
+    title: "협력업체 담당자 복수 등록 지원 요청",
+    type: "개선요청",
+    requester: "최담당",
+    dept: "발전사업부",
+    registeredAt: "2026-04-12",
+    status: "CLOSED",
+    content: "현재 협력업체별 담당자가 1명만 등록 가능합니다. 복수 담당자 등록 기능 추가를 요청합니다.",
+  },
+];

@@ -570,6 +570,7 @@ export default function VContractsPage() {
     { id: "detail", label: "계약정보" },
     { id: "bond", label: "보증제출" },
     { id: "doc", label: "서류요청" },
+    { id: "changes", label: "변경이력" },
     { id: "confirm", label: "확인상태" },
   ];
 
@@ -643,6 +644,32 @@ export default function VContractsPage() {
                 )}
                 {active === "doc" && (
                   <DocSubmitTab docs={docs} onSubmit={handleDocSubmit} />
+                )}
+                {active === "changes" && (
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: "#333", marginBottom: 12 }}>계약 변경이력</div>
+                    {[
+                      { date: selectedContract.startDate, type: "계약 체결", summary: "최초 계약 체결", actor: "이계약(C)" },
+                    ].map((h, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          display: "flex",
+                          gap: 12,
+                          alignItems: "flex-start",
+                          padding: "10px 0",
+                          borderBottom: "1px solid #f0f0f0",
+                        }}
+                      >
+                        <span style={{ fontSize: 15, color: "#888", minWidth: 95, flexShrink: 0 }}>{h.date}</span>
+                        <div>
+                          <div style={{ fontSize: 16, fontWeight: 600, color: "#333" }}>{h.type}</div>
+                          <div style={{ fontSize: 15, color: "#555", marginTop: 2 }}>{h.summary}</div>
+                        </div>
+                        <span style={{ fontSize: 15, color: "#888", marginLeft: "auto", whiteSpace: "nowrap" }}>{h.actor}</span>
+                      </div>
+                    ))}
+                  </div>
                 )}
                 {active === "confirm" && (
                   <ConfirmStatusTab contract={selectedContract} />

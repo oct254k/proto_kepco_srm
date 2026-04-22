@@ -332,8 +332,9 @@ function QuoteDetailDrawer({ quote, open, onClose }: QuoteDetailDrawerProps) {
   if (!quote) return null;
   const drawerTabs = [
     { id: "info", label: "요청정보" },
-    { id: "submitted", label: "제출내역" },
-    { id: "history", label: "이력" },
+    { id: "items", label: "품목·단가" },
+    { id: "attach", label: "첨부" },
+    { id: "history", label: "제출이력" },
   ];
 
   const labelCol: React.CSSProperties = { color: "#888", fontWeight: 500, paddingTop: 2, fontSize: 16 };
@@ -354,9 +355,15 @@ function QuoteDetailDrawer({ quote, open, onClose }: QuoteDetailDrawerProps) {
                 <span style={labelCol}>전달사항</span><span style={valueCol}>"2026년 1분기 적용 단가 기준으로 작성 부탁드립니다."</span>
               </div>
             )}
-            {activeTab === "submitted" && (
+            {activeTab === "items" && (
               <div style={{ color: "#888", fontSize: 16 }}>
                 <p>제출된 견적서 내역이 없거나 임시저장 상태입니다.</p>
+              </div>
+            )}
+            {activeTab === "attach" && (
+              <div>
+                <p style={{ fontSize: 16, color: "#888", marginBottom: 12 }}>첨부파일이 없습니다.</p>
+                <p style={{ fontSize: 15, color: "#aaa" }}>견적서 제출 시 PDF·Excel 파일을 첨부할 수 있습니다.</p>
               </div>
             )}
             {activeTab === "history" && (

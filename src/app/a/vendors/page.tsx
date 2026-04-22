@@ -451,9 +451,20 @@ function VendorListDrawer({
   const [pwResetModalOpen, setPwResetModalOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [emailChangeReason, setEmailChangeReason] = useState("");
+  const [niceLoading, setNiceLoading] = useState(false);
+  const [niceResult, setNiceResult] = useState<{ grade: string; score: string } | null>(null);
   const { show } = useToast();
 
   if (!vendor) return null;
+
+  const handleNice = () => {
+    setNiceLoading(true);
+    setTimeout(() => {
+      setNiceResult({ grade: "BBB", score: "720" });
+      setNiceLoading(false);
+      show("NICE 신용평가 조회가 완료되었습니다.", "info");
+    }, 4000);
+  };
 
   const handlePwReset = () => {
     setPwResetModalOpen(false);
@@ -481,6 +492,7 @@ function VendorListDrawer({
           tabs={[
             { id: "info", label: "기업정보" },
             { id: "account", label: "계정관리" },
+            { id: "nice", label: "NICE 신용평가" },
           ]}
         >
           {(tab) => (
@@ -639,6 +651,43 @@ function VendorListDrawer({
                       </tr>
                     </tbody>
                   </table>
+                </div>
+              )}
+
+              {tab === "nice" && (
+                <div>
+                  {niceResult ? (
+                    <div>
+                      <div
+                        style={{
+                          background: "#F0FFF4",
+                          border: "1px solid #A7F3D0",
+                          borderRadius: 6,
+                          padding: "12px 16px",
+                          marginBottom: 16,
+                        }}
+                      >
+                        <p style={{ fontSize: 16, fontWeight: 600, color: "#065F46", marginBottom: 8 }}>
+                          NICE 신용평가 결과 (참조용 — SRM 미저장)
+                        </p>
+                        <DetailRow label="업체명" value={vendor.name} />
+                        <DetailRow label="사업자번호" value={vendor.bizNo} />
+                        <DetailRow label="신용등급" value={<strong>{niceResult.grade}</strong>} />
+                        <DetailRow label="신용점수" value={`${niceResult.score}점`} />
+                        <DetailRow label="조회일시" value="2026-04-22 14:30:00" />
+                      </div>
+                      <p style={{ fontSize: 15, color: "#888" }}>
+                        ※ 조회 결과는 SRM DB에 저장되지 않으며, 조회 이력만 감사 로그에 기록됩니다.
+                      </p>
+                    </div>
+                  ) : (
+                    <div style={{ textAlign: "center", padding: "40px 20px", color: "#888", fontSize: 16 }}>
+                      <p style={{ marginBottom: 12 }}>NICE 신용평가 결과가 없습니다.</p>
+                      <Btn variant="outline" onClick={handleNice}>
+                        {niceLoading ? "조회 중..." : "NICE 신용평가 조회"}
+                      </Btn>
+                    </div>
+                  )}
                 </div>
               )}
             </>

@@ -27,14 +27,14 @@ export const MENUS: Record<Role, MenuGroup[]> = {
   V: [
     { label: "대시보드", items: [{ label: "대시보드", href: "/v/dashboard/" }] },
     { label: "견적", items: [{ label: "견적작성·현황", href: "/v/quotes/" }] },
-    { label: "입찰참여", items: [{ label: "입찰 파이프라인", href: "/v/bid-pipeline/" }] },
     {
-      label: "계약·보증",
+      label: "입찰참여",
       items: [
-        { label: "계약·보증 관리", href: "/v/contracts/" },
+        { label: "입찰 파이프라인", href: "/v/bid-pipeline/" },
         { label: "입찰·투찰 현황", href: "/v/bid-history/" },
       ],
     },
+    { label: "계약·보증", items: [{ label: "계약·보증 관리", href: "/v/contracts/" }] },
     {
       label: "마이페이지",
       items: [{ label: "기업정보", href: "/v/company/" }],
@@ -42,14 +42,14 @@ export const MENUS: Record<Role, MenuGroup[]> = {
   ],
   C: [
     { label: "대시보드", items: [{ label: "대시보드", href: "/c/dashboard/" }] },
-    { label: "발주관리", items: [{ label: "발주계약요청·계획", href: "/c/orders/" }] },
     {
-      label: "입찰관리",
+      label: "발주관리",
       items: [
-        { label: "입찰계획·공고", href: "/c/bids/" },
+        { label: "발주계약요청·계획", href: "/c/orders/" },
         { label: "견적요청 관리", href: "/c/quote-requests/" },
       ],
     },
+    { label: "입찰관리", items: [{ label: "입찰계획·공고", href: "/c/bids/" }] },
     { label: "참여업체평가", items: [{ label: "평가·심사관리", href: "/c/evaluations/" }] },
     { label: "낙찰관리", items: [{ label: "낙찰관리", href: "/c/awards/" }] },
     {

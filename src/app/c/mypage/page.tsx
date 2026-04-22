@@ -5,466 +5,725 @@ import PageHeader from "@/components/PageHeader";
 import Tabs from "@/components/Tabs";
 import DataTable from "@/components/DataTable";
 import StatusBadge from "@/components/StatusBadge";
+import Drawer from "@/components/Drawer";
 import Modal from "@/components/Modal";
+import SearchForm from "@/components/SearchForm";
 import { useToast } from "@/components/Toast";
 import {
-  C_MY_BIDS,
-  C_MY_CONTRACTS,
-  C_PROCESS_HISTORY,
+  C_ORDER_PLANS,
+  C_ORDER_PLAN_HISTORIES,
+  C_ORDER_PLAN_SUMMARY,
   C_PROFILE,
+  type OrderPlan,
 } from "@/lib/mock/users";
 
 // ─── 유틸 ─────────────────────────────────────────────────────────────────────
-const METHOD_LABELS: Record<string, string> = {
-  LIMITED: "제한경쟁",
-  TWO_STAGE: "2단계",
-  NEGOTIATION: "수의계약",
-  LOWEST_PRICE: "최저가",
-};
-
 function fmt(n: number) {
   if (n >= 100_000_000) return `${(n / 100_000_000).toFixed(1)}억`;
   if (n >= 10_000) return `${(n / 10_000).toFixed(0)}만`;
   return n.toLocaleString();
 }
 
-// ─── 프로필 카드 ──────────────────────────────────────────────────────────────
-function ProfileCard({ onChangePw }: { onChangePw: () => void }) {
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "대기",
+  ACCEPTED: "수락",
+  IN_PROGRESS: "진행중",
+  AWARDED: "낙찰",
+  CONTRACTED: "계약완료",
+  CANCELLED: "취소",
+};
+
+const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
+  PENDING: { bg: "#FEF3C7", text: "#92400E" },
+  ACCEPTED: { bg: "#DBEAFE", text: "#1E40AF" },
+  IN_PROGRESS: { bg: "#EDE9FE", text: "#5B21B6" },
+  AWARDED: { bg: "#D1FAE5", text: "#065F46" },
+  CONTRACTED: { bg: "#A7F3D0", text: "#047857" },
+  CANCELLED: { bg: "#F3F4F6", text: "#6B7280" },
+};
+
+// ─── StatusChipFilter ─────────────────────────────────────────────────────────
+function StatusChipFilter({
+  selected,
+  onChange,
+  summary,
+}: {
+  selected: string | null;
+  onChange: (v: string | null) => void;
+  summary: Record<string, number>;
+}) {
+  const chips = [
+    { key: "PENDING", label: "PENDING" },
+    { key: "ACCEPTED", label: "ACCEPTED" },
+    { key: "IN_PROGRESS", label: "IN_PROGRESS" },
+    { key: "AWARDED", label: "AWARDED" },
+    { key: "CONTRACTED", label: "CONTRACTED" },
+  ];
+
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #e5e7eb",
-        borderRadius: 8,
-        padding: "20px 24px",
-        marginBottom: 20,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: 12,
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <div
-          style={{
-            width: 52,
-            height: 52,
-            borderRadius: "50%",
-            background: "#6366F1",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff",
-            fontSize: 23,
-            fontWeight: 700,
-            flexShrink: 0,
-          }}
-        >
-          {C_PROFILE.name.charAt(0)}
-        </div>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <p style={{ margin: 0, fontSize: 19, fontWeight: 700, color: "#111827" }}>
-              {C_PROFILE.name}
-            </p>
-            <span
-              style={{
-                fontSize: 14,
-                background: "#e0e7ff",
-                color: "#4338ca",
-                padding: "2px 8px",
-                borderRadius: 999,
-                fontWeight: 600,
-              }}
-            >
-              {C_PROFILE.role}
-            </span>
-          </div>
-          <p style={{ margin: "2px 0 0", fontSize: 16, color: "#6B7280" }}>
-            {C_PROFILE.dept} · {C_PROFILE.position} · {C_PROFILE.empNo}
-          </p>
-          <p style={{ margin: "2px 0 0", fontSize: 15, color: "#9CA3AF" }}>
-            {C_PROFILE.email}
-          </p>
-        </div>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontSize: 15, color: "#6B7280" }}>계정상태:</span>
-          <StatusBadge status={C_PROFILE.accountStatus} />
-        </div>
-        <p style={{ margin: 0, fontSize: 15, color: "#9CA3AF" }}>
-          최종로그인: {C_PROFILE.lastLogin}
-        </p>
-        <button
-          onClick={onChangePw}
-          style={{
-            background: "#fff",
-            color: "#374151",
-            border: "1px solid #d1d5db",
-            borderRadius: 4,
-            padding: "7px 18px",
-            fontSize: 16,
-            fontWeight: 600,
-            cursor: "pointer",
-            fontFamily: "inherit",
-          }}
-        >
-          비밀번호 변경
-        </button>
-      </div>
+    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
+      {chips.map((c) => {
+        const active = selected === c.key;
+        const col = STATUS_COLORS[c.key] ?? { bg: "#E5E7EB", text: "#374151" };
+        return (
+          <button
+            key={c.key}
+            onClick={() => onChange(active ? null : c.key)}
+            style={{
+              minWidth: 110,
+              padding: "10px 14px",
+              borderRadius: 8,
+              border: active ? "2px solid #01ACC8" : "1px solid #e5e7eb",
+              background: active ? col.bg : "#fff",
+              cursor: "pointer",
+              fontFamily: "inherit",
+              textAlign: "center",
+              boxShadow: active ? "0 0 0 1px #01ACC8" : "none",
+            }}
+          >
+            <div style={{ fontSize: 13, color: col.text, fontWeight: 700, marginBottom: 4 }}>
+              {c.label}
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: "#111827" }}>
+              {summary[c.key] ?? 0}
+              <span style={{ fontSize: 14, color: "#6B7280", marginLeft: 2 }}>건</span>
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }
 
-// ─── 비밀번호 변경 Modal ──────────────────────────────────────────────────────
-function PasswordChangeModal({
-  open,
+// ─── 발주 Drawer ──────────────────────────────────────────────────────────────
+function OrderDrawer({
+  order,
   onClose,
+  onAccept,
+  onReject,
+  onPmsResync,
 }: {
-  open: boolean;
+  order: OrderPlan | null;
   onClose: () => void;
+  onAccept: (id: string) => void;
+  onReject: (id: string) => void;
+  onPmsResync: (id: string) => void;
 }) {
-  const { show } = useToast();
-  const [curPw, setCurPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [confPw, setConfPw] = useState("");
-  const [errors, setErrors] = useState<{ cur?: string; new?: string; conf?: string }>({});
+  const [drawerTab, setDrawerTab] = useState("info");
 
-  const pwPolicy = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,16}$/;
+  if (!order) return null;
 
-  const validate = () => {
-    const e: typeof errors = {};
-    if (!curPw) e.cur = "기존 비밀번호를 입력하세요.";
-    if (!pwPolicy.test(newPw)) e.new = "영문+숫자+특수문자 조합, 8~16자로 입력하세요.";
-    if (newPw !== confPw) e.conf = "비밀번호가 일치하지 않습니다.";
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
+  const histories = C_ORDER_PLAN_HISTORIES[order.id] ?? [];
+  const isPending = order.status === "PENDING";
 
-  const handleSubmit = () => {
-    if (validate()) {
-      setCurPw("");
-      setNewPw("");
-      setConfPw("");
-      setErrors({});
-      onClose();
-      setTimeout(() => show("비밀번호가 변경되었습니다.", "info"), 4000);
-    }
-  };
-
-  const handleClose = () => {
-    setCurPw("");
-    setNewPw("");
-    setConfPw("");
-    setErrors({});
-    onClose();
-  };
+  const drawerTabs = [
+    { id: "info", label: "발주정보" },
+    { id: "history", label: "처리이력" },
+    { id: "bid", label: "연계공고" },
+  ];
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      title="비밀번호 변경"
-      width={480}
-      footer={
-        <>
+    <Drawer
+      open={!!order}
+      onClose={onClose}
+      title={`발주 상세 : ${order.id}`}
+      width={560}
+    >
+      {/* 수락·거절 버튼 */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+        <button
+          onClick={() => onAccept(order.id)}
+          disabled={!isPending}
+          style={{
+            padding: "7px 20px",
+            background: isPending ? "#01ACC8" : "#E5E7EB",
+            color: isPending ? "#fff" : "#9CA3AF",
+            border: "none",
+            borderRadius: 4,
+            fontSize: 16,
+            fontWeight: 600,
+            cursor: isPending ? "pointer" : "not-allowed",
+            fontFamily: "inherit",
+          }}
+        >
+          수락
+        </button>
+        <button
+          onClick={() => onReject(order.id)}
+          disabled={!isPending}
+          style={{
+            padding: "7px 20px",
+            background: "#fff",
+            color: isPending ? "#EF4444" : "#9CA3AF",
+            border: isPending ? "1px solid #EF4444" : "1px solid #E5E7EB",
+            borderRadius: 4,
+            fontSize: 16,
+            fontWeight: 600,
+            cursor: isPending ? "pointer" : "not-allowed",
+            fontFamily: "inherit",
+          }}
+        >
+          거절
+        </button>
+      </div>
+
+      {/* 탭 */}
+      <div style={{ display: "flex", borderBottom: "2px solid #e5e7eb", marginBottom: 20 }}>
+        {drawerTabs.map((t) => (
           <button
-            onClick={handleClose}
+            key={t.id}
+            onClick={() => setDrawerTab(t.id)}
             style={{
-              background: "#fff",
-              color: "#374151",
-              border: "1px solid #d1d5db",
-              borderRadius: 4,
-              padding: "7px 20px",
+              padding: "10px 20px",
+              border: "none",
+              background: "none",
+              borderBottom: drawerTab === t.id ? "2px solid #01ACC8" : "2px solid transparent",
+              color: drawerTab === t.id ? "#01ACC8" : "#6B7280",
+              fontWeight: drawerTab === t.id ? 700 : 400,
               fontSize: 16,
               cursor: "pointer",
               fontFamily: "inherit",
+              marginBottom: -2,
             }}
           >
-            취소
+            {t.label}
           </button>
-          <button
-            onClick={handleSubmit}
+        ))}
+      </div>
+
+      {/* 발주정보 탭 */}
+      {drawerTab === "info" && (
+        <div>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 15, marginBottom: 16 }}>
+            <tbody>
+              {[
+                ["발주번호", order.id],
+                ["상태", null],
+                ["사업명", order.title],
+                ["사업소", order.site],
+                ["품목대분류", order.category],
+                ["예산금액", `${fmt(order.amount)}원`],
+                ["요청일자", order.requestedAt],
+                ["요청자", order.requester],
+              ].map(([label, value]) => (
+                <tr key={String(label)}>
+                  <th
+                    style={{
+                      padding: "9px 12px",
+                      background: "#f9fafb",
+                      borderBottom: "1px solid #e5e7eb",
+                      borderRight: "1px solid #e5e7eb",
+                      textAlign: "left",
+                      fontWeight: 600,
+                      color: "#374151",
+                      width: 120,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {label}
+                  </th>
+                  <td style={{ padding: "9px 12px", borderBottom: "1px solid #e5e7eb", color: "#111827" }}>
+                    {label === "상태" ? <StatusBadge status={order.status} /> : String(value ?? "")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* PMS 연동 상태 */}
+          <div
             style={{
+              padding: "12px 14px",
+              background: order.pmsSync === "FAILED" ? "#FEF2F2" : order.pmsSync === "SYNCED" ? "#F0FDF4" : "#FFFBEB",
+              border: `1px solid ${order.pmsSync === "FAILED" ? "#FECACA" : order.pmsSync === "SYNCED" ? "#BBF7D0" : "#FDE68A"}`,
+              borderRadius: 6,
+              marginBottom: 14,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+            }}
+          >
+            <div>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#374151" }}>PMS 연동 상태: </span>
+              <StatusBadge status={order.pmsSync} />
+              {order.pmsSync === "FAILED" && (
+                <span style={{ fontSize: 14, color: "#EF4444", marginLeft: 8 }}>— 재동기화가 필요합니다</span>
+              )}
+            </div>
+            {order.pmsSync === "FAILED" && (
+              <button
+                onClick={() => onPmsResync(order.id)}
+                style={{
+                  padding: "5px 14px",
+                  background: "#EF4444",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 4,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                PMS 재동기화
+              </button>
+            )}
+          </div>
+
+          <div style={{ padding: "12px 14px", background: "#f9fafb", borderRadius: 6, fontSize: 15, color: "#374151" }}>
+            <p style={{ margin: "0 0 6px", fontWeight: 600 }}>발주 상세 설명:</p>
+            <p style={{ margin: 0 }}>{order.description}</p>
+          </div>
+          <div style={{ marginTop: 14, fontSize: 15, color: "#9CA3AF" }}>
+            <span>📎 발주요청서.pdf</span>
+            <span style={{ marginLeft: 14 }}>📎 도면_v1.dwg</span>
+          </div>
+          {!isPending && (
+            <p style={{ marginTop: 12, fontSize: 14, color: "#9CA3AF" }}>
+              ※ PENDING 상태에서만 수락·거절이 가능합니다.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* 처리이력 탭 */}
+      {drawerTab === "history" && (
+        <div style={{ position: "relative", paddingLeft: 28 }}>
+          <div
+            style={{
+              position: "absolute",
+              left: 8,
+              top: 4,
+              bottom: 4,
+              width: 2,
+              background: "#e5e7eb",
+            }}
+          />
+          {histories.length === 0 && (
+            <p style={{ color: "#9CA3AF", fontSize: 15 }}>처리이력이 없습니다.</p>
+          )}
+          {histories.map((h, i) => (
+            <div key={i} style={{ position: "relative", marginBottom: i < histories.length - 1 ? 20 : 0 }}>
+              <div
+                style={{
+                  position: "absolute",
+                  left: -22,
+                  top: 4,
+                  width: 12,
+                  height: 12,
+                  borderRadius: "50%",
+                  background: "#01ACC8",
+                  border: "2px solid #fff",
+                  boxShadow: "0 0 0 2px #01ACC8",
+                }}
+              />
+              <div
+                style={{
+                  background: "#fff",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 6,
+                  padding: "10px 14px",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "#01ACC8", background: "#f0f9ff", padding: "1px 8px", borderRadius: 999 }}>
+                    {h.from} → {h.to}
+                  </span>
+                  <span style={{ fontSize: 14, color: "#9CA3AF" }}>{h.date}</span>
+                </div>
+                <span style={{ fontSize: 15, color: "#374151" }}>{h.actor}</span>
+                {h.note && <span style={{ fontSize: 14, color: "#6B7280", marginLeft: 8 }}>— {h.note}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 연계공고 탭 */}
+      {drawerTab === "bid" && (
+        <div>
+          <p style={{ fontSize: 16, fontWeight: 600, color: "#111827", marginBottom: 12 }}>연계된 입찰 공고</p>
+          <div
+            style={{
+              padding: "16px",
+              background: "#f9fafb",
+              border: "1px solid #e5e7eb",
+              borderRadius: 8,
+              color: "#6B7280",
+              fontSize: 15,
+              textAlign: "center",
+            }}
+          >
+            아직 입찰 공고가 연계되지 않았습니다.
+          </div>
+          <p style={{ marginTop: 10, fontSize: 14, color: "#9CA3AF" }}>
+            ※ 발주가 수락(ACCEPTED)된 후 입찰계획이 수립되면 공고가 연계됩니다.
+          </p>
+        </div>
+      )}
+    </Drawer>
+  );
+}
+
+// ─── 입찰현황 탭 ──────────────────────────────────────────────────────────────
+function BidStatusTab() {
+  const { show } = useToast();
+  const [selectedOrder, setSelectedOrder] = useState<OrderPlan | null>(null);
+  const [chipFilter, setChipFilter] = useState<string | null>(null);
+  const [keyword, setKeyword] = useState("");
+  const [acceptTarget, setAcceptTarget] = useState<string | null>(null);
+  const [rejectTarget, setRejectTarget] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [rejectError, setRejectError] = useState("");
+  const [orders, setOrders] = useState<OrderPlan[]>(C_ORDER_PLANS);
+
+  const filtered = orders.filter((o) => {
+    if (chipFilter && o.status !== chipFilter) return false;
+    if (keyword && !o.title.includes(keyword) && !o.id.includes(keyword)) return false;
+    return true;
+  });
+
+  const summary = {
+    PENDING: orders.filter((o) => o.status === "PENDING").length,
+    ACCEPTED: orders.filter((o) => o.status === "ACCEPTED").length,
+    IN_PROGRESS: orders.filter((o) => o.status === "IN_PROGRESS").length,
+    AWARDED: orders.filter((o) => o.status === "AWARDED").length,
+    CONTRACTED: orders.filter((o) => o.status === "CONTRACTED").length,
+  };
+
+  const columns = [
+    { key: "id", label: "발주번호", width: "150px" },
+    { key: "title", label: "사업명", align: "left" as const },
+    { key: "site", label: "사업소", width: "90px" },
+    { key: "category", label: "품목", width: "110px" },
+    {
+      key: "status",
+      label: "상태",
+      width: "110px",
+      render: (v: unknown) => <StatusBadge status={String(v)} />,
+    },
+    { key: "requestedAt", label: "요청일", width: "100px" },
+  ];
+
+  const handleAccept = (id: string) => {
+    setAcceptTarget(null);
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: "ACCEPTED" as const, pmsSync: "PENDING" as const } : o)));
+    if (selectedOrder?.id === id) setSelectedOrder((p) => p ? { ...p, status: "ACCEPTED", pmsSync: "PENDING" } : null);
+    setTimeout(() => show("발주가 수락되었습니다. 사업담당자에게 알림이 발송되었습니다.", "info"), 4000);
+  };
+
+  const handleReject = () => {
+    if (!rejectReason.trim()) {
+      setRejectError("거절 사유를 입력해 주세요 (최대 500자)");
+      return;
+    }
+    const id = rejectTarget!;
+    setRejectTarget(null);
+    setRejectReason("");
+    setRejectError("");
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: "CANCELLED" as const } : o)));
+    if (selectedOrder?.id === id) setSelectedOrder((p) => p ? { ...p, status: "CANCELLED" } : null);
+    setTimeout(() => show("발주가 거절되었습니다. 사업담당자에게 알림이 발송되었습니다.", "info"), 4000);
+  };
+
+  const handlePmsResync = (id: string) => {
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, pmsSync: "PENDING" as const } : o)));
+    if (selectedOrder?.id === id) setSelectedOrder((p) => p ? { ...p, pmsSync: "PENDING" } : null);
+    setTimeout(() => show("PMS 연동이 완료되었습니다.", "success"), 4000);
+  };
+
+  return (
+    <div>
+      <StatusChipFilter selected={chipFilter} onChange={setChipFilter} summary={summary} />
+
+      <SearchForm
+        fields={[
+          { name: "keyword", label: "발주번호·사업명", type: "text" },
+          {
+            name: "status",
+            label: "상태",
+            type: "select",
+            options: [
+              { value: "", label: "전체" },
+              ...Object.entries(STATUS_LABELS).map(([v, l]) => ({ value: v, label: l })),
+            ],
+          },
+          { name: "period", label: "요청일", type: "daterange" },
+        ]}
+        onSearch={(values) => {
+          setKeyword(values.keyword ?? "");
+          setChipFilter((values.status as string) || null);
+        }}
+      />
+
+      <DataTable
+        columns={columns}
+        data={filtered as unknown as Record<string, unknown>[]}
+        sectionLabel="발주요청 목록"
+        showExcel
+        showCheckbox={false}
+        totalCount={filtered.length}
+        onRowClick={(row) => setSelectedOrder(orders.find((o) => o.id === row.id) ?? null)}
+        notice="행을 클릭하면 발주 상세를 확인하고 수락·거절할 수 있습니다."
+      />
+
+      <OrderDrawer
+        order={selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+        onAccept={(id) => { setSelectedOrder(null); setAcceptTarget(id); }}
+        onReject={(id) => { setRejectTarget(id); }}
+        onPmsResync={handlePmsResync}
+      />
+
+      {/* 수락 확인 Modal */}
+      <Modal
+        open={!!acceptTarget}
+        onClose={() => setAcceptTarget(null)}
+        title="발주 수락 확인"
+        width={480}
+        footer={
+          <>
+            <button
+              onClick={() => setAcceptTarget(null)}
+              style={{ padding: "7px 20px", background: "#fff", color: "#374151", border: "1px solid #d1d5db", borderRadius: 4, fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}
+            >
+              취소
+            </button>
+            <button
+              onClick={() => handleAccept(acceptTarget!)}
+              style={{ padding: "7px 20px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            >
+              수락 확정
+            </button>
+          </>
+        }
+      >
+        <p style={{ fontSize: 16, color: "#374151", margin: 0 }}>
+          발주 <strong>{acceptTarget}</strong>을(를) 수락 처리하시겠습니까?
+        </p>
+        <p style={{ fontSize: 15, color: "#6B7280", marginTop: 8 }}>
+          수락 후 PMS 자동 동기화가 진행됩니다. 사업담당자에게 알림이 발송됩니다.
+        </p>
+      </Modal>
+
+      {/* 거절 사유 Modal */}
+      <Modal
+        open={!!rejectTarget}
+        onClose={() => { setRejectTarget(null); setRejectReason(""); setRejectError(""); }}
+        title="발주 거절 사유 입력"
+        width={480}
+        footer={
+          <>
+            <button
+              onClick={() => { setRejectTarget(null); setRejectReason(""); setRejectError(""); }}
+              style={{ padding: "7px 20px", background: "#fff", color: "#374151", border: "1px solid #d1d5db", borderRadius: 4, fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}
+            >
+              취소
+            </button>
+            <button
+              onClick={handleReject}
+              style={{ padding: "7px 20px", background: "#EF4444", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            >
+              거절 확정
+            </button>
+          </>
+        }
+      >
+        <div>
+          <p style={{ margin: "0 0 12px", fontSize: 15, color: "#374151" }}>
+            발주번호: <strong>{rejectTarget}</strong>
+          </p>
+          <label style={{ fontSize: 16, fontWeight: 600, display: "block", marginBottom: 6 }}>
+            거절 사유 <span style={{ color: "#EF4444" }}>*</span>
+            <span style={{ fontSize: 14, color: "#9CA3AF", fontWeight: 400, marginLeft: 6 }}>최대 500자</span>
+          </label>
+          <textarea
+            value={rejectReason}
+            onChange={(e) => { setRejectReason(e.target.value.slice(0, 500)); setRejectError(""); }}
+            rows={4}
+            placeholder="거절 사유를 입력하세요."
+            style={{
+              width: "100%",
+              border: rejectError ? "1px solid #EF4444" : "1px solid #d1d5db",
+              borderRadius: 4,
+              padding: "8px 12px",
+              fontSize: 15,
+              resize: "vertical",
+              fontFamily: "inherit",
+              boxSizing: "border-box",
+            }}
+          />
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+            {rejectError ? (
+              <span style={{ fontSize: 14, color: "#EF4444" }}>{rejectError}</span>
+            ) : (
+              <span />
+            )}
+            <span style={{ fontSize: 14, color: "#9CA3AF" }}>{rejectReason.length} / 500자</span>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+// ─── 기업정보 탭 ──────────────────────────────────────────────────────────────
+function CompanyInfoTab() {
+  const { show } = useToast();
+  const [notif, setNotif] = useState({
+    newOrder: true,
+    bidResult: true,
+    contractSign: true,
+    pmsFail: false,
+  });
+
+  const toggles: { key: keyof typeof notif; label: string }[] = [
+    { key: "newOrder", label: "발주 신규 배정 알림" },
+    { key: "bidResult", label: "입찰 결과 알림" },
+    { key: "contractSign", label: "계약 체결 알림" },
+    { key: "pmsFail", label: "PMS 연동 실패 알림" },
+  ];
+
+  return (
+    <div>
+      {/* 개인정보 (ReadOnly) */}
+      <div
+        style={{
+          background: "#fff",
+          border: "1px solid #e5e7eb",
+          borderRadius: 8,
+          padding: "20px 24px",
+          marginBottom: 20,
+        }}
+      >
+        <p style={{ margin: "0 0 16px", fontSize: 17, fontWeight: 700, color: "#111827" }}>
+          개인 정보 (그룹웨어 SSO 연동 — 읽기 전용)
+        </p>
+        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              background: "#6366F1",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              fontSize: 28,
+              fontWeight: 700,
+              flexShrink: 0,
+            }}
+          >
+            {C_PROFILE.name.charAt(0)}
+          </div>
+          <table style={{ borderCollapse: "collapse", fontSize: 15 }}>
+            <tbody>
+              {[
+                ["성명", C_PROFILE.name],
+                ["사번", C_PROFILE.empNo],
+                ["부서", C_PROFILE.dept],
+                ["직급", C_PROFILE.position],
+                ["이메일", `${C_PROFILE.email} (그룹웨어 연동)`],
+                ["전화번호", C_PROFILE.tel],
+                ["역할", "C (계약담당자)"],
+                ["계정상태", null],
+                ["최종로그인", C_PROFILE.lastLogin],
+              ].map(([label, value]) => (
+                <tr key={String(label)}>
+                  <td style={{ padding: "5px 16px 5px 0", fontWeight: 600, color: "#374151", whiteSpace: "nowrap" }}>
+                    {label}
+                  </td>
+                  <td style={{ padding: "5px 0", color: "#111827" }}>
+                    {label === "계정상태" ? <StatusBadge status={C_PROFILE.accountStatus} /> : String(value ?? "")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div
+          style={{
+            marginTop: 16,
+            padding: "10px 14px",
+            background: "#FFFBEB",
+            border: "1px solid #FDE68A",
+            borderRadius: 6,
+            fontSize: 14,
+            color: "#92400E",
+          }}
+        >
+          ⚠ 개인정보는 그룹웨어 시스템과 연동되며 SRM에서 직접 수정할 수 없습니다.
+          정보 변경이 필요한 경우 그룹웨어(인사시스템)를 이용하십시오.
+        </div>
+      </div>
+
+      {/* 알림 설정 */}
+      <div
+        style={{
+          background: "#fff",
+          border: "1px solid #e5e7eb",
+          borderRadius: 8,
+          padding: "20px 24px",
+        }}
+      >
+        <p style={{ margin: "0 0 16px", fontSize: 17, fontWeight: 700, color: "#111827" }}>
+          알림 설정
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {toggles.map((t) => (
+            <div key={t.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: 16, color: "#374151" }}>{t.label}</span>
+              <button
+                onClick={() => setNotif((prev) => ({ ...prev, [t.key]: !prev[t.key] }))}
+                style={{
+                  width: 52,
+                  height: 28,
+                  borderRadius: 999,
+                  background: notif[t.key] ? "#01ACC8" : "#D1D5DB",
+                  border: "none",
+                  cursor: "pointer",
+                  position: "relative",
+                  transition: "background 0.2s",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 4,
+                    left: notif[t.key] ? 26 : 4,
+                    width: 20,
+                    height: 20,
+                    borderRadius: "50%",
+                    background: "#fff",
+                    transition: "left 0.2s",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                  }}
+                />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}>
+          <button
+            onClick={() => setTimeout(() => show("알림 설정이 저장되었습니다.", "info"), 4000)}
+            style={{
+              padding: "8px 24px",
               background: "#01ACC8",
               color: "#fff",
               border: "none",
               borderRadius: 4,
-              padding: "7px 20px",
               fontSize: 16,
               fontWeight: 600,
               cursor: "pointer",
               fontFamily: "inherit",
             }}
           >
-            변경
+            저장
           </button>
-        </>
-      }
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <div>
-          <label style={{ fontSize: 16, fontWeight: 600, display: "block", marginBottom: 6 }}>
-            기존 비밀번호 <span style={{ color: "#EF4444" }}>*</span>
-          </label>
-          <input
-            type="password"
-            value={curPw}
-            onChange={(e) => setCurPw(e.target.value)}
-            style={{
-              width: "100%",
-              border: errors.cur ? "1px solid #EF4444" : "1px solid #d1d5db",
-              borderRadius: 4,
-              padding: "8px 12px",
-              fontSize: 16,
-              outline: "none",
-              fontFamily: "inherit",
-              boxSizing: "border-box",
-            }}
-          />
-          {errors.cur && <p style={{ margin: "4px 0 0", fontSize: 15, color: "#EF4444" }}>{errors.cur}</p>}
         </div>
-        <div>
-          <label style={{ fontSize: 16, fontWeight: 600, display: "block", marginBottom: 6 }}>
-            새 비밀번호 <span style={{ color: "#EF4444" }}>*</span>
-          </label>
-          <input
-            type="password"
-            value={newPw}
-            onChange={(e) => setNewPw(e.target.value)}
-            style={{
-              width: "100%",
-              border: errors.new ? "1px solid #EF4444" : "1px solid #d1d5db",
-              borderRadius: 4,
-              padding: "8px 12px",
-              fontSize: 16,
-              outline: "none",
-              fontFamily: "inherit",
-              boxSizing: "border-box",
-            }}
-          />
-          <p style={{ margin: "4px 0 0", fontSize: 15, color: errors.new ? "#EF4444" : "#6B7280" }}>
-            {errors.new ?? "✔ 영문+숫자+특수문자 조합, 8~16자"}
-          </p>
-        </div>
-        <div>
-          <label style={{ fontSize: 16, fontWeight: 600, display: "block", marginBottom: 6 }}>
-            새 비밀번호 확인 <span style={{ color: "#EF4444" }}>*</span>
-          </label>
-          <input
-            type="password"
-            value={confPw}
-            onChange={(e) => setConfPw(e.target.value)}
-            style={{
-              width: "100%",
-              border: errors.conf ? "1px solid #EF4444" : "1px solid #d1d5db",
-              borderRadius: 4,
-              padding: "8px 12px",
-              fontSize: 16,
-              outline: "none",
-              fontFamily: "inherit",
-              boxSizing: "border-box",
-            }}
-          />
-          {errors.conf && <p style={{ margin: "4px 0 0", fontSize: 15, color: "#EF4444" }}>{errors.conf}</p>}
-        </div>
-      </div>
-    </Modal>
-  );
-}
-
-// ─── 담당 입찰현황 탭 ─────────────────────────────────────────────────────────
-function BidsTab() {
-  const columns = [
-    { key: "id", label: "공고번호", width: "140px" },
-    { key: "title", label: "공고명", align: "left" as const },
-    {
-      key: "method",
-      label: "입찰방법",
-      width: "110px",
-      render: (v: unknown) => (
-        <span style={{ fontSize: 15, color: "#374151" }}>
-          {METHOD_LABELS[String(v)] ?? String(v)}
-        </span>
-      ),
-    },
-    { key: "deadline", label: "마감일", width: "110px" },
-    {
-      key: "participantCount",
-      label: "참여업체수",
-      width: "100px",
-      align: "center" as const,
-      render: (v: unknown) => (
-        <span style={{ fontWeight: 600, color: "#01ACC8" }}>{String(v)}개사</span>
-      ),
-    },
-    {
-      key: "status",
-      label: "상태",
-      width: "100px",
-      render: (v: unknown) => <StatusBadge status={String(v)} />,
-    },
-  ];
-
-  return (
-    <DataTable
-      columns={columns}
-      data={C_MY_BIDS as unknown as Record<string, unknown>[]}
-      sectionLabel="담당 입찰현황"
-      showExcel={false}
-      showCheckbox={false}
-      totalCount={C_MY_BIDS.length}
-    />
-  );
-}
-
-// ─── 계약현황 탭 ──────────────────────────────────────────────────────────────
-function ContractsTab() {
-  const columns = [
-    { key: "id", label: "계약번호", width: "140px" },
-    { key: "title", label: "계약명", align: "left" as const },
-    { key: "vendorName", label: "업체명", width: "160px", align: "left" as const },
-    {
-      key: "amount",
-      label: "계약금액",
-      width: "130px",
-      align: "right" as const,
-      render: (v: unknown) =>
-        typeof v === "number" ? (
-          <span style={{ fontWeight: 600 }}>
-            {fmt(v)}
-            <span style={{ fontSize: 14, color: "#6B7280", marginLeft: 2 }}>원</span>
-          </span>
-        ) : (
-          String(v)
-        ),
-    },
-    { key: "endDate", label: "만료일", width: "110px" },
-    {
-      key: "status",
-      label: "상태",
-      width: "90px",
-      render: (v: unknown) => <StatusBadge status={String(v)} />,
-    },
-  ];
-
-  return (
-    <DataTable
-      columns={columns}
-      data={C_MY_CONTRACTS as unknown as Record<string, unknown>[]}
-      sectionLabel="계약현황"
-      showExcel={false}
-      showCheckbox={false}
-      totalCount={C_MY_CONTRACTS.length}
-    />
-  );
-}
-
-// ─── 처리이력 탭 ──────────────────────────────────────────────────────────────
-function HistoryTab() {
-  return (
-    <div>
-      <div style={{ marginBottom: 12 }}>
-        <span style={{ fontSize: 16, fontWeight: 600, color: "#333" }}>
-          ▶ 처리이력 (총{" "}
-          <span style={{ color: "#01ACC8" }}>{C_PROCESS_HISTORY.length}</span>건)
-        </span>
-      </div>
-      <div style={{ position: "relative", paddingLeft: 32 }}>
-        {/* 세로 선 */}
-        <div
-          style={{
-            position: "absolute",
-            left: 10,
-            top: 8,
-            bottom: 8,
-            width: 2,
-            background: "#e5e7eb",
-          }}
-        />
-        {C_PROCESS_HISTORY.map((item, idx) => (
-          <div
-            key={item.id}
-            style={{
-              position: "relative",
-              marginBottom: idx < C_PROCESS_HISTORY.length - 1 ? 24 : 0,
-            }}
-          >
-            {/* 원형 마커 */}
-            <div
-              style={{
-                position: "absolute",
-                left: -26,
-                top: 4,
-                width: 14,
-                height: 14,
-                borderRadius: "50%",
-                background: "#01ACC8",
-                border: "2px solid #fff",
-                boxShadow: "0 0 0 2px #01ACC8",
-              }}
-            />
-            {/* 카드 */}
-            <div
-              style={{
-                background: "#fff",
-                border: "1px solid #e5e7eb",
-                borderRadius: 6,
-                padding: "12px 16px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: 6,
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span
-                    style={{
-                      fontSize: 15,
-                      background: "#f0f9ff",
-                      color: "#0369a1",
-                      padding: "2px 8px",
-                      borderRadius: 999,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {item.type}
-                  </span>
-                  <span style={{ fontSize: 16, fontWeight: 600, color: "#111827" }}>
-                    {item.target}
-                  </span>
-                </div>
-                <span style={{ fontSize: 15, color: "#9CA3AF" }}>{item.date}</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 15, color: "#6B7280" }}>처리결과:</span>
-                <span
-                  style={{
-                    fontSize: 15,
-                    background: item.result === "완료" ? "#D1FAE5" : "#FEF3C7",
-                    color: item.result === "완료" ? "#065F46" : "#92400E",
-                    padding: "1px 8px",
-                    borderRadius: 999,
-                    fontWeight: 600,
-                  }}
-                >
-                  {item.result}
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-        {C_PROCESS_HISTORY.length === 0 && (
-          <div style={{ padding: "24px 0", textAlign: "center", color: "#9CA3AF", fontSize: 16 }}>
-            처리이력이 없습니다.
-          </div>
-        )}
       </div>
     </div>
   );
@@ -472,18 +731,14 @@ function HistoryTab() {
 
 // ─── 메인 페이지 ──────────────────────────────────────────────────────────────
 export default function CMypagePage() {
-  const [pwModalOpen, setPwModalOpen] = useState(false);
-
   const tabs = [
-    { id: "bids", label: "담당 입찰현황" },
-    { id: "contracts", label: "계약현황" },
-    { id: "history", label: "처리이력" },
+    { id: "bids", label: "입찰현황" },
+    { id: "company", label: "기업정보" },
   ];
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1200, margin: "0 auto" }}>
       <PageHeader title="마이페이지" />
-      <ProfileCard onChangePw={() => setPwModalOpen(true)} />
       <div
         style={{
           background: "#fff",
@@ -494,14 +749,12 @@ export default function CMypagePage() {
       >
         <Tabs tabs={tabs}>
           {(active) => {
-            if (active === "bids") return <BidsTab />;
-            if (active === "contracts") return <ContractsTab />;
-            if (active === "history") return <HistoryTab />;
+            if (active === "bids") return <BidStatusTab />;
+            if (active === "company") return <CompanyInfoTab />;
             return null;
           }}
         </Tabs>
       </div>
-      <PasswordChangeModal open={pwModalOpen} onClose={() => setPwModalOpen(false)} />
     </div>
   );
 }

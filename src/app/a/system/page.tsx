@@ -15,10 +15,13 @@ import {
   MOCK_SYSTEM_SETTINGS,
   MOCK_COMMON_CODES,
   MOCK_AUDIT_LOGS,
+  A_SYSTEM_STATS,
+  ADMIN_SYSTEM_REQUESTS,
   type CommonCode,
   type AuditLog,
   type SystemSetting,
   type ManualDoc,
+  type SystemRequest,
 } from "@/lib/mock/items";
 import type { Notice } from "@/lib/types";
 
@@ -80,12 +83,224 @@ const fieldRow: React.CSSProperties = {
 
 // ────────── 탭 목록 ─────────────────────────────────────────────────────────
 const TABS = [
+  { id: "dashboard", label: "대시보드" },
+  { id: "requests", label: "요청사항" },
   { id: "notices", label: "공지사항" },
   { id: "manuals", label: "매뉴얼" },
   { id: "settings", label: "시스템 설정" },
   { id: "codes", label: "공통코드" },
   { id: "audit", label: "감사 로그" },
 ];
+
+const STATUS_REQ_LABEL: Record<string, string> = {
+  PENDING: "접수",
+  IN_REVIEW: "검토중",
+  RESOLVED: "처리완료",
+  CLOSED: "종결",
+};
+
+// ════════════════════════════════════════════════════════════════════════════
+// 대시보드 탭
+// ════════════════════════════════════════════════════════════════════════════
+function DashboardTab({ onTabChange }: { onTabChange: (id: string) => void }) {
+  const stats = A_SYSTEM_STATS;
+  const recentLogs = MOCK_AUDIT_LOGS.slice(0, 10);
+
+  const cards = [
+    { label: "내부사용자", value: `${stats.internalUsers} 명`, tabId: null },
+    { label: "협력업체", value: `${stats.vendors} 업체`, tabId: null },
+    { label: "진행중 입찰", value: `${stats.activeBids} 건`, tabId: null },
+    { label: "이번달 계약", value: `${stats.monthlyContracts} 건`, tabId: null },
+  ];
+
+  const logColumns: Column[] = [
+    { key: "createdAt", label: "발생일시", width: "150px", align: "center" },
+    { key: "action", label: "이벤트유형", align: "left" },
+    { key: "userName", label: "액터", width: "90px", align: "center" },
+    { key: "target", label: "대상", width: "130px", align: "center" },
+  ];
+
+  return (
+    <div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
+        {cards.map((c) => (
+          <div
+            key={c.label}
+            onClick={() => c.tabId && onTabChange(c.tabId)}
+            style={{
+              background: "#fff",
+              border: "1px solid #e0e0e0",
+              borderRadius: 8,
+              padding: "20px 24px",
+              textAlign: "center",
+              cursor: c.tabId ? "pointer" : "default",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            }}
+          >
+            <div style={{ fontSize: 28, fontWeight: 700, color: "#01ACC8" }}>{c.value}</div>
+            <div style={{ fontSize: 16, color: "#555", marginTop: 4 }}>{c.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 6, padding: 16 }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 12,
+          }}
+        >
+          <span style={{ fontSize: 17, fontWeight: 700, color: "#333" }}>최근 감사로그</span>
+          <button
+            style={{ ...btnOutline, padding: "4px 12px", fontSize: 15 }}
+            onClick={() => onTabChange("audit")}
+          >
+            전체 보기
+          </button>
+        </div>
+        <DataTable
+          columns={logColumns}
+          data={recentLogs as unknown as Record<string, unknown>[]}
+          sectionLabel=""
+          showExcel={false}
+          showCheckbox={false}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// 요청사항 탭
+// ════════════════════════════════════════════════════════════════════════════
+function SystemRequestsTab() {
+  const { show } = useToast();
+  const [requests, setRequests] = useState<SystemRequest[]>(ADMIN_SYSTEM_REQUESTS);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selected, setSelected] = useState<SystemRequest | null>(null);
+  const [statusValue, setStatusValue] = useState<string>("PENDING");
+
+  function handleRowClick(row: Record<string, unknown>) {
+    const req = requests.find((r) => r.id === (row.id as string));
+    if (!req) return;
+    setSelected(req);
+    setStatusValue(req.status);
+    setDrawerOpen(true);
+  }
+
+  function handleResolve() {
+    if (!selected) return;
+    const newStatus = statusValue as SystemRequest["status"];
+    setRequests((prev) =>
+      prev.map((r) => (r.id === selected.id ? { ...r, status: newStatus } : r))
+    );
+    setDrawerOpen(false);
+    show("요청사항이 처리되었습니다.", "info");
+  }
+
+  const columns: Column[] = [
+    { key: "id", label: "번호", width: "90px", align: "center" },
+    { key: "title", label: "제목", align: "left" },
+    { key: "type", label: "유형", width: "90px", align: "center" },
+    { key: "requester", label: "요청자", width: "90px", align: "center" },
+    { key: "dept", label: "부서", width: "110px", align: "center" },
+    { key: "registeredAt", label: "등록일", width: "110px", align: "center" },
+    {
+      key: "status",
+      label: "처리상태",
+      width: "100px",
+      align: "center",
+      render: (v) => (
+        <StatusBadge status={STATUS_REQ_LABEL[v as string] ?? (v as string)} />
+      ),
+    },
+  ];
+
+  return (
+    <div>
+      <DataTable
+        columns={columns}
+        data={requests as unknown as Record<string, unknown>[]}
+        sectionLabel="시스템 요청사항 목록"
+        showExcel={true}
+        showCheckbox={false}
+        onRowClick={handleRowClick}
+      />
+
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={`요청사항 상세 — ${selected?.id}`}
+        width={600}
+      >
+        {selected && (
+          <div>
+            <div style={{ marginBottom: 20 }}>
+              {[
+                { label: "유형", value: selected.type },
+                { label: "제목", value: selected.title },
+                { label: "요청자", value: `${selected.requester} (${selected.dept})` },
+                { label: "등록일", value: selected.registeredAt },
+              ].map((item) => (
+                <div key={item.label} style={{ ...fieldRow, marginBottom: 10 }}>
+                  <span style={{ ...labelStyle, minWidth: 70 }}>{item.label}</span>
+                  <span style={{ fontSize: 16, color: "#333" }}>{item.value}</span>
+                </div>
+              ))}
+              <div style={{ ...fieldRow, alignItems: "flex-start", marginBottom: 10 }}>
+                <span style={{ ...labelStyle, minWidth: 70, marginTop: 2 }}>내용</span>
+                <div
+                  style={{
+                    flex: 1,
+                    fontSize: 16,
+                    color: "#333",
+                    background: "#f8f8f8",
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 4,
+                    padding: "8px 10px",
+                    lineHeight: 1.7,
+                  }}
+                >
+                  {selected.content}
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: "#f5f5f5",
+                borderRadius: 6,
+                padding: 16,
+                marginBottom: 16,
+              }}
+            >
+              <div style={{ fontSize: 16, fontWeight: 700, color: "#333", marginBottom: 10 }}>처리</div>
+              <div style={fieldRow}>
+                <label style={{ ...labelStyle, minWidth: 70 }}>처리상태</label>
+                <select
+                  style={inputStyle}
+                  value={statusValue}
+                  onChange={(e) => setStatusValue(e.target.value)}
+                >
+                  {Object.entries(STATUS_REQ_LABEL).map(([k, v]) => (
+                    <option key={k} value={k}>{v}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+              <button style={btnOutline} onClick={() => setDrawerOpen(false)}>취소</button>
+              <button style={btnPrimary} onClick={handleResolve}>처리완료</button>
+            </div>
+          </div>
+        )}
+      </Drawer>
+    </div>
+  );
+}
 
 // ════════════════════════════════════════════════════════════════════════════
 // 공지사항 탭
@@ -890,7 +1105,10 @@ function AuditLogsTab() {
 // 메인 페이지 컴포넌트
 // ════════════════════════════════════════════════════════════════════════════
 export default function SystemPage() {
-  const [activeTab, setActiveTab] = useState("notices");
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const pendingRequestCount = ADMIN_SYSTEM_REQUESTS.filter(
+    (r) => r.status === "PENDING" || r.status === "IN_REVIEW"
+  ).length;
 
   return (
     <div>
@@ -911,6 +1129,7 @@ export default function SystemPage() {
       >
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
+          const badge = tab.id === "requests" && pendingRequestCount > 0 ? pendingRequestCount : null;
           return (
             <button
               key={tab.id}
@@ -930,9 +1149,27 @@ export default function SystemPage() {
                 marginBottom: -2,
                 fontFamily: "inherit",
                 whiteSpace: "nowrap",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
               }}
             >
               {tab.label}
+              {badge !== null && (
+                <span
+                  style={{
+                    background: "#e53e3e",
+                    color: "#fff",
+                    borderRadius: 10,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    padding: "1px 6px",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {badge}
+                </span>
+              )}
             </button>
           );
         })}
@@ -940,6 +1177,8 @@ export default function SystemPage() {
 
       {/* 탭 콘텐츠 */}
       <div>
+        {activeTab === "dashboard" && <DashboardTab onTabChange={setActiveTab} />}
+        {activeTab === "requests" && <SystemRequestsTab />}
         {activeTab === "notices" && <NoticesTab />}
         {activeTab === "manuals" && <ManualsTab />}
         {activeTab === "settings" && <SystemSettingsTab />}

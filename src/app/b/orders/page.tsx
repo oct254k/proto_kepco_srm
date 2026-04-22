@@ -63,8 +63,8 @@ function OrderWriteModal({ open, onClose }: OrderWriteModalProps) {
   const steps = [
     { label: "기본정보" },
     { label: "선정방법" },
-    { label: "추가정보" },
-    { label: "업체선택" },
+    { label: "품목·금액" },
+    { label: "서류·체크리스트" },
     { label: "확인·제출" },
   ];
 
