@@ -33,7 +33,6 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
   };
 
   const inputStyle: React.CSSProperties = {
-    flex: 1,
     padding: "5px 8px",
     border: "1px solid #ccc",
     borderRadius: "4px",
@@ -42,6 +41,8 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
     background: "#fff",
     height: "30px",
     boxSizing: "border-box",
+    width: "100%",
+    minWidth: 0,
   };
 
   return (
@@ -55,16 +56,16 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
       }}
     >
       <form onSubmit={handleSubmit}>
-        <div className="flex flex-col lg:flex-row items-start gap-4">
+        <div className="srm-search-layout">
           {/* Fields Grid */}
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px_20px]">
+          <div className="srm-search-fields">
             {fields.map((field) => (
               <div
                 key={field.name}
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                className="srm-search-field"
               >
                 <label
-                  className="min-w-[80px] lg:min-w-[90px]"
+                  className="srm-search-label"
                   style={{
                     fontSize: "13px",
                     color: "#555",
@@ -88,19 +89,19 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
                     ))}
                   </select>
                 ) : field.type === "daterange" ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: "4px", flex: 1 }}>
+                  <div className="srm-date-range">
                     <input
                       type="date"
                       value={values[field.name + "_from"] || ""}
                       onChange={(e) => handleChange(field.name + "_from", e.target.value)}
-                      style={{ ...inputStyle, flex: 1 }}
+                      style={inputStyle}
                     />
-                    <span style={{ fontSize: "12px", color: "#888" }}>~</span>
+                    <span style={{ fontSize: "12px", color: "#888", flex: "0 0 auto" }}>~</span>
                     <input
                       type="date"
                       value={values[field.name + "_to"] || ""}
                       onChange={(e) => handleChange(field.name + "_to", e.target.value)}
-                      style={{ ...inputStyle, flex: 1 }}
+                      style={inputStyle}
                     />
                   </div>
                 ) : (
@@ -117,7 +118,7 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-row lg:flex-col gap-[6px] flex-shrink-0 w-full lg:w-auto justify-end">
+          <div className="srm-search-actions">
             <button
               type="submit"
               style={{
@@ -132,6 +133,7 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
                 cursor: "pointer",
                 fontFamily: "inherit",
                 display: "flex",
+                justifyContent: "center",
                 alignItems: "center",
                 gap: "4px",
                 whiteSpace: "nowrap",
@@ -154,6 +156,7 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
                 cursor: "pointer",
                 fontFamily: "inherit",
                 display: "flex",
+                justifyContent: "center",
                 alignItems: "center",
                 gap: "4px",
                 whiteSpace: "nowrap",
