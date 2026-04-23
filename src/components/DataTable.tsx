@@ -46,13 +46,37 @@ export default function DataTable({
           gap: "8px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span style={{ fontSize: "13px", fontWeight: 600, color: "#333" }}>
-            ▶ {sectionLabel} (총{" "}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", minHeight: "30px" }}>
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#333",
+              lineHeight: 1,
+            }}
+          >
+            <span
+              aria-hidden="true"
+              style={{
+                width: "9px",
+                height: "9px",
+                borderTop: "3px solid #01ACC8",
+                borderRight: "3px solid #01ACC8",
+                transform: "rotate(45deg)",
+                display: "inline-block",
+                flex: "0 0 auto",
+              }}
+            />
+            <span>
+            {sectionLabel} (총{" "}
             <span style={{ color: "#01ACC8", fontWeight: 700 }}>
               {(totalCount ?? data.length).toLocaleString()}
             </span>
             건)
+            </span>
           </span>
           {notice && (
             <span
@@ -68,7 +92,7 @@ export default function DataTable({
             </span>
           )}
         </div>
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div style={{ display: "flex", gap: "8px", alignItems: "center", minHeight: "30px" }}>
           {actionButton}
           {showExcel && (
             <button
@@ -77,7 +101,8 @@ export default function DataTable({
                 color: "#01ACC8",
                 border: "1px solid #01ACC8",
                 borderRadius: "4px",
-                padding: "5px 14px",
+                minHeight: "30px",
+                padding: "0 14px",
                 fontSize: "12px",
                 fontWeight: 600,
                 cursor: "pointer",
@@ -94,7 +119,7 @@ export default function DataTable({
       <div
         style={{
           overflowX: "auto",
-          border: "1px solid #e0e0e0",
+          border: "1px solid #d8dfe3",
           borderRadius: "4px",
         }}
       >
@@ -113,7 +138,7 @@ export default function DataTable({
                   style={{
                     width: "40px",
                     padding: "10px 8px",
-                    borderBottom: "1px solid #e0e0e0",
+                    borderBottom: "1px solid #d8dfe3",
                     textAlign: "center",
                   }}
                 >
@@ -125,7 +150,7 @@ export default function DataTable({
                   key={col.key}
                   style={{
                     padding: "10px 12px",
-                    borderBottom: "1px solid #e0e0e0",
+                    borderBottom: "1px solid #d8dfe3",
                     textAlign: col.align || "center",
                     fontWeight: 600,
                     color: "#444",
@@ -177,7 +202,7 @@ export default function DataTable({
                       style={{
                         height: "44px",
                         padding: "0 8px",
-                        borderBottom: "1px solid #eee",
+                        borderBottom: "1px solid #eef1f3",
                         textAlign: "center",
                       }}
                     >
@@ -190,7 +215,7 @@ export default function DataTable({
                       style={{
                         height: "44px",
                         padding: "0 12px",
-                        borderBottom: "1px solid #eee",
+                        borderBottom: "1px solid #eef1f3",
                         textAlign: col.align || "center",
                         color: "#444",
                         whiteSpace: "nowrap",
