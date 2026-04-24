@@ -256,7 +256,12 @@ function ResultTab() {
 
   const handleNotify = () => {
     setNotifyModalOpen(false);
-    setTimeout(() => toast.show("심사 결과가 4개 업체에 발송되었습니다.", "info"), 4000);
+    // 설계서 FN-P-14 §6: srm-bid-proposals Webhook 시뮬레이션 (기술평가 완료 후 업체별 제안 데이터 전송)
+    setTimeout(() => toast.show(
+      "심사 결과 발송 완료 — srm-bid-proposals 이벤트가 PMS로 전송되었습니다. " +
+      "PMS Pipeline PL-003(대전공장 HVAC)의 제안비교(c) 탭에 업체별 신용·부채·납기 데이터가 반영됩니다.",
+      "success"
+    ), 500);
   };
 
   return (

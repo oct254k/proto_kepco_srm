@@ -21,11 +21,30 @@ export interface Order {
 export interface Bid {
   id: string; title: string; method: string; estAmount: number;
   status: string; publishedAt: string; deadline: string;
+  // 설계서 05_ERD — PMS 연계 식별자
+  orderRequestId?: string;  // PMS ORDER_REQUEST_ID (PMS → SRM 발주요청)
+  pmsCardId?: string;       // PMS PipelineCard.id (연계 추적용)
 }
 
 export interface Award {
   id: string; bidId: string; title: string; vendorName: string;
   awardedAmount: number; status: string; awardedAt: string;
+}
+
+// 설계서 05_ERD/02 VENDOR_PROPOSALS_JSON shape
+// srm-bid-proposals Webhook으로 PMS에 전달되는 업체별 제안 데이터
+export interface BidParticipant {
+  id: string;
+  bidId: string;
+  vendorName: string;
+  srmPartnerId: string;
+  amount: number;
+  score: number;
+  status: string;
+  delivery: number;      // 납기(일)
+  creditGrade: string;   // 신용등급 (CREDIT_RATING 테이블 기준)
+  debtRatio: string;     // 부채비율
+  historyCount: number;  // 유사 프로젝트 수행 실적 건수
 }
 
 export interface Contract {

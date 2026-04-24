@@ -1,11 +1,15 @@
-import type { Bid, Award } from "../types";
+import type { Bid, Award, BidParticipant } from "../types";
 
+// pmsCardId 매핑: 설계서 05_ERD ORDER_REQUEST_ID ↔ SRM_BID_ID 연계
+// PL-001(공고중) → BID-2026-005, PL-002(제안서) → BID-2026-004
+// PL-003(기술평가) → BID-2026-003, PL-011(가격평가) → BID-2026-002
+// PL-004(낙찰) → BID-2026-001
 export const MOCK_BIDS: Bid[] = [
-  { id: "BID-2026-005", title: "태양광 인버터 구매 입찰", method: "LIMITED", estAmount: 450000000, status: "ACTIVE", publishedAt: "2026-04-20", deadline: "2026-04-30" },
-  { id: "BID-2026-004", title: "변압기 교체 공사 입찰", method: "TWO_STAGE", estAmount: 320000000, status: "IN_PROGRESS", publishedAt: "2026-04-12", deadline: "2026-04-22" },
-  { id: "BID-2026-003", title: "배전반 유지보수 입찰", method: "LOWEST_PRICE", estAmount: 95000000, status: "OPENED", publishedAt: "2026-04-08", deadline: "2026-04-18" },
-  { id: "BID-2026-002", title: "UPS 시스템 구축", method: "NEGOTIATION", estAmount: 200000000, status: "CLOSED", publishedAt: "2026-03-20", deadline: "2026-04-05" },
-  { id: "BID-2026-001", title: "사무용 PC 납품", method: "QUALIFIED", estAmount: 78000000, status: "AWARDED", publishedAt: "2026-03-01", deadline: "2026-03-20" },
+  { id: "BID-2026-005", title: "태양광 인버터 구매 입찰", method: "LIMITED",      estAmount: 450000000, status: "ACTIVE",      publishedAt: "2026-04-20", deadline: "2026-04-30", orderRequestId: "ORD-REQ-2025-001", pmsCardId: "PL-001" },
+  { id: "BID-2026-004", title: "변압기 교체 공사 입찰",   method: "TWO_STAGE",   estAmount: 320000000, status: "IN_PROGRESS", publishedAt: "2026-04-12", deadline: "2026-04-22", orderRequestId: "ORD-REQ-2025-002", pmsCardId: "PL-002" },
+  { id: "BID-2026-003", title: "배전반 유지보수 입찰",    method: "LOWEST_PRICE", estAmount: 95000000,  status: "OPENED",      publishedAt: "2026-04-08", deadline: "2026-04-18", orderRequestId: "ORD-REQ-2025-003", pmsCardId: "PL-003" },
+  { id: "BID-2026-002", title: "UPS 시스템 구축",         method: "NEGOTIATION",  estAmount: 200000000, status: "CLOSED",      publishedAt: "2026-03-20", deadline: "2026-04-05", orderRequestId: "ORD-REQ-2025-011", pmsCardId: "PL-011" },
+  { id: "BID-2026-001", title: "사무용 PC 납품",           method: "QUALIFIED",    estAmount: 78000000,  status: "AWARDED",     publishedAt: "2026-03-01", deadline: "2026-03-20", orderRequestId: "ORD-REQ-2025-004", pmsCardId: "PL-004" },
 ];
 
 export const METHOD_LABELS: Record<string, string> = {
@@ -32,11 +36,20 @@ export const V_MY_BIDS = [
   { bidId: "BID-2026-003", title: "배전반 유지보수 입찰", step: 3, stepLabel: "투찰완료", status: "SUBMITTED", method: "LOWEST_PRICE", estAmount: 95000000, deadline: "2026-04-18" },
 ];
 
-// 참여 업체 목록 (심사용)
-export const BID_PARTICIPANTS = [
-  { id: "P001", bidId: "BID-2026-004", vendorName: "(주)한국전기솔루션", amount: 290000000, score: 88, status: "SUBMITTED" },
-  { id: "P002", bidId: "BID-2026-004", vendorName: "(주)전기공사", amount: 310000000, score: 75, status: "SUBMITTED" },
-  { id: "P003", bidId: "BID-2026-004", vendorName: "(주)그린에너지", amount: 275000000, score: 62, status: "SUBMITTED" },
+// 참여 업체 목록 — BidParticipant 타입 적용 (설계서 05_ERD/02 VENDOR_PROPOSALS_JSON shape)
+// srm-bid-proposals Webhook으로 PMS에 전송되는 데이터의 원본
+export const BID_PARTICIPANTS: BidParticipant[] = [
+  { id: "P001", bidId: "BID-2026-004", vendorName: "(주)한국전기솔루션", srmPartnerId: "SRM-V-011", amount: 290000000, score: 88, status: "SUBMITTED", delivery: 75,  creditGrade: "A-",  debtRatio: "68%", historyCount: 4 },
+  { id: "P002", bidId: "BID-2026-004", vendorName: "(주)전기공사",         srmPartnerId: "SRM-V-022", amount: 310000000, score: 75, status: "SUBMITTED", delivery: 90,  creditGrade: "BBB", debtRatio: "72%", historyCount: 2 },
+  { id: "P003", bidId: "BID-2026-004", vendorName: "(주)그린에너지",       srmPartnerId: "SRM-V-033", amount: 275000000, score: 62, status: "SUBMITTED", delivery: 60,  creditGrade: "BB+", debtRatio: "85%", historyCount: 1 },
+  // BID-2026-005 (공고중 → 제안서 접수 중)
+  { id: "P004", bidId: "BID-2026-005", vendorName: "(주)태양전력",         srmPartnerId: "SRM-V-041", amount: 420000000, score:  0, status: "APPLIED",   delivery: 60,  creditGrade: "A",   debtRatio: "55%", historyCount: 3 },
+  { id: "P005", bidId: "BID-2026-005", vendorName: "(주)에너지텍",         srmPartnerId: "SRM-V-052", amount: 445000000, score:  0, status: "APPLIED",   delivery: 75,  creditGrade: "BBB", debtRatio: "78%", historyCount: 1 },
+  { id: "P006", bidId: "BID-2026-005", vendorName: "(주)스마트파워",       srmPartnerId: "SRM-V-063", amount: 437000000, score:  0, status: "APPLIED",   delivery: 45,  creditGrade: "BB",  debtRatio: "92%", historyCount: 0 },
+  // BID-2026-003 (기술평가 완료)
+  { id: "P007", bidId: "BID-2026-003", vendorName: "(주)한국전기솔루션",   srmPartnerId: "SRM-V-011", amount: 86500000,  score: 88, status: "SUBMITTED", delivery: 30,  creditGrade: "A-",  debtRatio: "68%", historyCount: 2 },
+  { id: "P008", bidId: "BID-2026-003", vendorName: "(주)그린솔루션",       srmPartnerId: "SRM-V-071", amount: 84000000,  score: 75, status: "SUBMITTED", delivery: 35,  creditGrade: "BBB", debtRatio: "70%", historyCount: 1 },
+  { id: "P009", bidId: "BID-2026-003", vendorName: "(주)태양전력",         srmPartnerId: "SRM-V-041", amount: 87800000,  score: 62, status: "SUBMITTED", delivery: 40,  creditGrade: "A",   debtRatio: "55%", historyCount: 0 },
 ];
 
 export const MOCK_AWARDS: Award[] = [

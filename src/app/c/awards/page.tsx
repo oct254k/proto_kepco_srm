@@ -422,7 +422,13 @@ function Tab3Award({ bidId }: { bidId: string }) {
   const handleAwardConfirm = () => {
     setConfirmModalOpen(false);
     setAwarded(true);
-    setTimeout(() => toast.show("PMS S5 Pipeline이 시작되었습니다. Pipeline ID: PL-2026-005", "success"), 4000);
+    // 설계서 FN-P-14 §6: srm-bid-awarded Webhook 시뮬레이션
+    // BID-2026-005 → PMS PL-001 (광명공장 LED 조명교체) 연계
+    setTimeout(() => toast.show(
+      "낙찰 확정 완료 — srm-bid-awarded 이벤트가 PMS로 전송되었습니다. " +
+      "PMS Pipeline PL-001(광명공장 LED 조명교체)이 '낙찰' 컬럼으로 이동됩니다.",
+      "success"
+    ), 500);
   };
 
   return (
@@ -480,7 +486,7 @@ function Tab3Award({ bidId }: { bidId: string }) {
               <span>확정일: <strong>2026-04-29</strong></span>
             </div>
             <div style={{ marginTop: 10, padding: "8px 12px", background: "#D1FAE5", borderRadius: 6, fontSize: 15, color: "#065F46" }}>
-              ✅ PMS Pipeline S5가 시작되었습니다. Pipeline ID: PL-2026-005
+              ✅ srm-bid-awarded 이벤트 전송 완료 — PMS Pipeline PL-001(광명공장 LED 조명교체) '낙찰' 컬럼으로 이동
             </div>
           </div>
 

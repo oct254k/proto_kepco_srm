@@ -154,12 +154,17 @@ function PlanForm({ onSave }: { onSave: () => void }) {
 function NoticeForm() {
   const toast = useToast();
   const [items, setItems] = useState([
-    { name: "태양광 인버터 5kW", spec: "IEC형", qty: 5, unit: "EA" },
-    { name: "태양광 인버터 10kW", spec: "IEC형", qty: 3, unit: "EA" },
+    { name: "태양광 인버터 5kW", spec: "IEC형", qty: 5, unit: "EA", unitPrice: 42000000 },
+    { name: "태양광 인버터 10kW", spec: "IEC형", qty: 3, unit: "EA", unitPrice: 78000000 },
   ]);
 
   const handlePublish = () => {
-    toast.show("공고가 게시되었습니다. 등록 협력업체 12개사에게 메일이 발송되었습니다.", "info");
+    // 설계서 FN-P-14 §6: srm-bid-stage: ANNOUNCED + srm-bid-items Webhook 시뮬레이션
+    toast.show(
+      "공고 게시 완료 — srm-bid-stage(ANNOUNCED) 이벤트가 PMS로 전송되었습니다. " +
+      "PMS Pipeline PL-001(광명공장 LED 조명교체)이 '공고중' 컬럼으로 이동됩니다.",
+      "success"
+    );
   };
 
   return (
@@ -192,7 +197,7 @@ function NoticeForm() {
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 16 }}>
           <thead>
             <tr style={{ background: "#f5f5f5" }}>
-              {["#", "품목명", "규격", "수량", "단위", ""].map((h) => (
+              {["#", "품목명", "규격", "수량", "단위", "단가(원)", ""].map((h) => (
                 <th key={h} style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center", fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
@@ -213,6 +218,9 @@ function NoticeForm() {
                 <td style={{ padding: "6px 10px", border: "1px solid #e0e0e0" }}>
                   <input style={{ ...input, flex: "none", width: 60 }} value={item.unit} onChange={(e) => setItems(items.map((it, idx) => idx === i ? { ...it, unit: e.target.value } : it))} />
                 </td>
+                <td style={{ padding: "6px 10px", border: "1px solid #e0e0e0" }}>
+                  <input type="number" style={{ ...input, flex: "none", width: 110 }} value={item.unitPrice} onChange={(e) => setItems(items.map((it, idx) => idx === i ? { ...it, unitPrice: Number(e.target.value) } : it))} />
+                </td>
                 <td style={{ padding: "6px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>
                   <button style={{ ...btn("danger"), padding: "2px 8px", fontSize: 15 }} onClick={() => setItems(items.filter((_, idx) => idx !== i))}>삭제</button>
                 </td>
@@ -220,7 +228,7 @@ function NoticeForm() {
             ))}
           </tbody>
         </table>
-        <button style={{ ...btn("secondary"), fontSize: 15, marginTop: 6 }} onClick={() => setItems([...items, { name: "", spec: "", qty: 1, unit: "EA" }])}>
+        <button style={{ ...btn("secondary"), fontSize: 15, marginTop: 6 }} onClick={() => setItems([...items, { name: "", spec: "", qty: 1, unit: "EA", unitPrice: 0 }])}>
           + 행 추가
         </button>
       </div>

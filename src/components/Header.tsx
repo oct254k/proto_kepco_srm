@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Bell, User, LogOut, ChevronDown } from "lucide-react";
 import { useRole } from "@/lib/role";
 import { ROLE_LABELS } from "@/lib/types";
+import { MENUS } from "@/lib/menu";
 import RoleSwitcher from "@/components/RoleSwitcher";
 import { MOCK_NOTIFICATIONS } from "@/lib/mock/common";
 
@@ -33,7 +34,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
       </button>
 
       {/* 로고 */}
-      <Link href={`/${role.toLowerCase()}/dashboard/`} style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", whiteSpace: "nowrap" }}>
+      <Link href={MENUS[role]?.[0]?.items?.[0]?.href ?? "/"} style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", whiteSpace: "nowrap" }}>
         <Image src="/logo.png" alt="KEPCO-ES 로고" width={95} height={25} style={{ objectFit: "contain" }} priority />
         <span style={{ color: "#333", fontWeight: 600, fontSize: 18 }}>구매시스템</span>
       </Link>
