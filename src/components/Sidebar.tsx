@@ -43,48 +43,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const isActive = (href: string) => href.replace(/\/$/, "") === activeHref;
 
-  function renderItemLink(href: string, label: string, depth: 1 | 2) {
-    const active = isActive(href);
-    const basePadding = depth === 1
-      ? "0.5rem 1rem 0.5rem 1rem"
-      : "0.5rem 1rem 0.5rem 2.5rem";
-    return (
-      <Link
-        key={href}
-        href={href}
-        onClick={onClose}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          padding: basePadding,
-          margin: "2px 0.5rem",
-          borderRadius: ITEM_RADIUS,
-          fontSize: depth === 1 ? 15 : 14,
-          color: active ? ACTIVE_FG : REST_FG,
-          background: active ? ACTIVE_BG : "transparent",
-          textDecoration: "none",
-          fontWeight: active ? 700 : 400,
-          transition: "background-color 0.12s ease, color 0.12s ease",
-        }}
-        onMouseEnter={(e) => {
-          if (!active) {
-            (e.currentTarget as HTMLAnchorElement).style.background = HOVER_BG;
-            (e.currentTarget as HTMLAnchorElement).style.color = HOVER_FG;
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!active) {
-            (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
-            (e.currentTarget as HTMLAnchorElement).style.color = REST_FG;
-          }
-        }}
-      >
-        {label}
-      </Link>
-    );
-  }
-
   return (
     <aside
       className={[
@@ -101,18 +59,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     >
       <nav style={{ padding: "0.25rem 0" }}>
         {groups.map((group) => {
-          const isLeaf = group.items.length === 1;
-
-          // 단일 항목 그룹 → 그룹 라벨로 직접 네비게이션 (chevron 없음)
-          if (isLeaf) {
-            return (
-              <div key={group.label}>
-                {renderItemLink(group.items[0].href, group.label, 1)}
-              </div>
-            );
-          }
-
-          // 다중 항목 그룹 → 토글 가능한 그룹 헤더 + 자식 링크
           const open = openGroups.has(group.label);
           return (
             <div key={group.label}>
@@ -122,38 +68,67 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   display: "flex",
                   alignItems: "center",
                   gap: "0.5rem",
-                  width: "calc(100% - 1rem)",
-                  margin: "2px 0.5rem",
-                  padding: "0.5rem 1rem",
+                  width: "100%",
+                  padding: "0.625rem 1rem",
                   fontSize: 15,
                   fontWeight: 400,
-                  color: REST_FG,
-                  background: "transparent",
+                  color: "#1a1a1a",
+                  background: "#f5f7fa",
                   border: "none",
-                  borderRadius: ITEM_RADIUS,
                   cursor: "pointer",
                   fontFamily: "inherit",
                   textAlign: "left",
                   userSelect: "none",
-                  transition: "background-color 0.12s ease, color 0.12s ease",
                 }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.background = HOVER_BG;
-                  (e.currentTarget as HTMLButtonElement).style.color = HOVER_FG;
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-                  (e.currentTarget as HTMLButtonElement).style.color = REST_FG;
-                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#ebeef2"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#f5f7fa"; }}
               >
                 {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                <span style={{ flex: 1 }}>{group.label}</span>
+                <span>{group.label}</span>
               </button>
               {open && (
                 <div>
-                  {group.items.map((item) => renderItemLink(item.href, item.label, 2))}
+                  {group.items.map((item) => {
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={onClose}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          padding: "0.5rem 1rem 0.5rem 2.5rem",
+                          margin: "2px 0.5rem",
+                          borderRadius: ITEM_RADIUS,
+                          fontSize: 14,
+                          color: active ? ACTIVE_FG : REST_FG,
+                          background: active ? ACTIVE_BG : "transparent",
+                          textDecoration: "none",
+                          fontWeight: active ? 700 : 400,
+                          transition: "background-color 0.12s ease, color 0.12s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!active) {
+                            (e.currentTarget as HTMLAnchorElement).style.background = HOVER_BG;
+                            (e.currentTarget as HTMLAnchorElement).style.color = HOVER_FG;
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!active) {
+                            (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                            (e.currentTarget as HTMLAnchorElement).style.color = REST_FG;
+                          }
+                        }}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
+              <div style={{ height: 1, background: "#e6ebf0", margin: "0.25rem 0" }} />
             </div>
           );
         })}
