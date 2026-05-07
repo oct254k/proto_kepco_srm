@@ -43,7 +43,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           textDecoration: "none", whiteSpace: "nowrap", gap: 0,
         }}
       >
-        <Image src="/logo.png" alt="KEPCO-ES 로고" width={106} height={28} style={{ objectFit: "contain", height: 28, width: "auto" }} priority />
+        <Image src="/logo.svg" alt="KEPCO-ES 로고" width={140} height={32} style={{ objectFit: "contain", height: 32, width: "auto" }} priority unoptimized />
       </Link>
 
       <div style={{ flex: 1 }} />

@@ -69,7 +69,7 @@ export default function LoginPage() {
         <div style={{ background: "#FAF7F2", border: "1px solid #E8E8E8", borderRadius: 12, padding: 32, width: 480, boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
           <div style={{ textAlign: "center", marginBottom: 20 }}>
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}>
-              <Image src="/logo.png" alt="KEPCO-ES 로고" width={120} height={32} style={{ objectFit: "contain" }} priority />
+              <Image src="/logo.svg" alt="KEPCO-ES 로고" width={160} height={42} style={{ objectFit: "contain", height: 42, width: "auto" }} priority unoptimized />
             </div>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#333", marginTop: 6 }}>협력업체 신규 가입</div>
           </div>
@@ -98,7 +98,7 @@ export default function LoginPage() {
       <div style={{ background: "#FAF7F2", border: "1px solid #E8E8E8", borderRadius: 12, padding: 32, width: 400, boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
         <div style={{ textAlign: "center", marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
-            <Image src="/logo.png" alt="KEPCO-ES 로고" width={130} height={36} style={{ objectFit: "contain" }} priority />
+            <Image src="/logo.svg" alt="KEPCO-ES 로고" width={170} height={44} style={{ objectFit: "contain", height: 44, width: "auto" }} priority unoptimized />
           </div>
           <div style={{ fontSize: 12, color: "#6c757d" }}>구매시스템</div>
         </div>
