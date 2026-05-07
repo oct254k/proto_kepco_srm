@@ -318,7 +318,7 @@ function OrderWriteModal({ open, onClose }: OrderWriteModalProps) {
         <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
           <button
             onClick={handleClose}
-            style={{ padding: "8px 20px", border: "1px solid #ccc", borderRadius: 4, background: "#fff", fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "8px 20px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
           >
             닫기
           </button>
@@ -326,7 +326,7 @@ function OrderWriteModal({ open, onClose }: OrderWriteModalProps) {
             {step > 0 && (
               <button
                 onClick={handlePrev}
-                style={{ padding: "8px 20px", border: "1px solid #ccc", borderRadius: 4, background: "#fff", fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}
+                style={{ padding: "8px 20px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
               >
                 ← 이전
               </button>
@@ -334,14 +334,14 @@ function OrderWriteModal({ open, onClose }: OrderWriteModalProps) {
             {step < steps.length - 1 ? (
               <button
                 onClick={handleNext}
-                style={{ padding: "8px 20px", border: "none", borderRadius: 4, background: "#01ACC8", color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+                style={{ padding: "8px 20px", border: "1px solid #DFE8F0", borderRadius: 4, background: "#654024", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
               >
                 다음 →
               </button>
             ) : (
               <button
                 onClick={handleSubmit}
-                style={{ padding: "8px 20px", border: "none", borderRadius: 4, background: "#065F46", color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+                style={{ padding: "8px 20px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", color: "#654024", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
               >
                 발주요청
               </button>
@@ -396,11 +396,11 @@ function OrderDetailDrawer({ order, open, onClose }: OrderDetailDrawerProps) {
                 </div>
                 <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
                   {order.status === "SUBMITTED" && (
-                    <button style={{ padding: "7px 14px", background: "#fff", color: "#555", border: "1px solid #ccc", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "inherit" }}>
+                    <button style={{ padding: "7px 14px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
                       수정
                     </button>
                   )}
-                  <button style={{ padding: "7px 14px", background: "#FEE2E2", color: "#991B1B", border: "1px solid #FECACA", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "inherit" }}>
+                  <button style={{ padding: "7px 14px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
                     취소
                   </button>
                 </div>
@@ -530,7 +530,7 @@ export default function BOrdersPage() {
         actions={
           <button
             onClick={() => setModalOpen(true)}
-            style={{ padding: "8px 18px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "8px 18px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             + 발주계약요청 작성
           </button>

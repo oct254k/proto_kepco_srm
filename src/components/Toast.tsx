@@ -25,14 +25,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           <div
             key={t.id}
             style={{
-              padding: "12px 20px",
-              background: t.type === "error" ? "#FEE2E2" : t.type === "info" ? "#DBEAFE" : "#D1FAE5",
-              color: t.type === "error" ? "#991B1B" : t.type === "info" ? "#1E40AF" : "#065F46",
-              borderRadius: 6,
+              padding: "10px 16px",
+              background: t.type === "error" ? "#f8d7da" : t.type === "info" ? "#cce5ff" : "#d4edda",
+              color: t.type === "error" ? "#721c24" : t.type === "info" ? "#004085" : "#155724",
+              borderRadius: 8,
               boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              fontSize: 17,
-              fontWeight: 500,
-              minWidth: 280,
+              fontSize: 12,
+              fontWeight: 600,
+              minWidth: 240,
             }}
           >
             {t.message}

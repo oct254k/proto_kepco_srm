@@ -109,7 +109,7 @@ function CompanyInfoTab() {
       {/* 기업 기본정보 카드 */}
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           borderRadius: 8,
           border: "1px solid #e5e7eb",
           marginBottom: 20,
@@ -135,9 +135,9 @@ function CompanyInfoTab() {
                 <button
                   onClick={handleCancel}
                   style={{
-                    background: "#fff",
-                    color: "#374151",
-                    border: "1px solid #d1d5db",
+                    background: "#ffffff",
+                    color: "#654024",
+                    border: "1px solid #CFCFCF",
                     borderRadius: 4,
                     padding: "6px 16px",
                     fontSize: 16,
@@ -150,9 +150,9 @@ function CompanyInfoTab() {
                 <button
                   onClick={handleSave}
                   style={{
-                    background: "#01ACC8",
+                    background: "#654024",
                     color: "#fff",
-                    border: "none",
+                    border: "1px solid #DFE8F0",
                     borderRadius: 4,
                     padding: "6px 16px",
                     fontSize: 16,
@@ -168,9 +168,9 @@ function CompanyInfoTab() {
               <button
                 onClick={() => setEditMode(true)}
                 style={{
-                  background: "#fff",
-                  color: "#01ACC8",
-                  border: "1px solid #01ACC8",
+                  background: "#ffffff",
+                  color: "#654024",
+                  border: "1px solid #CFCFCF",
                   borderRadius: 4,
                   padding: "6px 16px",
                   fontSize: 16,
@@ -235,7 +235,7 @@ function CompanyInfoTab() {
                   maxWidth: 360,
                   outline: "none",
                   fontFamily: "inherit",
-                  background: "#fff",
+                  background: "#FAF7F2",
                 }}
               >
                 <option>전기공사업</option>
@@ -363,7 +363,7 @@ function CompanyInfoTab() {
       {/* 비밀번호 관리 카드 */}
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           borderRadius: 8,
           border: "1px solid #e5e7eb",
           padding: "16px 20px",
@@ -383,9 +383,9 @@ function CompanyInfoTab() {
         <button
           onClick={() => setPwModalOpen(true)}
           style={{
-            background: "#fff",
-            color: "#374151",
-            border: "1px solid #d1d5db",
+            background: "#ffffff",
+            color: "#654024",
+            border: "1px solid #CFCFCF",
             borderRadius: 4,
             padding: "7px 18px",
             fontSize: 16,
@@ -466,9 +466,9 @@ function PasswordChangeModal({
           <button
             onClick={handleClose}
             style={{
-              background: "#fff",
-              color: "#374151",
-              border: "1px solid #d1d5db",
+              background: "#ffffff",
+              color: "#654024",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               padding: "7px 20px",
               fontSize: 16,
@@ -481,9 +481,9 @@ function PasswordChangeModal({
           <button
             onClick={handleSubmit}
             style={{
-              background: "#01ACC8",
+              background: "#654024",
               color: "#fff",
-              border: "none",
+              border: "1px solid #DFE8F0",
               borderRadius: 4,
               padding: "7px 20px",
               fontSize: 16,
@@ -644,9 +644,9 @@ function ContactAddModal({
           <button
             onClick={handleClose}
             style={{
-              background: "#fff",
-              color: "#374151",
-              border: "1px solid #d1d5db",
+              background: "#ffffff",
+              color: "#654024",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               padding: "7px 20px",
               fontSize: 16,
@@ -659,9 +659,9 @@ function ContactAddModal({
           <button
             onClick={handleSubmit}
             style={{
-              background: "#01ACC8",
+              background: "#654024",
               color: "#fff",
-              border: "none",
+              border: "1px solid #DFE8F0",
               borderRadius: 4,
               padding: "7px 20px",
               fontSize: 16,
@@ -775,9 +775,9 @@ function ContactsTab() {
         <div style={{ display: "flex", gap: 4, justifyContent: "center" }}>
           <button
             style={{
-              background: "#fff",
-              color: "#01ACC8",
-              border: "1px solid #01ACC8",
+              background: "#ffffff",
+              color: "#654024",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               padding: "2px 10px",
               fontSize: 15,
@@ -831,9 +831,9 @@ function ContactsTab() {
           <button
             onClick={() => setAddOpen(true)}
             style={{
-              background: "#01ACC8",
+              background: "#654024",
               color: "#fff",
-              border: "none",
+              border: "1px solid #DFE8F0",
               borderRadius: 4,
               padding: "6px 16px",
               fontSize: 16,
@@ -877,7 +877,7 @@ function NotificationTab() {
   return (
     <div
       style={{
-        background: "#fff",
+        background: "#FAF7F2",
         borderRadius: 8,
         border: "1px solid #e5e7eb",
         overflow: "hidden",
@@ -933,7 +933,7 @@ function NotificationTab() {
               width: 48,
               height: 26,
               borderRadius: 999,
-              background: settings[item.key] ? "#01ACC8" : "#d1d5db",
+              background: settings[item.key] ? "#00a7ea" : "#d1d5db",
               border: "none",
               cursor: "pointer",
               position: "relative",
@@ -949,7 +949,7 @@ function NotificationTab() {
                 width: 20,
                 height: 20,
                 borderRadius: "50%",
-                background: "#fff",
+                background: "#FAF7F2",
                 transition: "left 0.2s",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
               }}
@@ -1009,7 +1009,7 @@ function ActivityTab() {
       {/* 필터 */}
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           border: "1px solid #e5e7eb",
           borderRadius: 8,
           padding: "14px 20px",
@@ -1037,7 +1037,7 @@ function ActivityTab() {
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          style={{ border: "1px solid #d1d5db", borderRadius: 4, padding: "5px 10px", fontSize: 16, fontFamily: "inherit", background: "#fff" }}
+          style={{ border: "1px solid #d1d5db", borderRadius: 4, padding: "5px 10px", fontSize: 16, fontFamily: "inherit", background: "#ffffff" }}
         >
           {["전체", "견적제출", "입찰참여", "계약체결"].map((t) => (
             <option key={t}>{t}</option>
@@ -1048,14 +1048,14 @@ function ActivityTab() {
       {/* 요약 카드 */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 16 }}>
         {[
-          { label: "견적제출", count: summary.quote, color: "#01ACC8" },
+          { label: "견적제출", count: summary.quote, color: "#00a7ea" },
           { label: "입찰참여", count: summary.bid, color: "#3B82F6" },
           { label: "낙찰", count: summary.award, color: "#10B981" },
         ].map((s) => (
           <div
             key={s.label}
             style={{
-              background: "#fff",
+              background: "#FAF7F2",
               border: "1px solid #e5e7eb",
               borderRadius: 8,
               padding: "16px 20px",
@@ -1097,7 +1097,7 @@ export default function CompanyPage() {
       <PageHeader title="기업정보" />
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           borderRadius: 8,
           border: "1px solid #e5e7eb",
           padding: "20px 24px",

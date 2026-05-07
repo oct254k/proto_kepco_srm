@@ -12,25 +12,32 @@ export default function Stepper({ steps, current }: StepperProps) {
       {steps.map((step, i) => {
         const done = i < current;
         const active = i === current;
+        const circleBorder = done ? "#198754" : active ? "#00a7ea" : "#dee2e6";
+        const circleBg = done ? "#198754" : active ? "#e6f6fd" : "#fff";
+        const circleColor = done ? "#fff" : active ? "#00a7ea" : "#aaa";
+        const labelColor = done ? "#198754" : active ? "#00a7ea" : "#aaa";
         return (
           <React.Fragment key={i}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 80 }}>
               <div
                 style={{
-                  width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
-                  background: done ? "#01ACC8" : active ? "#01ACC8" : "#e0e0e0",
-                  color: done || active ? "#fff" : "#888",
-                  fontSize: 16, fontWeight: 700,
+                  width: 28, height: 28, borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  border: `2px solid ${circleBorder}`,
+                  background: circleBg,
+                  color: circleColor,
+                  fontSize: 11, fontWeight: 700,
+                  flexShrink: 0,
                 }}
               >
                 {done ? "✓" : i + 1}
               </div>
-              <span style={{ fontSize: 15, marginTop: 6, color: active ? "#01ACC8" : done ? "#01ACC8" : "#888", fontWeight: active ? 700 : 400, textAlign: "center" }}>
+              <span style={{ fontSize: 11, marginTop: 6, color: labelColor, fontWeight: active ? 700 : 400, textAlign: "center", whiteSpace: "nowrap" }}>
                 {step.label}
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div style={{ flex: 1, height: 2, background: done ? "#01ACC8" : "#e0e0e0", margin: "0 4px", marginBottom: 24 }} />
+              <div style={{ flex: 1, height: 2, background: done ? "#198754" : "#dee2e6", margin: "0 0.5rem", marginBottom: 22 }} />
             )}
           </React.Fragment>
         );

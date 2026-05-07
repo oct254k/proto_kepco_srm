@@ -18,23 +18,23 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "30px",
-    height: "30px",
-    border: "1px solid #e0e0e0",
+    width: "26px",
+    height: "26px",
+    border: "1px solid #CFCFCF",
     borderRadius: "4px",
-    fontSize: "13px",
+    fontSize: "12px",
     cursor: "pointer",
-    background: "#fff",
-    color: "#444",
+    background: "#ffffff",
+    color: "#654024",
     fontFamily: "inherit",
   };
 
   const activeStyle: React.CSSProperties = {
     ...btnBase,
-    background: "#01ACC8",
-    color: "#fff",
-    border: "1px solid #01ACC8",
-    fontWeight: 600,
+    background: "#654024",
+    color: "#ffffff",
+    border: "1px solid #DFE8F0",
+    fontWeight: 700,
   };
 
   return (

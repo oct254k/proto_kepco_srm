@@ -41,37 +41,22 @@ const PRICE_HISTORY: Record<string, { from: string; to: string | null; price: nu
 
 // ────────── 스타일 헬퍼 ─────────────────────────────────────────────────────
 const btnPrimary: React.CSSProperties = {
-  background: "#01ACC8",
-  color: "#fff",
-  border: "none",
-  borderRadius: 4,
-  padding: "6px 14px",
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: "pointer",
-  fontFamily: "inherit",
+  padding: "6px 14px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: "1px solid #DFE8F0",
+  background: "#654024",
+  color: "#ffffff",
 };
 const btnOutline: React.CSSProperties = {
-  background: "#fff",
-  color: "#01ACC8",
-  border: "1px solid #01ACC8",
-  borderRadius: 4,
-  padding: "6px 14px",
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: "pointer",
-  fontFamily: "inherit",
+  padding: "6px 14px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: "1px solid #CFCFCF",
+  background: "#ffffff",
+  color: "#654024",
 };
 const btnDanger: React.CSSProperties = {
-  background: "#fff",
-  color: "#dc2626",
-  border: "1px solid #dc2626",
-  borderRadius: 4,
-  padding: "6px 14px",
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: "pointer",
-  fontFamily: "inherit",
+  padding: "6px 14px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: "1px solid #CFCFCF",
+  background: "#ffffff",
+  color: "#654024",
 };
 const labelStyle: React.CSSProperties = {
   fontSize: 16,
@@ -331,7 +316,7 @@ export default function ItemsPage() {
       {/* 검색 필터 바 */}
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           border: "1px solid #e0e0e0",
           borderRadius: 6,
           padding: "12px 20px",
@@ -362,7 +347,7 @@ export default function ItemsPage() {
       </div>
 
       {/* Master / Detail 레이아웃 */}
-      <div style={{ display: "flex", gap: 0, background: "#fff", border: "1px solid #e0e0e0", borderRadius: 6, overflow: "hidden" }}>
+      <div style={{ display: "flex", gap: 0, background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 6, overflow: "hidden" }}>
 
         {/* ── 좌측 대분류 패널 ─────────────────────────────────────────── */}
         <div
@@ -388,7 +373,7 @@ export default function ItemsPage() {
           >
             <span>대분류</span>
             <button
-              style={{ ...btnPrimary, padding: "3px 8px", fontSize: 15 }}
+              style={{ ...btnPrimary, padding: "3px 8px", fontSize: 12 }}
               onClick={() => setLModalOpen(true)}
             >
               + 추가
@@ -405,7 +390,7 @@ export default function ItemsPage() {
                     width: "100%",
                     textAlign: "left",
                     padding: "10px 14px",
-                    border: "none",
+                    border: "1px solid #CFCFCF",
                     borderBottom: "1px solid #f0f0f0",
                     background: isSelected ? "#e6f7fa" : "#fff",
                     cursor: "pointer",
@@ -415,14 +400,14 @@ export default function ItemsPage() {
                     fontFamily: "inherit",
                     fontSize: 16,
                     fontWeight: isSelected ? 700 : 400,
-                    color: isSelected ? "#01ACC8" : "#333",
-                    borderLeft: isSelected ? "3px solid #01ACC8" : "3px solid transparent",
+                    color: isSelected ? "#00a7ea" : "#333",
+                    borderLeft: isSelected ? "3px solid #00a7ea" : "3px solid transparent",
                   }}
                 >
                   <span>{cat.name}</span>
                   <span
                     style={{
-                      background: isSelected ? "#01ACC8" : "#e5e7eb",
+                      background: isSelected ? "#00a7ea" : "#e5e7eb",
                       color: isSelected ? "#fff" : "#555",
                       borderRadius: 999,
                       padding: "1px 8px",
@@ -466,10 +451,10 @@ export default function ItemsPage() {
                     style={{
                       padding: "4px 14px",
                       borderRadius: 999,
-                      border: isActive ? "none" : "1px solid #ccc",
-                      background: isActive ? "#01ACC8" : "#f5f5f5",
-                      color: isActive ? "#fff" : "#444",
-                      fontSize: 15,
+                      border: isActive ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
+                      background: isActive ? "#654024" : "#ffffff",
+                      color: isActive ? "#ffffff" : "#654024",
+                      fontSize: 12,
                       fontWeight: isActive ? 700 : 400,
                       cursor: "pointer",
                       fontFamily: "inherit",
@@ -484,9 +469,9 @@ export default function ItemsPage() {
               style={{
                 padding: "4px 12px",
                 borderRadius: 999,
-                border: "1px dashed #01ACC8",
-                background: "#fff",
-                color: "#01ACC8",
+                border: "1px solid #CFCFCF",
+                background: "#ffffff",
+                color: "#654024",
                 fontSize: 15,
                 cursor: "pointer",
                 fontFamily: "inherit",
@@ -661,13 +646,13 @@ export default function ItemsPage() {
               <div style={{ fontSize: 16, fontWeight: 700, color: "#333" }}>
                 표준단가 이력
                 {priceHistory.length > 0 && (
-                  <span style={{ marginLeft: 8, fontSize: 15, color: "#01ACC8", fontWeight: 400 }}>
+                  <span style={{ marginLeft: 8, fontSize: 15, color: "#00a7ea", fontWeight: 400 }}>
                     현재 유효 단가: {priceHistory[0].price.toLocaleString()} 원
                   </span>
                 )}
               </div>
               <button
-                style={{ ...btnPrimary, padding: "4px 10px", fontSize: 15 }}
+                style={{ ...btnPrimary, padding: "4px 10px", fontSize: 12 }}
                 onClick={() => setPriceModalOpen(true)}
               >
                 + 신규 단가 등록
@@ -688,10 +673,10 @@ export default function ItemsPage() {
                   </thead>
                   <tbody>
                     {priceHistory.map((p, idx) => (
-                      <tr key={idx} style={{ background: idx === 0 ? "#f0f8fb" : "#fff" }}>
+                      <tr key={idx} style={{ background: idx === 0 ? "#e6f6fd" : "#fff" }}>
                         <td style={{ padding: "8px 10px", borderBottom: "1px solid #eee", textAlign: "center" }}>{p.from}</td>
                         <td style={{ padding: "8px 10px", borderBottom: "1px solid #eee", textAlign: "center" }}>
-                          {p.to ?? <span style={{ color: "#01ACC8", fontWeight: 600 }}>(현재 유효)</span>}
+                          {p.to ?? <span style={{ color: "#00a7ea", fontWeight: 600 }}>(현재 유효)</span>}
                         </td>
                         <td style={{ padding: "8px 10px", borderBottom: "1px solid #eee", textAlign: "right" }}>
                           {p.price.toLocaleString()}

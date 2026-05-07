@@ -16,6 +16,42 @@ const SIGNUP_STEPS = [
   { label: "신청" },
 ];
 
+const inputBaseStyle: React.CSSProperties = {
+  padding: "0 9px",
+  height: 28,
+  border: "1px solid #becacf",
+  borderRadius: 4,
+  fontSize: 12,
+  fontFamily: "inherit",
+  outline: "none",
+  background: "#ffffff",
+};
+
+const primaryBtnStyle: React.CSSProperties = {
+  height: 32,
+  padding: "0 16px",
+  background: "#654024",
+  color: "#fff",
+  border: "1px solid #DFE8F0",
+  borderRadius: 4,
+  fontSize: 12,
+  fontWeight: 700,
+  cursor: "pointer",
+  fontFamily: "inherit",
+};
+
+const secondaryBtnStyle: React.CSSProperties = {
+  height: 28,
+  padding: "0 12px",
+  background: "#ffffff",
+  color: "#654024",
+  border: "1px solid #CFCFCF",
+  borderRadius: 4,
+  fontSize: 12,
+  cursor: "pointer",
+  fontFamily: "inherit",
+};
+
 export default function LoginPage() {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<Role>("B");
@@ -29,28 +65,28 @@ export default function LoginPage() {
 
   if (showSignup) {
     return (
-      <div style={{ minHeight: "100vh", background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ background: "#fff", borderRadius: 12, padding: 40, width: 520, boxShadow: "0 8px 40px rgba(0,0,0,0.12)" }}>
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
+      <div style={{ minHeight: "100vh", background: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ background: "#FAF7F2", border: "1px solid #E8E8E8", borderRadius: 12, padding: 32, width: 480, boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
+          <div style={{ textAlign: "center", marginBottom: 20 }}>
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}>
-              <Image src="/logo.png" alt="KEPCO-ES 로고" width={140} height={37} style={{ objectFit: "contain" }} priority />
+              <Image src="/logo.png" alt="KEPCO-ES 로고" width={120} height={32} style={{ objectFit: "contain" }} priority />
             </div>
-            <div style={{ fontSize: 19, fontWeight: 600, color: "#222", marginTop: 4 }}>협력업체 신규 가입</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#333", marginTop: 6 }}>협력업체 신규 가입</div>
           </div>
           <Stepper steps={SIGNUP_STEPS} current={signupStep} />
-          <div style={{ minHeight: 160, padding: "20px 0", fontSize: 17, color: "#555", textAlign: "center" }}>
+          <div style={{ minHeight: 140, padding: "16px 0", fontSize: 12, color: "#555", textAlign: "center" }}>
             {signupStep === 0 && <div>이용약관에 동의해주세요.<br /><br /><label><input type="checkbox" /> 이용약관에 동의합니다 (필수)</label></div>}
-            {signupStep === 1 && <div>기업정보를 입력해주세요.<br /><br /><input placeholder="사업자등록번호" style={{ width: "100%", padding: "8px 12px", border: "1px solid #ddd", borderRadius: 4, fontSize: 17 }} /></div>}
-            {signupStep === 2 && <div>담당자 정보를 입력해주세요.<br /><br /><input placeholder="담당자명" style={{ width: "100%", padding: "8px 12px", border: "1px solid #ddd", borderRadius: 4, fontSize: 17 }} /></div>}
-            {signupStep === 3 && <div style={{ color: "#01ACC8", fontWeight: 700, fontSize: 21 }}>🎉 가입이 완료되었습니다!<br /><br />관리자 승인 후 로그인 가능합니다.</div>}
+            {signupStep === 1 && <div>기업정보를 입력해주세요.<br /><br /><input placeholder="사업자등록번호" style={{ ...inputBaseStyle, width: "100%" }} /></div>}
+            {signupStep === 2 && <div>담당자 정보를 입력해주세요.<br /><br /><input placeholder="담당자명" style={{ ...inputBaseStyle, width: "100%" }} /></div>}
+            {signupStep === 3 && <div style={{ color: "#00a7ea", fontWeight: 700, fontSize: 15 }}>🎉 가입이 완료되었습니다!<br /><br />관리자 승인 후 로그인 가능합니다.</div>}
           </div>
-          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 16 }}>
-            {signupStep > 0 && signupStep < 3 && <button onClick={() => setSignupStep((s) => s - 1)} style={{ padding: "8px 20px", border: "1px solid #ddd", borderRadius: 4, background: "#fff", cursor: "pointer", fontFamily: "inherit" }}>이전</button>}
-            {signupStep < 3 && <button onClick={() => setSignupStep((s) => s + 1)} style={{ padding: "8px 20px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontFamily: "inherit" }}>{signupStep === 2 ? "가입 신청" : "다음"}</button>}
-            {signupStep === 3 && <button onClick={() => { setShowSignup(false); setSignupStep(0); }} style={{ padding: "8px 20px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontFamily: "inherit" }}>로그인으로</button>}
+          <div style={{ display: "flex", gap: 6, justifyContent: "flex-end", marginTop: 16 }}>
+            {signupStep > 0 && signupStep < 3 && <button onClick={() => setSignupStep((s) => s - 1)} style={secondaryBtnStyle}>이전</button>}
+            {signupStep < 3 && <button onClick={() => setSignupStep((s) => s + 1)} style={{ ...primaryBtnStyle, height: 28, fontWeight: 400 }}>{signupStep === 2 ? "가입 신청" : "다음"}</button>}
+            {signupStep === 3 && <button onClick={() => { setShowSignup(false); setSignupStep(0); }} style={{ ...primaryBtnStyle, height: 28, fontWeight: 400 }}>로그인으로</button>}
           </div>
           <div style={{ textAlign: "center", marginTop: 12 }}>
-            <button onClick={() => setShowSignup(false)} style={{ background: "transparent", border: "none", cursor: "pointer", color: "#888", fontSize: 16 }}>← 로그인으로 돌아가기</button>
+            <button onClick={() => setShowSignup(false)} style={{ background: "transparent", border: "none", cursor: "pointer", color: "#6c757d", fontSize: 12 }}>← 로그인으로 돌아가기</button>
           </div>
         </div>
       </div>
@@ -58,13 +94,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ background: "#fff", borderRadius: 12, padding: 40, width: 440, boxShadow: "0 8px 40px rgba(0,0,0,0.12)" }}>
-        <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}>
-            <Image src="/logo.png" alt="KEPCO-ES 로고" width={150} height={40} style={{ objectFit: "contain" }} priority />
+    <div style={{ minHeight: "100vh", background: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #E8E8E8", borderRadius: 12, padding: 32, width: 400, boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+            <Image src="/logo.png" alt="KEPCO-ES 로고" width={130} height={36} style={{ objectFit: "contain" }} priority />
           </div>
-          <div style={{ fontSize: 17, color: "#555" }}>구매시스템</div>
+          <div style={{ fontSize: 12, color: "#6c757d" }}>구매시스템</div>
         </div>
 
         <Tabs
@@ -77,15 +113,15 @@ export default function LoginPage() {
           {(tab) => (
             <>
               {tab === "login" && (
-                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  <input placeholder="이메일 (아이디)" style={{ padding: "10px 14px", border: "1px solid #ddd", borderRadius: 6, fontSize: 17, fontFamily: "inherit" }} />
-                  <input type="password" placeholder="비밀번호" style={{ padding: "10px 14px", border: "1px solid #ddd", borderRadius: 6, fontSize: 17, fontFamily: "inherit" }} />
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <input placeholder="이메일 (아이디)" style={{ ...inputBaseStyle, height: 32 }} />
+                  <input type="password" placeholder="비밀번호" style={{ ...inputBaseStyle, height: 32 }} />
 
                   <div>
-                    <div style={{ fontSize: 15, color: "#555", marginBottom: 6 }}>역할 선택 (시연용)</div>
-                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <div style={{ fontSize: 12, color: "#555", marginBottom: 6 }}>역할 선택 (시연용)</div>
+                    <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                       {ROLES.map((r) => (
-                        <label key={r} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer", fontSize: 16 }}>
+                        <label key={r} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer", fontSize: 12 }}>
                           <input type="radio" name="role" value={r} checked={selectedRole === r} onChange={() => setSelectedRole(r)} />
                           {ROLE_LABELS[r]}
                         </label>
@@ -95,14 +131,14 @@ export default function LoginPage() {
 
                   <button
                     onClick={handleLogin}
-                    style={{ padding: "11px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 6, fontSize: 18, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                    style={primaryBtnStyle}
                   >
                     로그인
                   </button>
 
                   {selectedRole === "V" && (
                     <div style={{ textAlign: "center" }}>
-                      <button onClick={() => setShowSignup(true)} style={{ background: "transparent", border: "none", cursor: "pointer", color: "#01ACC8", fontSize: 16, textDecoration: "underline" }}>
+                      <button onClick={() => setShowSignup(true)} style={{ background: "transparent", border: "none", cursor: "pointer", color: "#00a7ea", fontSize: 12, textDecoration: "underline" }}>
                         신규 협력업체 가입 신청
                       </button>
                     </div>
@@ -110,17 +146,17 @@ export default function LoginPage() {
                 </div>
               )}
               {tab === "find-id" && (
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <p style={{ fontSize: 16, color: "#555" }}>가입 시 등록한 이메일로 아이디를 찾을 수 있습니다.</p>
-                  <input placeholder="등록 이메일" style={{ padding: "10px 14px", border: "1px solid #ddd", borderRadius: 6, fontSize: 17, fontFamily: "inherit" }} />
-                  <button style={{ padding: "10px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 6, fontSize: 17, cursor: "pointer", fontFamily: "inherit" }}>아이디 찾기</button>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <p style={{ fontSize: 12, color: "#555" }}>가입 시 등록한 이메일로 아이디를 찾을 수 있습니다.</p>
+                  <input placeholder="등록 이메일" style={{ ...inputBaseStyle, height: 32 }} />
+                  <button style={primaryBtnStyle}>아이디 찾기</button>
                 </div>
               )}
               {tab === "reset-pw" && (
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <p style={{ fontSize: 16, color: "#555" }}>등록된 이메일로 비밀번호 재설정 링크가 발송됩니다.</p>
-                  <input placeholder="이메일 (아이디)" style={{ padding: "10px 14px", border: "1px solid #ddd", borderRadius: 6, fontSize: 17, fontFamily: "inherit" }} />
-                  <button style={{ padding: "10px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 6, fontSize: 17, cursor: "pointer", fontFamily: "inherit" }}>재설정 링크 발송</button>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <p style={{ fontSize: 12, color: "#555" }}>등록된 이메일로 비밀번호 재설정 링크가 발송됩니다.</p>
+                  <input placeholder="이메일 (아이디)" style={{ ...inputBaseStyle, height: 32 }} />
+                  <button style={primaryBtnStyle}>재설정 링크 발송</button>
                 </div>
               )}
             </>

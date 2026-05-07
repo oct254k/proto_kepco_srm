@@ -29,12 +29,13 @@ export default function RoleSwitcher() {
           key={r}
           onClick={() => handleRoleChange(r)}
           style={{
-            padding: "3px 10px",
-            fontSize: 15,
+            padding: "2px 8px",
+            fontSize: 11,
+            height: 22,
             borderRadius: 4,
-            border: r === role ? "1px solid #01ACC8" : "1px solid #ccc",
-            background: r === role ? "#01ACC8" : "#fff",
-            color: r === role ? "#fff" : "#555",
+            border: r === role ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
+            background: r === role ? "#654024" : "#ffffff",
+            color: r === role ? "#ffffff" : "#654024",
             cursor: "pointer",
             fontWeight: r === role ? 700 : 400,
             fontFamily: "inherit",

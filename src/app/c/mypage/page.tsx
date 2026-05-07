@@ -73,12 +73,13 @@ function StatusChipFilter({
               minWidth: 110,
               padding: "10px 14px",
               borderRadius: 8,
-              border: active ? "2px solid #01ACC8" : "1px solid #e5e7eb",
-              background: active ? col.bg : "#fff",
+              border: active ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
+              background: active ? "#654024" : "#ffffff",
+              color: active ? "#ffffff" : "#654024",
               cursor: "pointer",
               fontFamily: "inherit",
               textAlign: "center",
-              boxShadow: active ? "0 0 0 1px #01ACC8" : "none",
+              boxShadow: active ? "0 0 0 1px #DFE8F0" : "none",
             }}
           >
             <div style={{ fontSize: 13, color: col.text, fontWeight: 700, marginBottom: 4 }}>
@@ -136,7 +137,7 @@ function OrderDrawer({
           disabled={!isPending}
           style={{
             padding: "7px 20px",
-            background: isPending ? "#01ACC8" : "#E5E7EB",
+            background: isPending ? "#00a7ea" : "#E5E7EB",
             color: isPending ? "#fff" : "#9CA3AF",
             border: "none",
             borderRadius: 4,
@@ -153,7 +154,7 @@ function OrderDrawer({
           disabled={!isPending}
           style={{
             padding: "7px 20px",
-            background: "#fff",
+            background: "#FAF7F2",
             color: isPending ? "#EF4444" : "#9CA3AF",
             border: isPending ? "1px solid #EF4444" : "1px solid #E5E7EB",
             borderRadius: 4,
@@ -175,10 +176,10 @@ function OrderDrawer({
             onClick={() => setDrawerTab(t.id)}
             style={{
               padding: "10px 20px",
-              border: "none",
-              background: "none",
-              borderBottom: drawerTab === t.id ? "2px solid #01ACC8" : "2px solid transparent",
-              color: drawerTab === t.id ? "#01ACC8" : "#6B7280",
+              border: "1px solid #CFCFCF",
+              background: "#ffffff",
+              borderBottom: drawerTab === t.id ? "2px solid #00a7ea" : "2px solid transparent",
+              color: drawerTab === t.id ? "#00a7ea" : "#6B7280",
               fontWeight: drawerTab === t.id ? 700 : 400,
               fontSize: 16,
               cursor: "pointer",
@@ -256,9 +257,9 @@ function OrderDrawer({
                 onClick={() => onPmsResync(order.id)}
                 style={{
                   padding: "5px 14px",
-                  background: "#EF4444",
-                  color: "#fff",
-                  border: "none",
+                  background: "#ffffff",
+                  color: "#654024",
+                  border: "1px solid #CFCFCF",
                   borderRadius: 4,
                   fontSize: 14,
                   fontWeight: 600,
@@ -314,21 +315,21 @@ function OrderDrawer({
                   width: 12,
                   height: 12,
                   borderRadius: "50%",
-                  background: "#01ACC8",
+                  background: "#654024",
                   border: "2px solid #fff",
-                  boxShadow: "0 0 0 2px #01ACC8",
+                  boxShadow: "0 0 0 2px #00a7ea",
                 }}
               />
               <div
                 style={{
-                  background: "#fff",
+                  background: "#FAF7F2",
                   border: "1px solid #e5e7eb",
                   borderRadius: 6,
                   padding: "10px 14px",
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: "#01ACC8", background: "#f0f9ff", padding: "1px 8px", borderRadius: 999 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "#00a7ea", background: "#f0f9ff", padding: "1px 8px", borderRadius: 999 }}>
                     {h.from} → {h.to}
                   </span>
                   <span style={{ fontSize: 14, color: "#9CA3AF" }}>{h.date}</span>
@@ -487,13 +488,13 @@ function BidStatusTab() {
           <>
             <button
               onClick={() => setAcceptTarget(null)}
-              style={{ padding: "7px 20px", background: "#fff", color: "#374151", border: "1px solid #d1d5db", borderRadius: 4, fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}
+              style={{ padding: "7px 20px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
             >
               취소
             </button>
             <button
               onClick={() => handleAccept(acceptTarget!)}
-              style={{ padding: "7px 20px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+              style={{ padding: "7px 20px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
             >
               수락 확정
             </button>
@@ -518,13 +519,13 @@ function BidStatusTab() {
           <>
             <button
               onClick={() => { setRejectTarget(null); setRejectReason(""); setRejectError(""); }}
-              style={{ padding: "7px 20px", background: "#fff", color: "#374151", border: "1px solid #d1d5db", borderRadius: 4, fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}
+              style={{ padding: "7px 20px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
             >
               취소
             </button>
             <button
               onClick={handleReject}
-              style={{ padding: "7px 20px", background: "#EF4444", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+              style={{ padding: "7px 20px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
             >
               거절 확정
             </button>
@@ -591,7 +592,7 @@ function CompanyInfoTab() {
       {/* 개인정보 (ReadOnly) */}
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           border: "1px solid #e5e7eb",
           borderRadius: 8,
           padding: "20px 24px",
@@ -663,7 +664,7 @@ function CompanyInfoTab() {
       {/* 알림 설정 */}
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           border: "1px solid #e5e7eb",
           borderRadius: 8,
           padding: "20px 24px",
@@ -682,7 +683,7 @@ function CompanyInfoTab() {
                   width: 52,
                   height: 28,
                   borderRadius: 999,
-                  background: notif[t.key] ? "#01ACC8" : "#D1D5DB",
+                  background: notif[t.key] ? "#00a7ea" : "#D1D5DB",
                   border: "none",
                   cursor: "pointer",
                   position: "relative",
@@ -697,7 +698,7 @@ function CompanyInfoTab() {
                     width: 20,
                     height: 20,
                     borderRadius: "50%",
-                    background: "#fff",
+                    background: "#FAF7F2",
                     transition: "left 0.2s",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
                   }}
@@ -711,9 +712,9 @@ function CompanyInfoTab() {
             onClick={() => setTimeout(() => show("알림 설정이 저장되었습니다.", "info"), 4000)}
             style={{
               padding: "8px 24px",
-              background: "#01ACC8",
+              background: "#654024",
               color: "#fff",
-              border: "none",
+              border: "1px solid #DFE8F0",
               borderRadius: 4,
               fontSize: 16,
               fontWeight: 600,
@@ -741,7 +742,7 @@ export default function CMypagePage() {
       <PageHeader title="마이페이지" />
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           borderRadius: 8,
           border: "1px solid #e5e7eb",
           padding: "20px 24px",

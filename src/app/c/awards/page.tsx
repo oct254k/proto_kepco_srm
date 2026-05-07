@@ -11,10 +11,10 @@ import { useToast } from "@/components/Toast";
 import { MOCK_BIDS, METHOD_LABELS, RESERVE_PRICES, OPEN_BID_RESULTS, MOCK_AWARDS } from "@/lib/mock/bids";
 
 const btn = (variant: "primary" | "secondary" | "danger" | "ghost" = "primary"): React.CSSProperties => ({
-  padding: "6px 16px", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-  border: variant === "primary" ? "none" : variant === "danger" ? "none" : variant === "ghost" ? "1px solid #e0e0e0" : "1px solid #01ACC8",
-  background: variant === "primary" ? "#01ACC8" : variant === "danger" ? "#DC2626" : "#fff",
-  color: variant === "primary" ? "#fff" : variant === "danger" ? "#fff" : variant === "ghost" ? "#555" : "#01ACC8",
+  padding: "6px 16px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: variant === "primary" ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
+  background: variant === "primary" ? "#654024" : "#ffffff",
+  color: variant === "primary" ? "#ffffff" : "#654024",
 });
 
 // ── 예비가 추첨 Modal ─────────────────────────────────────────
@@ -66,10 +66,11 @@ function DrawModal({ open, onClose }: { open: boolean; onClose: () => void }) {
             <button
               key={rp.no}
               style={{
-                padding: "8px 0", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
-                border: selected.includes(rp.no) ? "2px solid #01ACC8" : "1px solid #e0e0e0",
-                borderRadius: 6, background: selected.includes(rp.no) ? "#E0F7FA" : "#fff",
-                color: selected.includes(rp.no) ? "#01ACC8" : "#333",
+                padding: "8px 0", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+                borderRadius: 6,
+                border: selected.includes(rp.no) ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
+                background: selected.includes(rp.no) ? "#654024" : "#ffffff",
+                color: selected.includes(rp.no) ? "#ffffff" : "#654024",
               }}
               onClick={() => toggleSelect(rp.no)}
             >
@@ -91,7 +92,7 @@ function DrawModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                 <div style={{ borderTop: "1px solid #e0e0e0", marginTop: 8, paddingTop: 8 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700 }}>
                     <span>예정가 (산술평균)</span>
-                    <span style={{ color: "#01ACC8" }}>{avg.toLocaleString()}원</span>
+                    <span style={{ color: "#00a7ea" }}>{avg.toLocaleString()}원</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "#888", marginTop: 4 }}>
                     <span>낙찰하한금액 (하한율 87%)</span>
@@ -260,7 +261,7 @@ function Tab1EstPrice({ bidId }: { bidId: string }) {
         ℹ 예정가 정보는 가격등록자만 입력 가능합니다. 계약담당자는 읽기 전용입니다.
       </div>
 
-      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: 20, marginBottom: 20 }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 20, marginBottom: 20 }}>
         <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 14, color: "#222" }}>예정가 정보</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 24px" }}>
           <div>
@@ -279,7 +280,7 @@ function Tab1EstPrice({ bidId }: { bidId: string }) {
           </div>
           <div>
             <div style={{ fontSize: 15, color: "#888", marginBottom: 4 }}>낙찰하한금액 (자동 계산)</div>
-            <div style={{ padding: "7px 10px", background: "#F9FAFB", border: "1px solid #e0e0e0", borderRadius: 4, fontSize: 16, color: "#01ACC8", fontWeight: 700 }} aria-live="polite">
+            <div style={{ padding: "7px 10px", background: "#F9FAFB", border: "1px solid #e0e0e0", borderRadius: 4, fontSize: 16, color: "#00a7ea", fontWeight: 700 }} aria-live="polite">
               {lowerBound.toLocaleString()}원
             </div>
           </div>
@@ -290,10 +291,10 @@ function Tab1EstPrice({ bidId }: { bidId: string }) {
         </div>
       </div>
 
-      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: 20, marginBottom: 20 }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 20, marginBottom: 20 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
           <div style={{ fontSize: 17, fontWeight: 700, color: "#222" }}>예비가격표 (15개 — 제한경쟁 전용)</div>
-          <span style={{ fontSize: 16, color: "#555" }}>완료: <strong style={{ color: "#01ACC8" }}>15/15</strong></span>
+          <span style={{ fontSize: 16, color: "#555" }}>완료: <strong style={{ color: "#00a7ea" }}>15/15</strong></span>
         </div>
         <div style={{ overflowY: "auto", maxHeight: 300 }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 16 }}>
@@ -374,7 +375,7 @@ function Tab2OpenBid({ bidId }: { bidId: string }) {
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, padding: "12px 16px", background: "#F9FAFB", borderRadius: 6 }}>
         <span style={{ fontSize: 16 }}>공고 상태: <strong>마감완료 (CLOSED)</strong></span>
-        <span style={{ fontSize: 16 }}>예정가: <strong style={{ color: "#01ACC8" }}>98,000,000원</strong></span>
+        <span style={{ fontSize: 16 }}>예정가: <strong style={{ color: "#00a7ea" }}>98,000,000원</strong></span>
         <span style={{ fontSize: 16 }}>하한금액: <strong>85,260,000원</strong></span>
         <button style={{ ...btn("primary"), marginLeft: "auto" }} onClick={() => setOpenBidModal(true)}>
           개찰
@@ -469,7 +470,7 @@ function Tab3Award({ bidId }: { bidId: string }) {
         {!awarded && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 6, marginBottom: 16 }}>
             <div style={{ fontSize: 16 }}>
-              낙찰업체: <strong>{selectedVendor}</strong> &nbsp;|&nbsp; 낙찰금액: <strong style={{ color: "#01ACC8" }}>{selectedAmount.toLocaleString()}원</strong>
+              낙찰업체: <strong>{selectedVendor}</strong> &nbsp;|&nbsp; 낙찰금액: <strong style={{ color: "#00a7ea" }}>{selectedAmount.toLocaleString()}원</strong>
             </div>
             <button style={btn("primary")} onClick={() => setConfirmModalOpen(true)}>낙찰업체 확정</button>
           </div>
@@ -575,11 +576,11 @@ export default function CAwardsPage() {
       <PageHeader title="낙찰관리 통합 ★ PMS Pipeline S5" />
 
       {/* 입찰 선택 */}
-      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: "16px 20px" }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: "16px 20px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: 16, fontWeight: 600, color: "#555", whiteSpace: "nowrap" }}>입찰 선택</span>
           <select
-            style={{ flex: 1, padding: "6px 10px", border: "1px solid #ccc", borderRadius: 4, fontSize: 16, fontFamily: "inherit", background: "#fff" }}
+            style={{ flex: 1, padding: "6px 10px", border: "1px solid #ccc", borderRadius: 4, fontSize: 16, fontFamily: "inherit", background: "#ffffff" }}
             value={selectedBidId}
             onChange={(e) => { setSelectedBidId(e.target.value); setShowDetail(true); }}
           >
@@ -613,7 +614,7 @@ export default function CAwardsPage() {
             </span>
           </div>
 
-          <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: 20 }}>
+          <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 20 }}>
             <Tabs
               tabs={[
                 { id: "est", label: "예정가 관리" },
@@ -634,7 +635,7 @@ export default function CAwardsPage() {
       )}
 
       {/* 낙찰 이력 */}
-      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: 20 }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 20 }}>
         <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 16, color: "#222" }}>낙찰 이력</div>
         <DataTable
           columns={awardsColumns}

@@ -19,10 +19,10 @@ import {
 } from "@/lib/mock/bids";
 
 const btn = (variant: "primary" | "secondary" | "danger" | "ghost" = "primary"): React.CSSProperties => ({
-  padding: "6px 16px", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-  border: variant === "primary" ? "none" : variant === "danger" ? "none" : "1px solid #01ACC8",
-  background: variant === "primary" ? "#01ACC8" : variant === "danger" ? "#DC2626" : "#fff",
-  color: variant === "primary" ? "#fff" : variant === "danger" ? "#fff" : "#01ACC8",
+  padding: "6px 16px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: variant === "primary" ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
+  background: variant === "primary" ? "#654024" : "#ffffff",
+  color: variant === "primary" ? "#ffffff" : "#654024",
 });
 
 // ── Drawer 탭: 기준설정 ────────────────────────────────────────
@@ -41,7 +41,7 @@ function CriteriaTab() {
           <option>표준_적격심사_2026</option>
           <option>표준_2단계경쟁_2026</option>
         </select>
-        <button style={{ ...btn("secondary"), fontSize: 15 }}>+ 새 그룹 만들기</button>
+        <button style={{ ...btn("secondary"), fontSize: 12 }}>+ 새 그룹 만들기</button>
       </div>
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 16 }}>
         <thead>
@@ -71,13 +71,13 @@ function CriteriaTab() {
                 <input type="number" step="0.01" style={{ width: 70, padding: "4px 6px", border: "1px solid #e0e0e0", borderRadius: 3, fontSize: 16, fontFamily: "inherit", textAlign: "center" }} value={c.weight} onChange={(e) => setCriteria(criteria.map((cr, ci) => ci === i ? { ...cr, weight: Number(e.target.value) } : cr))} />
               </td>
               <td style={{ padding: "6px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>
-                <button style={{ ...btn("danger"), padding: "2px 8px", fontSize: 14 }} onClick={() => setCriteria(criteria.filter((_, ci) => ci !== i))}>삭제</button>
+                <button style={{ ...btn("danger"), padding: "2px 8px", fontSize: 12 }} onClick={() => setCriteria(criteria.filter((_, ci) => ci !== i))}>삭제</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <button style={{ ...btn("secondary"), fontSize: 15, marginTop: 8 }} onClick={() => setCriteria([...criteria, { id: `C00${criteria.length + 1}`, name: "새 항목", evalType: "SCORE", maxScore: 10, weight: 0.10 }])}>
+      <button style={{ ...btn("secondary"), fontSize: 12, marginTop: 8 }} onClick={() => setCriteria([...criteria, { id: `C00${criteria.length + 1}`, name: "새 항목", evalType: "SCORE", maxScore: 10, weight: 0.10 }])}>
         + 항목추가
       </button>
       <div style={{ display: "flex", gap: 20, marginTop: 12, padding: "10px 0", borderTop: "1px solid #e0e0e0", fontSize: 16 }}>
@@ -101,7 +101,7 @@ function ReviewersTab() {
 
   return (
     <div>
-      <button style={{ ...btn("primary"), fontSize: 15, marginBottom: 12 }} onClick={() => setSearchModalOpen(true)}>
+      <button style={{ ...btn("primary"), fontSize: 12, marginBottom: 12 }} onClick={() => setSearchModalOpen(true)}>
         + 심사위원 추가 (내부 사용자 검색)
       </button>
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 16 }}>
@@ -165,7 +165,7 @@ function ReviewersTab() {
                 <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>{u.title}</td>
                 <td style={{ padding: "6px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>
                   <button
-                    style={{ ...btn("primary"), padding: "2px 8px", fontSize: 15 }}
+                    style={{ ...btn("primary"), padding: "2px 8px", fontSize: 12 }}
                     onClick={() => {
                       setReviewers([...reviewers, { id: `R00${reviewers.length + 1}`, name: u.name, dept: u.dept, role: "MEMBER", assignedAt: "2026-04-22", status: "배정완료" }]);
                       setSearchModalOpen(false);
@@ -231,7 +231,7 @@ function ProgressTab() {
           <span>전체 진행률: {pct}% ({done}/{total}건 완료)</span>
         </div>
         <div style={{ height: 10, background: "#e0e0e0", borderRadius: 5, overflow: "hidden" }}>
-          <div style={{ height: "100%", width: `${pct}%`, background: "#01ACC8", borderRadius: 5, transition: "width 0.3s" }} />
+          <div style={{ height: "100%", width: `${pct}%`, background: "#654024", borderRadius: 5, transition: "width 0.3s" }} />
         </div>
         <div style={{ display: "flex", gap: 16, marginTop: 8, fontSize: 15, color: "#555" }}>
           <span>✅ 제출완료</span>
@@ -268,7 +268,7 @@ function ResultTab() {
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
         <span style={{ fontSize: 16, color: "#555" }}>집계 상태: <strong>{aggregated ? "완료" : "미실행"}</strong></span>
-        <button style={{ ...btn("primary"), opacity: aggregated ? 0.5 : 1, fontSize: 15 }} onClick={handleAggregate} disabled={aggregated}>
+        <button style={{ ...btn("primary"), opacity: aggregated ? 0.5 : 1, fontSize: 12 }} onClick={handleAggregate} disabled={aggregated}>
           집계 실행
         </button>
       </div>

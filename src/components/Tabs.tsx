@@ -12,39 +12,40 @@ export default function Tabs({ tabs, defaultTab, children }: TabsProps) {
   const [active, setActive] = useState(defaultTab ?? tabs[0]?.id ?? "");
   return (
     <div>
-      <div style={{ display: "flex", borderBottom: "2px solid #e0e0e0", marginBottom: 16 }}>
+      <div style={{ display: "flex", borderBottom: "2px solid #dee2e6", marginBottom: 16, gap: 0 }}>
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setActive(t.id)}
             style={{
-              padding: "10px 20px",
-              fontSize: 17,
+              padding: "0.5rem 1.25rem",
+              fontSize: 12,
               fontWeight: active === t.id ? 700 : 400,
-              color: active === t.id ? "#01ACC8" : "#555",
-              background: "transparent",
-              border: "none",
+              color: active === t.id ? "#00a7ea" : "#6c757d",
+              background: "#ffffff",
+              border: "1px solid #CFCFCF",
               borderBottomWidth: 2,
               borderBottomStyle: "solid",
-              borderBottomColor: active === t.id ? "#01ACC8" : "transparent",
+              borderBottomColor: active === t.id ? "#00a7ea" : "transparent",
               cursor: "pointer",
               marginBottom: -2,
               fontFamily: "inherit",
               display: "flex",
               alignItems: "center",
               gap: 6,
+              whiteSpace: "nowrap",
             }}
           >
             {t.label}
             {t.count !== undefined && (
               <span style={{
-                fontSize: 13,
-                fontWeight: 600,
+                fontSize: 11,
+                fontWeight: 700,
                 color: active === t.id ? "#fff" : "#888",
-                background: active === t.id ? "#01ACC8" : "#e8e8e8",
-                borderRadius: 10,
+                background: active === t.id ? "#00a7ea" : "#e9ecef",
+                borderRadius: 9999,
                 padding: "1px 7px",
-                lineHeight: "18px",
+                lineHeight: "16px",
               }}>
                 {t.count}건
               </span>

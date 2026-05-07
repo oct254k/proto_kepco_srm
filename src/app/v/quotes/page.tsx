@@ -262,18 +262,18 @@ function QuoteWriteTab() {
       {!submitted ? (
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 8 }}>
           <button
-            style={{ padding: "8px 20px", border: "1px solid #01ACC8", borderRadius: 4, background: "#fff", color: "#01ACC8", fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "8px 20px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", color: "#654024", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             임시저장
           </button>
           <button
-            style={{ padding: "8px 20px", border: "1px solid #e53e3e", borderRadius: 4, background: "#FEE2E2", color: "#991B1B", fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "8px 20px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", color: "#654024", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             견적포기
           </button>
           <button
             onClick={handleSubmit}
-            style={{ padding: "8px 20px", border: "none", borderRadius: 4, background: "#01ACC8", color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "8px 20px", border: "1px solid #DFE8F0", borderRadius: 4, background: "#654024", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             최종 제출
           </button>

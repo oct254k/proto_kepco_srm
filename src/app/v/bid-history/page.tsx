@@ -27,11 +27,11 @@ interface StatCardProps {
   value: string | number;
   color?: string;
 }
-function StatCard({ label, value, color = "#01ACC8" }: StatCardProps) {
+function StatCard({ label, value, color = "#00a7ea" }: StatCardProps) {
   return (
     <div
       style={{
-        background: "#fff",
+        background: "#FAF7F2",
         border: "1px solid #E5E7EB",
         borderRadius: 8,
         padding: "16px 20px",
@@ -127,7 +127,7 @@ function BidDetailDrawer({ bid, open, onClose }: { bid: BidRow | null; open: boo
                   ].map((e) => (
                     <div key={e.item} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: "1px solid #f0f0f0" }}>
                       <span style={{ fontSize: 16, flex: 1, color: "#444" }}>{e.item}</span>
-                      <span style={{ fontSize: 16, fontWeight: 600, color: "#01ACC8" }}>{e.score}점</span>
+                      <span style={{ fontSize: 16, fontWeight: 600, color: "#00a7ea" }}>{e.score}점</span>
                     </div>
                   ))}
                 </div>
@@ -183,7 +183,7 @@ function BidParticipationTab({ onRowClick }: { onRowClick: (row: Record<string, 
                     style={{
                       width: 16,
                       height: 2,
-                      background: s.done ? "#01ACC8" : "#E5E7EB",
+                      background: s.done ? "#00a7ea" : "#E5E7EB",
                     }}
                   />
                 )}
@@ -193,11 +193,11 @@ function BidParticipationTab({ onRowClick }: { onRowClick: (row: Record<string, 
                       width: 10,
                       height: 10,
                       borderRadius: "50%",
-                      background: s.done ? "#01ACC8" : "#E5E7EB",
-                      border: `2px solid ${s.done ? "#01ACC8" : "#D1D5DB"}`,
+                      background: s.done ? "#00a7ea" : "#E5E7EB",
+                      border: `2px solid ${s.done ? "#00a7ea" : "#D1D5DB"}`,
                     }}
                   />
-                  <span style={{ fontSize: 12, color: s.done ? "#01ACC8" : "#9CA3AF", marginTop: 2 }}>
+                  <span style={{ fontSize: 12, color: s.done ? "#00a7ea" : "#9CA3AF", marginTop: 2 }}>
                     {s.id}
                   </span>
                 </div>
@@ -323,9 +323,9 @@ function AwardTab({ onRowClick }: { onRowClick: (row: Record<string, unknown>) =
             router.push("/v/contracts/");
           }}
           style={{
-            background: "#01ACC8",
+            background: "#654024",
             color: "#fff",
-            border: "none",
+            border: "1px solid #DFE8F0",
             borderRadius: 4,
             padding: "4px 12px",
             fontSize: 15,
@@ -498,7 +498,7 @@ export default function VBidHistoryPage() {
 
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           border: "1px solid #E5E7EB",
           borderRadius: 8,
           padding: "20px",

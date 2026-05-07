@@ -19,29 +19,36 @@ export default function Header({ onMenuClick }: HeaderProps) {
 
   return (
     <header style={{
-      position: "fixed", top: 0, left: 0, right: 0, height: 56, background: "#fff",
-      display: "flex", alignItems: "center", padding: "0 20px", zIndex: 100, gap: 16,
-      borderBottom: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+      position: "fixed", top: 0, left: 0, right: 0, height: 48, background: "#ffffff",
+      display: "flex", alignItems: "center", padding: "0 1.5rem 0 0", zIndex: 150, gap: 0,
+      borderBottom: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
     }}>
       {/* 햄버거 (모바일) */}
       <button
         className="lg:hidden"
         onClick={onMenuClick}
-        style={{ background: "transparent", border: "none", cursor: "pointer", color: "#555", padding: 4 }}
+        style={{ background: "transparent", border: "none", cursor: "pointer", color: "#666", padding: "0 0.75rem", height: "100%" }}
         aria-label="메뉴"
       >
-        <span style={{ fontSize: 23 }}>☰</span>
+        <span style={{ fontSize: 18 }}>☰</span>
       </button>
 
-      {/* 로고 */}
-      <Link href={MENUS[role]?.[0]?.items?.[0]?.href ?? "/"} style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", whiteSpace: "nowrap" }}>
-        <Image src="/logo.png" alt="KEPCO-ES 로고" width={95} height={25} style={{ objectFit: "contain" }} priority />
-        <span style={{ color: "#333", fontWeight: 600, fontSize: 18 }}>구매시스템</span>
+      {/* 로고 영역 (PMS GNB: 220px, 우측 보더, 로고만) */}
+      <Link
+        href={MENUS[role]?.[0]?.items?.[0]?.href ?? "/"}
+        style={{
+          width: 220, minWidth: 220, height: "100%",
+          display: "flex", alignItems: "center", padding: "0 1.25rem",
+          background: "#ffffff", borderRight: "1px solid #e5e7eb",
+          textDecoration: "none", whiteSpace: "nowrap", gap: 0,
+        }}
+      >
+        <Image src="/logo.png" alt="KEPCO-ES 로고" width={106} height={28} style={{ objectFit: "contain", height: 28, width: "auto" }} priority />
       </Link>
 
       <div style={{ flex: 1 }} />
 
-      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         {/* 역할 스위처 */}
         <RoleSwitcher />
 
@@ -49,14 +56,14 @@ export default function Header({ onMenuClick }: HeaderProps) {
         <div style={{ position: "relative" }}>
           <button
             onClick={() => { setShowNotif((v) => !v); setShowUser(false); }}
-            style={{ background: "transparent", border: "none", cursor: "pointer", color: "#555", padding: 4, position: "relative" }}
+            style={{ background: "transparent", border: "none", cursor: "pointer", color: "#666", padding: 4, position: "relative" }}
             aria-label="알림"
           >
-            <Bell size={20} />
+            <Bell size={18} />
             {unreadCount > 0 && (
               <span style={{
-                position: "absolute", top: 0, right: 0, width: 16, height: 16, borderRadius: "50%",
-                background: "#f00", color: "#fff", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700,
+                position: "absolute", top: -4, right: -4, width: 16, height: 16, borderRadius: "50%",
+                background: "#dc3545", color: "#fff", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700,
               }}>
                 {unreadCount}
               </span>
@@ -64,19 +71,19 @@ export default function Header({ onMenuClick }: HeaderProps) {
           </button>
           {showNotif && (
             <div style={{
-              position: "absolute", top: 44, right: 0, width: 320, background: "#fff",
-              borderRadius: 8, boxShadow: "0 8px 24px rgba(0,0,0,0.2)", zIndex: 200,
+              position: "absolute", top: 36, right: 0, width: 320, background: "#fff",
+              border: "1px solid #e6ebf0", borderRadius: 8, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 200,
             }}>
-              <div style={{ padding: "12px 16px", fontWeight: 700, fontSize: 17, borderBottom: "1px solid #eee" }}>
-                🔔 알림 ({unreadCount}건)
+              <div style={{ padding: "10px 14px", fontWeight: 700, fontSize: 13, borderBottom: "1px solid #e6ebf0", background: "#f8f9fa" }}>
+                알림 ({unreadCount}건)
               </div>
               {MOCK_NOTIFICATIONS.map((n) => (
-                <div key={n.id} style={{ padding: "10px 16px", fontSize: 16, borderBottom: "1px solid #f0f0f0", color: n.read ? "#888" : "#222" }}>
-                  <div style={{ fontWeight: n.read ? 400 : 600 }}>{n.message}</div>
-                  <div style={{ color: "#aaa", fontSize: 15, marginTop: 2 }}>{n.createdAt}</div>
+                <div key={n.id} style={{ padding: "10px 14px", fontSize: 12, borderBottom: "1px solid #f0f0f0", color: n.read ? "#888" : "#222" }}>
+                  <div style={{ fontWeight: n.read ? 400 : 700 }}>{n.message}</div>
+                  <div style={{ color: "#aaa", fontSize: 11, marginTop: 2 }}>{n.createdAt}</div>
                 </div>
               ))}
-              <div style={{ padding: "10px 16px", textAlign: "center", fontSize: 16, color: "#01ACC8", cursor: "pointer" }}>
+              <div style={{ padding: "10px 14px", textAlign: "center", fontSize: 12, color: "#00a7ea", cursor: "pointer" }}>
                 전체 알림 보기
               </div>
             </div>
@@ -87,16 +94,16 @@ export default function Header({ onMenuClick }: HeaderProps) {
         <div style={{ position: "relative" }}>
           <button
             onClick={() => { setShowUser((v) => !v); setShowNotif(false); }}
-            style={{ background: "transparent", border: "none", cursor: "pointer", color: "#333", display: "flex", alignItems: "center", gap: 4, fontSize: 16 }}
+            style={{ background: "transparent", border: "none", cursor: "pointer", color: "#333", display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, fontFamily: "inherit" }}
           >
-            <User size={18} />
+            <User size={16} style={{ color: "#666" }} />
             <span>테스트{ROLE_LABELS[role]}님</span>
-            <ChevronDown size={14} />
+            <ChevronDown size={12} />
           </button>
           {showUser && (
             <div style={{
-              position: "absolute", top: 44, right: 0, width: 160, background: "#fff",
-              borderRadius: 8, boxShadow: "0 8px 24px rgba(0,0,0,0.2)", zIndex: 200,
+              position: "absolute", top: 36, right: 0, width: 160, background: "#fff",
+              border: "1px solid #e6ebf0", borderRadius: 8, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 200,
             }}>
               {[
                 { label: "마이페이지", href: `/${role.toLowerCase()}/mypage/` },
@@ -106,16 +113,16 @@ export default function Header({ onMenuClick }: HeaderProps) {
                   key={item.label}
                   href={item.href}
                   onClick={() => setShowUser(false)}
-                  style={{ display: "block", padding: "10px 16px", fontSize: 16, color: "#333", textDecoration: "none" }}
+                  style={{ display: "block", padding: "8px 14px", fontSize: 12, color: "#333", textDecoration: "none" }}
                 >
                   {item.label}
                 </Link>
               ))}
               <button
                 onClick={() => setShowUser(false)}
-                style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", padding: "10px 16px", fontSize: 16, color: "#e53e3e", background: "transparent", border: "none", cursor: "pointer", borderTop: "1px solid #eee", fontFamily: "inherit" }}
+                style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", padding: "8px 14px", fontSize: 12, color: "#654024", background: "#ffffff", border: "1px solid #CFCFCF", cursor: "pointer", borderTop: "1px solid #e6ebf0", fontFamily: "inherit" }}
               >
-                <LogOut size={14} /> 로그아웃
+                <LogOut size={12} /> 로그아웃
               </button>
             </div>
           )}

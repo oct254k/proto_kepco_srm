@@ -73,8 +73,8 @@ function Btn({
     whiteSpace: "nowrap" as const,
   };
   const variants: Record<string, React.CSSProperties> = {
-    primary: { background: "#01ACC8", color: "#fff", borderColor: "#01ACC8" },
-    outline: { background: "#fff", color: "#01ACC8", borderColor: "#01ACC8" },
+    primary: { background: "#654024", color: "#fff", borderColor: "#654024" },
+    outline: { background: "#fff", color: "#00a7ea", borderColor: "#654024" },
     danger: { background: "#fff", color: "#DC2626", borderColor: "#DC2626" },
     warning: { background: "#fff", color: "#92400E", borderColor: "#D97706" },
   };
@@ -450,7 +450,7 @@ function VendorDetailDrawer({
             <div
               key={s.label}
               style={{
-                background: "#fff",
+                background: "#FAF7F2",
                 border: "1px solid #e0e0e0",
                 borderRadius: 6,
                 padding: "10px 14px",
@@ -458,7 +458,7 @@ function VendorDetailDrawer({
               }}
             >
               <p style={{ fontSize: 15, color: "#888", marginBottom: 4 }}>{s.label}</p>
-              <p style={{ fontSize: 21, fontWeight: 700, color: "#01ACC8" }}>{s.value}</p>
+              <p style={{ fontSize: 21, fontWeight: 700, color: "#00a7ea" }}>{s.value}</p>
             </div>
           ))}
         </div>

@@ -61,9 +61,9 @@ function ContractDetailTab({ contract }: { contract: Contract }) {
       <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
         <button
           style={{
-            background: "#fff",
-            border: "1px solid #01ACC8",
-            color: "#01ACC8",
+            background: "#ffffff",
+            border: "1px solid #CFCFCF",
+            color: "#654024",
             borderRadius: 4,
             padding: "6px 16px",
             fontSize: 16,
@@ -106,9 +106,9 @@ function BondSubmitTab({
         <button
           onClick={onOpenBondModal}
           style={{
-            background: "#01ACC8",
+            background: "#654024",
             color: "#fff",
-            border: "none",
+            border: "1px solid #DFE8F0",
             borderRadius: 4,
             padding: "6px 16px",
             fontSize: 16,
@@ -164,9 +164,9 @@ function DocSubmitTab({
           <button
             onClick={(e) => { e.stopPropagation(); onSubmit(String(v)); }}
             style={{
-              background: "#01ACC8",
+              background: "#654024",
               color: "#fff",
-              border: "none",
+              border: "1px solid #DFE8F0",
               borderRadius: 4,
               padding: "3px 12px",
               fontSize: 15,
@@ -340,8 +340,8 @@ function BondSubmitModal({
           <button
             onClick={onClose}
             style={{
-              background: "#fff",
-              border: "1px solid #ccc",
+              background: "#ffffff",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               padding: "6px 16px",
               fontSize: 16,
@@ -355,7 +355,7 @@ function BondSubmitModal({
             onClick={() => isValid && onSubmit(form)}
             disabled={!isValid}
             style={{
-              background: isValid ? "#01ACC8" : "#ccc",
+              background: isValid ? "#00a7ea" : "#ccc",
               color: "#fff",
               border: "none",
               borderRadius: 4,
@@ -550,9 +550,9 @@ export default function VContractsPage() {
             if (contract) { setSelectedContract(contract); setDrawerOpen(true); }
           }}
           style={{
-            background: "#01ACC8",
+            background: "#654024",
             color: "#fff",
-            border: "none",
+            border: "1px solid #DFE8F0",
             borderRadius: 4,
             padding: "3px 12px",
             fontSize: 15,

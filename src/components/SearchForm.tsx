@@ -33,136 +33,131 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
   };
 
   const inputStyle: React.CSSProperties = {
-    padding: "5px 8px",
-    border: "1px solid #ccc",
+    padding: "0 9px",
+    border: "1px solid #becacf",
     borderRadius: "4px",
-    fontSize: "13px",
+    fontSize: "12px",
     fontFamily: "inherit",
     background: "#fff",
-    height: "30px",
+    height: "26px",
     boxSizing: "border-box",
-    width: "100%",
     minWidth: 0,
+    outline: "none",
   };
 
   return (
     <div
       style={{
-        background: "#fff",
-        border: "1px solid #e0e0e0",
-        borderRadius: "6px",
-        padding: "16px 24px",
-        marginBottom: "16px",
+        background: "#FAF7F2",
+        border: "1px solid #E8E8E8",
+        borderRadius: "8px",
+        padding: "0.75rem 1rem",
+        marginBottom: "1rem",
       }}
     >
       <form onSubmit={handleSubmit}>
-        <div className="srm-search-layout">
-          {/* Fields Grid */}
-          <div className="srm-search-fields">
-            {fields.map((field) => (
-              <div
-                key={field.name}
-                className="srm-search-field"
+        <div className="srm-filter-row">
+          {fields.map((field) => (
+            <div key={field.name} className="srm-filter-item">
+              <label
+                style={{
+                  fontSize: "12px",
+                  color: "#555",
+                  fontWeight: 400,
+                  whiteSpace: "nowrap",
+                  flex: "0 0 auto",
+                }}
               >
-                <label
-                  className="srm-search-label"
-                  style={{
-                    fontSize: "13px",
-                    color: "#555",
-                    fontWeight: 500,
-                    whiteSpace: "nowrap",
-                  }}
+                {field.label}
+              </label>
+              {field.type === "select" ? (
+                <select
+                  value={values[field.name] || ""}
+                  onChange={(e) => handleChange(field.name, e.target.value)}
+                  style={{ ...inputStyle, width: 140 }}
                 >
-                  {field.label}
-                </label>
-                {field.type === "select" ? (
-                  <select
-                    value={values[field.name] || ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    style={inputStyle}
-                  >
-                    <option value="">전체</option>
-                    {field.options?.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                ) : field.type === "daterange" ? (
-                  <div className="srm-date-range">
-                    <input
-                      type="date"
-                      value={values[field.name + "_from"] || ""}
-                      onChange={(e) => handleChange(field.name + "_from", e.target.value)}
-                      style={inputStyle}
-                    />
-                    <span style={{ fontSize: "12px", color: "#888", flex: "0 0 auto" }}>~</span>
-                    <input
-                      type="date"
-                      value={values[field.name + "_to"] || ""}
-                      onChange={(e) => handleChange(field.name + "_to", e.target.value)}
-                      style={inputStyle}
-                    />
-                  </div>
-                ) : (
+                  <option value="">전체</option>
+                  {field.options?.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              ) : field.type === "daterange" ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <input
-                    type={field.type}
-                    value={values[field.name] || ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    placeholder={field.placeholder}
-                    style={inputStyle}
+                    type="date"
+                    value={values[field.name + "_from"] || ""}
+                    onChange={(e) => handleChange(field.name + "_from", e.target.value)}
+                    style={{ ...inputStyle, width: 130 }}
                   />
-                )}
-              </div>
-            ))}
-          </div>
+                  <span style={{ fontSize: "12px", color: "#888" }}>~</span>
+                  <input
+                    type="date"
+                    value={values[field.name + "_to"] || ""}
+                    onChange={(e) => handleChange(field.name + "_to", e.target.value)}
+                    style={{ ...inputStyle, width: 130 }}
+                  />
+                </div>
+              ) : (
+                <input
+                  type={field.type}
+                  value={values[field.name] || ""}
+                  onChange={(e) => handleChange(field.name, e.target.value)}
+                  placeholder={field.placeholder}
+                  style={{ ...inputStyle, width: 160 }}
+                />
+              )}
+            </div>
+          ))}
 
-          {/* Buttons */}
-          <div className="srm-search-actions">
+          <div className="srm-filter-actions">
             <button
               type="submit"
               style={{
-                background: "#01ACC8",
+                background: "#654024",
                 color: "#fff",
-                border: "none",
+                border: "1px solid #DFE8F0",
                 borderRadius: "4px",
-                padding: "0 16px",
-                height: "30px",
-                fontSize: "13px",
-                fontWeight: 600,
+                padding: "0 12px",
+                height: "28px",
+                fontSize: "12px",
+                fontWeight: 400,
                 cursor: "pointer",
                 fontFamily: "inherit",
-                display: "flex",
+                display: "inline-flex",
                 justifyContent: "center",
                 alignItems: "center",
                 gap: "4px",
                 whiteSpace: "nowrap",
+                minWidth: 54,
               }}
             >
-              <Search size={14} />
+              <Search size={12} />
               검색
             </button>
             <button
               type="button"
               onClick={handleReset}
               style={{
-                background: "#fff",
-                color: "#01ACC8",
-                border: "1px solid #01ACC8",
+                background: "#ffffff",
+                color: "#654024",
+                border: "1px solid #CFCFCF",
                 borderRadius: "4px",
-                padding: "0 16px",
-                height: "30px",
-                fontSize: "13px",
+                padding: "0 12px",
+                height: "28px",
+                fontSize: "12px",
                 cursor: "pointer",
                 fontFamily: "inherit",
-                display: "flex",
+                display: "inline-flex",
                 justifyContent: "center",
                 alignItems: "center",
                 gap: "4px",
                 whiteSpace: "nowrap",
+                minWidth: 54,
               }}
             >
-              <RefreshCw size={13} />
+              <RefreshCw size={12} />
               초기화
             </button>
           </div>

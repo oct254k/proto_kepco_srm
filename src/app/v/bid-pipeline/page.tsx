@@ -10,15 +10,10 @@ import { useToast } from "@/components/Toast";
 import { V_MY_BIDS, MOCK_BIDS, METHOD_LABELS } from "@/lib/mock/bids";
 
 const btn = (variant: "primary" | "secondary" | "danger" | "ghost" = "primary"): React.CSSProperties => ({
-  padding: "8px 20px",
-  borderRadius: 4,
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: "pointer",
-  fontFamily: "inherit",
-  border: variant === "primary" ? "none" : variant === "danger" ? "none" : variant === "ghost" ? "1px solid #e0e0e0" : "1px solid #01ACC8",
-  background: variant === "primary" ? "#01ACC8" : variant === "danger" ? "#DC2626" : "#fff",
-  color: variant === "primary" ? "#fff" : variant === "danger" ? "#fff" : variant === "ghost" ? "#555" : "#01ACC8",
+  padding: "6px 16px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: variant === "primary" ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
+  background: variant === "primary" ? "#654024" : "#ffffff",
+  color: variant === "primary" ? "#ffffff" : "#654024",
 });
 
 const PIPELINE_STEPS = [
@@ -38,7 +33,7 @@ function Step0Panel({ bidId, onApply }: { bidId: string; onApply: () => void }) 
 
   return (
     <div>
-      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24, marginBottom: 16 }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24, marginBottom: 16 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 24px" }}>
           {[
             { label: "공고번호", value: bid.id },
@@ -106,7 +101,7 @@ function Step0Panel({ bidId, onApply }: { bidId: string; onApply: () => void }) 
             {[{ name: "입찰공고문.pdf", size: "2.1 MB" }, { name: "공사내역서.xlsx", size: "1.5 MB" }].map((f, i) => (
               <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #f5f5f5", fontSize: 16 }}>
                 <span>📎 {f.name} ({f.size})</span>
-                <button style={{ ...btn("secondary"), padding: "2px 8px", fontSize: 15 }}>다운로드</button>
+                <button style={{ ...btn("secondary"), padding: "2px 8px", fontSize: 12 }}>다운로드</button>
               </div>
             ))}
           </div>
@@ -139,7 +134,7 @@ function Step1Panel({ onSubmit, onPrev }: { onSubmit: () => void; onPrev: () => 
   };
 
   return (
-    <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
+    <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
       <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 20, color: "#222" }}>참여자격 확인 (필수 서류 첨부)</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
         {docs.map((doc, i) => (
@@ -156,7 +151,7 @@ function Step1Panel({ onSubmit, onPrev }: { onSubmit: () => void; onPrev: () => 
               <span style={{ fontSize: 15, color: "#065F46", fontWeight: 600 }}>✓ 업로드완료</span>
             ) : (
               <button
-                style={{ ...btn("secondary"), fontSize: 15, padding: "4px 10px" }}
+                style={{ ...btn("secondary"), fontSize: 12, padding: "4px 10px" }}
                 onClick={() => setDocs(docs.map((d, di) => di === i ? { ...d, uploaded: true } : d))}
               >
                 파일첨부
@@ -176,7 +171,7 @@ function Step1Panel({ onSubmit, onPrev }: { onSubmit: () => void; onPrev: () => 
 // ── Step 2: 심사 ──────────────────────────────────────────────
 function Step2Panel({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) {
   return (
-    <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
+    <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
       <div style={{ background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: 8, padding: 20, marginBottom: 24, textAlign: "center" }}>
         <div style={{ fontSize: 27, marginBottom: 8 }}>⏳</div>
         <div style={{ fontSize: 19, fontWeight: 700, color: "#92400E", marginBottom: 6 }}>심사 진행 중</div>
@@ -242,7 +237,7 @@ function Step3Panel({ onSubmit, onPrev }: { onSubmit: () => void; onPrev: () => 
         </span>
       </div>
 
-      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
         <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 16, color: "#222" }}>투찰금액 입력</div>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 16, marginBottom: 16 }}>
           <thead>
@@ -282,7 +277,7 @@ function Step3Panel({ onSubmit, onPrev }: { onSubmit: () => void; onPrev: () => 
             { label: "VAT (10%)", value: vat },
             { label: "총 투찰금액 (VAT 포함)", value: grandTotal },
           ].map((row, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", fontWeight: i === 2 ? 700 : 400, fontSize: i === 2 ? 15 : 13, borderTop: i === 2 ? "1px solid #e0e0e0" : "none", color: i === 2 ? "#01ACC8" : "#333" }}>
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", fontWeight: i === 2 ? 700 : 400, fontSize: i === 2 ? 15 : 13, borderTop: i === 2 ? "1px solid #e0e0e0" : "none", color: i === 2 ? "#00a7ea" : "#333" }}>
               <span>{row.label}</span>
               <span>{row.value.toLocaleString()}원</span>
             </div>
@@ -318,7 +313,7 @@ function Step3Panel({ onSubmit, onPrev }: { onSubmit: () => void; onPrev: () => 
         <div>
           <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 6, padding: 16, marginBottom: 16 }}>
             <div style={{ fontSize: 16, marginBottom: 8 }}>총 투찰금액 (VAT 포함)</div>
-            <div style={{ fontSize: 25, fontWeight: 700, color: "#01ACC8" }}>{grandTotal.toLocaleString()}원</div>
+            <div style={{ fontSize: 25, fontWeight: 700, color: "#00a7ea" }}>{grandTotal.toLocaleString()}원</div>
           </div>
           <div style={{ fontSize: 16, color: "#DC2626", marginBottom: 8 }}>⚠ 제출 후 마감일 이전에만 수정이 가능합니다.</div>
           <div style={{ fontSize: 16, color: "#555" }}>투찰을 제출하시겠습니까?</div>
@@ -331,7 +326,7 @@ function Step3Panel({ onSubmit, onPrev }: { onSubmit: () => void; onPrev: () => 
 // ── Step 4: 결과확인 ──────────────────────────────────────────
 function Step4Panel() {
   return (
-    <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
+    <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
       <div style={{ background: "#EDE9FE", border: "1px solid #DDD6FE", borderRadius: 12, padding: 24, textAlign: "center", marginBottom: 24 }}>
         <div style={{ fontSize: 35, marginBottom: 8 }}>🏆</div>
         <div style={{ fontSize: 25, fontWeight: 800, color: "#5B21B6", marginBottom: 6 }}>낙찰</div>
@@ -380,10 +375,10 @@ export default function VBidPipelinePage() {
       <PageHeader title="입찰 파이프라인" />
 
       {/* 공고 선택 드롭다운 */}
-      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: "16px 20px", display: "flex", alignItems: "center", gap: 12 }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: "16px 20px", display: "flex", alignItems: "center", gap: 12 }}>
         <span style={{ fontSize: 16, fontWeight: 600, color: "#555", whiteSpace: "nowrap" }}>참여 중인 입찰</span>
         <select
-          style={{ flex: 1, padding: "6px 10px", border: "1px solid #ccc", borderRadius: 4, fontSize: 16, fontFamily: "inherit", background: "#fff" }}
+          style={{ flex: 1, padding: "6px 10px", border: "1px solid #ccc", borderRadius: 4, fontSize: 16, fontFamily: "inherit", background: "#ffffff" }}
           value={selectedBidId}
           onChange={(e) => handleSelectBid(e.target.value)}
         >
@@ -397,7 +392,7 @@ export default function VBidPipelinePage() {
       </div>
 
       {/* 스텝바 */}
-      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, padding: "20px 24px" }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: "20px 24px" }}>
         <Stepper steps={PIPELINE_STEPS} current={currentStep} />
 
         {/* 단계별 클릭 버튼 (완료 단계 복귀) */}
@@ -408,8 +403,8 @@ export default function VBidPipelinePage() {
               onClick={() => i <= currentStep && setCurrentStep(i)}
               style={{
                 padding: "4px 12px", fontSize: 15, borderRadius: 4, cursor: i <= currentStep ? "pointer" : "not-allowed",
-                border: "1px solid #e0e0e0", background: i === currentStep ? "#01ACC8" : "#fff",
-                color: i === currentStep ? "#fff" : i < currentStep ? "#01ACC8" : "#bbb",
+                border: "1px solid #e0e0e0", background: i === currentStep ? "#00a7ea" : "#fff",
+                color: i === currentStep ? "#fff" : i < currentStep ? "#00a7ea" : "#bbb",
                 fontFamily: "inherit",
               }}
             >

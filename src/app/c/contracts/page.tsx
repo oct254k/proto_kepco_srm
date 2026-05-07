@@ -64,9 +64,9 @@ function ContractInfoTab({ contract }: { contract: Contract }) {
       <div style={{ display: "flex", gap: 8 }}>
         <button
           style={{
-            background: "#fff",
-            border: "1px solid #01ACC8",
-            color: "#01ACC8",
+            background: "#ffffff",
+            border: "1px solid #CFCFCF",
+            color: "#654024",
             borderRadius: 4,
             padding: "6px 16px",
             fontSize: 16,
@@ -78,8 +78,8 @@ function ContractInfoTab({ contract }: { contract: Contract }) {
         </button>
         <button
           style={{
-            background: "#01ACC8",
-            border: "none",
+            background: "#654024",
+            border: "1px solid #DFE8F0",
             color: "#fff",
             borderRadius: 4,
             padding: "6px 16px",
@@ -128,9 +128,9 @@ function BondTab({
           <button
             onClick={(e) => { e.stopPropagation(); onApprove(String(v)); }}
             style={{
-              background: "#D1FAE5",
-              color: "#065F46",
-              border: "none",
+              background: "#ffffff",
+              color: "#654024",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               padding: "3px 10px",
               fontSize: 15,
@@ -143,9 +143,9 @@ function BondTab({
           <button
             onClick={(e) => { e.stopPropagation(); onReject(String(v)); }}
             style={{
-              background: "#FEE2E2",
-              color: "#991B1B",
-              border: "none",
+              background: "#ffffff",
+              color: "#654024",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               padding: "3px 10px",
               fontSize: 15,
@@ -202,9 +202,9 @@ function DocRequestTab({
         <button
           onClick={onOpenRequestModal}
           style={{
-            background: "#01ACC8",
+            background: "#654024",
             color: "#fff",
-            border: "none",
+            border: "1px solid #DFE8F0",
             borderRadius: 4,
             padding: "6px 16px",
             fontSize: 16,
@@ -297,9 +297,9 @@ function PmsTab({
           <button
             onClick={onResync}
             style={{
-              background: "#DC2626",
-              color: "#fff",
-              border: "none",
+              background: "#ffffff",
+              color: "#654024",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               padding: "8px 20px",
               fontSize: 16,
@@ -358,7 +358,7 @@ function HistoryTab({ contractId }: { contractId: string }) {
             style={{
               width: 8,
               height: 8,
-              background: "#01ACC8",
+              background: "#654024",
               borderRadius: "50%",
               marginTop: 5,
               flexShrink: 0,
@@ -514,9 +514,9 @@ export default function CContractsPage() {
             if (contract) { setSelectedContract(contract); setDrawerOpen(true); }
           }}
           style={{
-            background: "#01ACC8",
+            background: "#654024",
             color: "#fff",
-            border: "none",
+            border: "1px solid #DFE8F0",
             borderRadius: 4,
             padding: "3px 12px",
             fontSize: 15,
@@ -634,8 +634,8 @@ export default function CContractsPage() {
             <button
               onClick={() => setDocModalOpen(false)}
               style={{
-                background: "#fff",
-                border: "1px solid #ccc",
+                background: "#ffffff",
+                border: "1px solid #CFCFCF",
                 borderRadius: 4,
                 padding: "6px 16px",
                 fontSize: 16,
@@ -649,7 +649,7 @@ export default function CContractsPage() {
               onClick={handleDocRequest}
               disabled={!docName.trim()}
               style={{
-                background: docName.trim() ? "#01ACC8" : "#ccc",
+                background: docName.trim() ? "#00a7ea" : "#ccc",
                 color: "#fff",
                 border: "none",
                 borderRadius: 4,
@@ -717,8 +717,8 @@ export default function CContractsPage() {
             <button
               onClick={() => setRejectModalOpen(false)}
               style={{
-                background: "#fff",
-                border: "1px solid #ccc",
+                background: "#ffffff",
+                border: "1px solid #CFCFCF",
                 borderRadius: 4,
                 padding: "6px 16px",
                 fontSize: 16,
