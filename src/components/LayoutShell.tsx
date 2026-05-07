@@ -6,6 +6,8 @@ import Sidebar from "@/components/Sidebar";
 import Breadcrumb from "@/components/Breadcrumb";
 import { useRole } from "@/lib/role";
 import { getBreadcrumb } from "@/lib/menu";
+import { canAccessPath } from "@/lib/access";
+import ForbiddenView from "@/components/ForbiddenView";
 import { ToastProvider } from "@/components/Toast";
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
@@ -21,6 +23,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
   }, []);
 
   const isLogin = pathname === "/login" || pathname === "/login/";
+  const unauthorized = !isLogin && !canAccessPath(role, pathname);
 
   if (isLogin) {
     return <ToastProvider>{children}</ToastProvider>;
@@ -38,7 +41,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
         )}
         <main style={{ flex: 1, minWidth: 0, background: "#f5f5f5", padding: "20px 24px" }}>
           {crumbs.length > 0 && <Breadcrumb items={crumbs} />}
-          {children}
+          {unauthorized ? <ForbiddenView /> : children}
         </main>
       </div>
     </ToastProvider>

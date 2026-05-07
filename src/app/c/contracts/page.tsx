@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import DataTable from "@/components/DataTable";
 import type { Column } from "@/components/DataTable";
 import StatusBadge from "@/components/StatusBadge";
@@ -10,770 +10,645 @@ import Drawer from "@/components/Drawer";
 import Modal from "@/components/Modal";
 import EmptyState from "@/components/EmptyState";
 import Tabs from "@/components/Tabs";
+import StatusGuide, { type StatusGuideSection } from "@/components/StatusGuide";
 import { useToast } from "@/components/Toast";
+import { CONTRACT_AUTHORITY_LABELS, type Contract } from "@/lib/types";
+import { useContractAuthority } from "@/lib/role";
 import {
-  MOCK_CONTRACTS,
   MOCK_BONDS,
-  MOCK_DOC_REQUESTS,
   MOCK_CONTRACT_HISTORIES,
+  MOCK_CONTRACTS,
+  MOCK_DOC_REQUESTS,
   MOCK_PMS_LOGS,
+  type Bond,
+  type DocRequest,
 } from "@/lib/mock/contracts";
-import type { Bond, DocRequest } from "@/lib/mock/contracts";
-import type { Contract } from "@/lib/types";
 
-// ── 인라인 유틸 ──────────────────────────────────────────────
-function fmt(n: number) {
-  return n.toLocaleString() + "원";
+const CONTRACT_GUIDE: StatusGuideSection[] = [
+  {
+    title: "계약 진행 상태",
+    description: "계약상태, 보증상태, PMS 전송상태를 하나로 합치지 않고 분리해서 관리합니다.",
+    items: [
+      {
+        code: "DRAFT",
+        meaning: "계약 초안 단계로 계약담당자만 수정/취소 가능합니다.",
+        owner: "계약담당자",
+        actions: "수정, 취소",
+        next: "협력업체 확인대기",
+        limit: "협력업체/사업담당자 승인 전",
+      },
+      {
+        code: "PENDING_SUPPLIER_APPROVAL",
+        meaning: "협력업체가 계약서와 보증 제출 준비를 하는 단계입니다.",
+        owner: "협력업체",
+        actions: "계약 확인, 보증 제출",
+        next: "사업담당 승인대기 또는 보증반려",
+        limit: "일반 계약취소 버튼 비노출",
+      },
+      {
+        code: "PENDING_BUSINESS_APPROVAL",
+        meaning: "협력업체 제출과 계약 검토가 끝나 사업담당자 승인 대기인 상태입니다.",
+        owner: "사업담당자, 계약담당자",
+        actions: "승인 요청 현황 조회",
+        next: "계약확정",
+        limit: "사업담당 승인 전 최종 확정 금지",
+      },
+      {
+        code: "ACTIVE",
+        label: "계약확정",
+        meaning: "계약이 확정되었고 일반 수정/취소는 종료된 상태입니다.",
+        owner: "계약담당자",
+        actions: "계약변경 요청, PMS 재전송",
+        next: "PMS 전송완료 또는 계약변경",
+        limit: "일반 수정/취소 버튼 제거",
+      },
+      {
+        code: "PMS_SYNCED",
+        label: "PMS 전송완료",
+        meaning: "계약확정 정보가 PMS에 반영된 상태입니다.",
+        owner: "계약담당자",
+        actions: "변경 이력 조회",
+        next: "계약변경 또는 종료",
+        limit: "핵심 계약정보 직접 수정 제한",
+      },
+    ],
+  },
+  {
+    title: "보증 / PMS 상태",
+    items: [
+      {
+        code: "REJECTED",
+        label: "보증반려",
+        meaning: "보증 서류에 문제가 있어 재제출이 필요한 상태입니다.",
+        owner: "계약담당자, 협력업체",
+        actions: "반려사유 확인, 재제출",
+        next: "보증제출완료",
+        limit: "반려 사유 필수",
+      },
+      {
+        code: "PMS_FAILED",
+        label: "PMS 전송실패",
+        meaning: "계약 정보가 PMS로 전송되지 못한 상태입니다.",
+        owner: "계약담당자",
+        actions: "재전송",
+        next: "PMS 전송완료",
+        limit: "실패 원인 확인 후만 재전송",
+      },
+    ],
+  },
+];
+
+function fmt(amount: number) {
+  return `${amount.toLocaleString()}원`;
 }
 
-// ── 계약정보 탭 ──────────────────────────────────────────────
-function ContractInfoTab({ contract }: { contract: Contract }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "12px 24px",
-          background: "#F9FAFB",
-          border: "1px solid #E5E7EB",
-          borderRadius: 8,
-          padding: "20px",
-        }}
-      >
-        {[
-          ["계약번호", contract.id],
-          ["계약명", contract.title],
-          ["업체명", contract.vendorName],
-          ["계약금액", fmt(contract.amount)],
-          ["계약시작일", contract.startDate],
-          ["계약종료일", contract.endDate],
-          ["담당자", "이계약 (계약1팀)"],
-          ["계약유형", "물품"],
-          ["이행보증금률", "10%"],
-          ["이행보증금액", fmt(Math.floor(contract.amount * 0.1))],
-          ["특약사항", "품질보증기간 2년 적용"],
-          ["계약서 파일", "계약서_" + contract.id + ".pdf"],
-        ].map(([label, value]) => (
-          <div key={label} style={{ display: "flex", gap: 8 }}>
-            <span style={{ fontSize: 16, color: "#6B7280", minWidth: 100, flexShrink: 0 }}>{label}</span>
-            <span style={{ fontSize: 16, color: "#111", fontWeight: 500 }}>{value}</span>
-          </div>
-        ))}
-      </div>
-      <div style={{ display: "flex", gap: 8 }}>
-        <button
-          style={{
-            background: "#fff",
-            border: "1px solid #01ACC8",
-            color: "#01ACC8",
-            borderRadius: 4,
-            padding: "6px 16px",
-            fontSize: 16,
-            cursor: "pointer",
-            fontFamily: "inherit",
-          }}
-        >
-          임시저장
-        </button>
-        <button
-          style={{
-            background: "#01ACC8",
-            border: "none",
-            color: "#fff",
-            borderRadius: 4,
-            padding: "6px 16px",
-            fontSize: 16,
-            cursor: "pointer",
-            fontFamily: "inherit",
-          }}
-        >
-          계약 최종 확정
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ── 보증서확인 탭 ────────────────────────────────────────────
-function BondTab({
-  bonds,
-  onApprove,
-  onReject,
-}: {
-  bonds: Bond[];
-  onApprove: (id: string) => void;
-  onReject: (id: string) => void;
-}) {
-  const cols: Column[] = [
-    { key: "type", label: "보증유형", width: "100px", align: "center" },
-    { key: "amount", label: "보증금액", align: "right", render: (v) => fmt(Number(v)) },
-    { key: "issuer", label: "발행기관", width: "120px", align: "center" },
-    { key: "startDate", label: "시작일", width: "100px", align: "center" },
-    { key: "endDate", label: "만료일", width: "100px", align: "center" },
-    {
-      key: "status",
-      label: "상태",
-      width: "100px",
-      align: "center",
-      render: (v) => <StatusBadge status={String(v)} />,
-    },
-    {
-      key: "id",
-      label: "액션",
-      width: "140px",
-      align: "center",
-      render: (v) => (
-        <div style={{ display: "flex", gap: 4, justifyContent: "center" }}>
-          <button
-            onClick={(e) => { e.stopPropagation(); onApprove(String(v)); }}
-            style={{
-              background: "#D1FAE5",
-              color: "#065F46",
-              border: "none",
-              borderRadius: 4,
-              padding: "3px 10px",
-              fontSize: 15,
-              cursor: "pointer",
-              fontFamily: "inherit",
-            }}
-          >
-            승인
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onReject(String(v)); }}
-            style={{
-              background: "#FEE2E2",
-              color: "#991B1B",
-              border: "none",
-              borderRadius: 4,
-              padding: "3px 10px",
-              fontSize: 15,
-              cursor: "pointer",
-              fontFamily: "inherit",
-            }}
-          >
-            반려
-          </button>
-        </div>
-      ),
-    },
-  ];
-
-  if (bonds.length === 0) {
-    return <EmptyState message="제출된 보증서가 없습니다." />;
-  }
-
-  return (
-    <DataTable
-      columns={cols}
-      data={bonds as unknown as Record<string, unknown>[]}
-      sectionLabel="보증서"
-      showExcel={false}
-      showCheckbox={false}
-    />
-  );
-}
-
-// ── 서류요청 탭 ──────────────────────────────────────────────
-function DocRequestTab({
-  docs,
-  onOpenRequestModal,
-}: {
-  docs: DocRequest[];
-  onOpenRequestModal: () => void;
-}) {
-  const cols: Column[] = [
-    { key: "id", label: "요청번호", width: "130px", align: "center" },
-    { key: "docName", label: "서류명", align: "left" },
-    { key: "dueDate", label: "제출기한", width: "110px", align: "center" },
-    {
-      key: "status",
-      label: "상태",
-      width: "100px",
-      align: "center",
-      render: (v) => <StatusBadge status={String(v)} />,
-    },
+function StatusSummaryBar({ contract }: { contract: Contract }) {
+  const items = [
+    { label: "계약상태", value: contract.contractStatus ?? contract.status },
+    { label: "보증상태", value: contract.bondStatus ?? "NOT_SUBMITTED" },
+    { label: "PMS 전송", value: contract.pmsSyncStatus ?? contract.pmsStatus ?? "PMS_PENDING" },
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <button
-          onClick={onOpenRequestModal}
-          style={{
-            background: "#01ACC8",
-            color: "#fff",
-            border: "none",
-            borderRadius: 4,
-            padding: "6px 16px",
-            fontSize: 16,
-            cursor: "pointer",
-            fontFamily: "inherit",
-            fontWeight: 600,
-          }}
-        >
-          + 서류 요청
-        </button>
-      </div>
-      {docs.length === 0 ? (
-        <EmptyState message="요청된 서류가 없습니다." />
-      ) : (
-        <DataTable
-          columns={cols}
-          data={docs as unknown as Record<string, unknown>[]}
-          sectionLabel="서류요청"
-          showExcel={false}
-          showCheckbox={false}
-        />
-      )}
-    </div>
-  );
-}
-
-// ── PMS 연동 탭 ──────────────────────────────────────────────
-function PmsTab({
-  contract,
-  onResync,
-}: {
-  contract: Contract;
-  onResync: () => void;
-}) {
-  const logs = MOCK_PMS_LOGS[contract.id] ?? [];
-  const pmsStatus = contract.pmsStatus ?? "PENDING";
-
-  const cardColor =
-    pmsStatus === "SYNCED"
-      ? { bg: "#F0FDF4", border: "#BBF7D0", color: "#16A34A" }
-      : pmsStatus === "FAILED"
-      ? { bg: "#FEF2F2", border: "#FECACA", color: "#DC2626" }
-      : { bg: "#FEFCE8", border: "#FDE68A", color: "#D97706" };
-
-  const logCols: Column[] = [
-    { key: "requestedAt", label: "요청일시", width: "160px", align: "center" },
-    {
-      key: "status",
-      label: "상태",
-      width: "100px",
-      align: "center",
-      render: (v) => <StatusBadge status={String(v)} />,
-    },
-    { key: "responseCode", label: "응답코드", width: "80px", align: "center" },
-    { key: "note", label: "비고", align: "left" },
-  ];
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      {/* PMS 상태 카드 */}
-      <div
-        style={{
-          background: cardColor.bg,
-          border: `1px solid ${cardColor.border}`,
-          borderRadius: 8,
-          padding: "20px",
-        }}
-      >
-        <div style={{ fontSize: 19, fontWeight: 700, color: cardColor.color, marginBottom: 12 }}>
-          PMS 연동 상태: {pmsStatus}
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 24px" }}>
-          {[
-            ["PMS 수신일시", pmsStatus === "SYNCED" ? "2026-05-01 14:32:05" : "-"],
-            ["PMS 계약 ID", pmsStatus === "SYNCED" ? "PMS-" + contract.id : "-"],
-            ["연동 테이블", "SRM_ORDER_CONTRACT"],
-            ["오류코드", pmsStatus === "FAILED" ? "500" : "-"],
-          ].map(([label, value]) => (
-            <div key={label} style={{ display: "flex", gap: 8 }}>
-              <span style={{ fontSize: 16, color: "#6B7280", minWidth: 100 }}>{label}</span>
-              <span style={{ fontSize: 16, fontWeight: 500, color: "#111" }}>{value}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 재연동 버튼 */}
-      {(pmsStatus === "FAILED" || pmsStatus === "PENDING") && (
-        <div>
-          <button
-            onClick={onResync}
-            style={{
-              background: "#DC2626",
-              color: "#fff",
-              border: "none",
-              borderRadius: 4,
-              padding: "8px 20px",
-              fontSize: 16,
-              cursor: "pointer",
-              fontFamily: "inherit",
-              fontWeight: 600,
-            }}
-          >
-            재연동
-          </button>
-        </div>
-      )}
-
-      {/* 전송 이력 */}
-      <div>
-        <div style={{ fontSize: 17, fontWeight: 600, color: "#222", marginBottom: 8 }}>전송 이력</div>
-        {logs.length === 0 ? (
-          <EmptyState message="전송 이력이 없습니다." />
-        ) : (
-          <DataTable
-            columns={logCols}
-            data={logs as unknown as Record<string, unknown>[]}
-            sectionLabel="전송이력"
-            showExcel={false}
-            showCheckbox={false}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ── 변경이력 탭 ──────────────────────────────────────────────
-function HistoryTab({ contractId }: { contractId: string }) {
-  const items = MOCK_CONTRACT_HISTORIES.filter((h) => h.contractId === contractId);
-
-  if (items.length === 0) {
-    return <EmptyState message="변경 이력이 없습니다." />;
-  }
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+        gap: 10,
+        padding: 12,
+        border: "1px solid #E2E8F0",
+        borderRadius: 10,
+        background: "#F8FAFC",
+      }}
+    >
       {items.map((item) => (
-        <div
-          key={item.id}
-          style={{
-            display: "flex",
-            gap: 16,
-            padding: "14px 16px",
-            background: "#F9FAFB",
-            border: "1px solid #E5E7EB",
-            borderRadius: 8,
-          }}
-        >
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              background: "#01ACC8",
-              borderRadius: "50%",
-              marginTop: 5,
-              flexShrink: 0,
-            }}
-          />
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 15, color: "#9CA3AF", marginBottom: 4 }}>
-              {item.changedAt} · {item.changedBy}
-            </div>
-            <div style={{ fontSize: 17, fontWeight: 600, color: "#111", marginBottom: 4 }}>
-              {item.item} 변경
-            </div>
-            <div style={{ fontSize: 16, color: "#374151" }}>
-              <span style={{ color: "#DC2626" }}>{item.before}</span>
-              {" → "}
-              <span style={{ color: "#16A34A" }}>{item.after}</span>
-            </div>
-            <div style={{ fontSize: 15, color: "#6B7280", marginTop: 4 }}>사유: {item.reason}</div>
-          </div>
+        <div key={item.label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <span style={{ fontSize: 13, color: "#64748B", fontWeight: 700 }}>{item.label}</span>
+          <div><StatusBadge status={item.value} /></div>
         </div>
       ))}
     </div>
   );
 }
 
-// ── 메인 페이지 ─────────────────────────────────────────────
-export default function CContractsPage() {
-  const toast = useToast();
-  const [contracts, setContracts] = useState(MOCK_CONTRACTS);
-  const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+function isDraftContract(contract: Contract) {
+  return contract.contractStatus === "DRAFT";
+}
 
-  // 서류요청 모달
-  const [docModalOpen, setDocModalOpen] = useState(false);
-  const [docName, setDocName] = useState("");
-  const [docDue, setDocDue] = useState("");
+function isPendingBusiness(contract: Contract) {
+  return contract.contractStatus === "PENDING_BUSINESS_APPROVAL";
+}
 
-  // 반려 모달
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [rejectBondId, setRejectBondId] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
+function isFinalized(contract: Contract) {
+  return contract.contractStatus === "ACTIVE" || contract.pmsSyncStatus === "PMS_SYNCED";
+}
 
-  // PMS 재연동 토스트 (4초)
-  const [resyncing, setResyncing] = useState(false);
+function ContractInfoTab({
+  contract,
+  canManage,
+  onOpenChangeModal,
+  onCancelDraft,
+  onFinalApprove,
+}: {
+  contract: Contract;
+  canManage: boolean;
+  onOpenChangeModal: () => void;
+  onCancelDraft: () => void;
+  onFinalApprove: () => void;
+}) {
+  const canEditDraft = canManage && isDraftContract(contract);
+  const canCancel = canManage && isDraftContract(contract);
+  const canChange = canManage && isFinalized(contract);
+  const canFinalize = canManage && isPendingBusiness(contract) && contract.businessApprovalStatus === "APPROVED";
 
-  const handleRowClick = (row: Record<string, unknown>) => {
-    const contract = contracts.find((c) => c.id === row.id);
-    if (contract) {
-      setSelectedContract(contract);
-      setDrawerOpen(true);
-    }
-  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <StatusSummaryBar contract={contract} />
+      <div
+        style={{
+          background: canManage ? "#F8FAFC" : "#FEF3C7",
+          border: `1px solid ${canManage ? "#E2E8F0" : "#FDE68A"}`,
+          borderRadius: 10,
+          padding: "14px 16px",
+          fontSize: 15,
+          color: canManage ? "#334155" : "#92400E",
+          lineHeight: 1.7,
+        }}
+      >
+        {canManage
+          ? "계약담당자 권한 기준으로 상태별 액션을 제어합니다."
+          : "가격등록자/임원 권한은 계약 본문 수정 대신 상태 조회 중심으로 제한됩니다."}
+      </div>
 
-  const handleCloseDrawer = () => {
-    setDrawerOpen(false);
-    setSelectedContract(null);
-  };
+      <div style={{ display: "grid", gridTemplateColumns: "130px 1fr", gap: "8px 12px", fontSize: 15 }}>
+        <span style={{ color: "#64748B" }}>계약번호</span>
+        <strong>{contract.id}</strong>
+        <span style={{ color: "#64748B" }}>계약명</span>
+        <strong>{contract.title}</strong>
+        <span style={{ color: "#64748B" }}>업체명</span>
+        <strong>{contract.vendorName}</strong>
+        <span style={{ color: "#64748B" }}>계약금액</span>
+        <strong>{fmt(contract.amount)}</strong>
+        <span style={{ color: "#64748B" }}>사업담당 승인</span>
+        <div><StatusBadge status={contract.businessApprovalStatus === "APPROVED" ? "APPROVED" : "PENDING_APPROVAL"} label={contract.businessApprovalStatus === "APPROVED" ? "승인완료" : "승인대기"} /></div>
+      </div>
 
-  const handleApprove = (bondId: string) => {
-    toast.show(`보증서 ${bondId} 승인 처리되었습니다.`, "success");
-  };
-
-  const handleReject = (bondId: string) => {
-    setRejectBondId(bondId);
-    setRejectReason("");
-    setRejectModalOpen(true);
-  };
-
-  const handleRejectSubmit = () => {
-    if (!rejectReason.trim()) return;
-    toast.show(`보증서 ${rejectBondId} 반려 처리되었습니다.`, "error");
-    setRejectModalOpen(false);
-    setRejectBondId(null);
-  };
-
-  const handleResync = () => {
-    if (resyncing) return;
-    setResyncing(true);
-    setTimeout(() => {
-      if (selectedContract) {
-        toast.show(
-          `PMS 연동 완료. PMS 계약ID: ${selectedContract.id}`,
-          "success"
-        );
-        setContracts((prev) =>
-          prev.map((c) =>
-            c.id === selectedContract.id ? { ...c, pmsStatus: "SYNCED" } : c
-          )
-        );
-        setSelectedContract((prev) => (prev ? { ...prev, pmsStatus: "SYNCED" } : prev));
-      }
-      setResyncing(false);
-    }, 4000);
-  };
-
-  const handleDocRequest = () => {
-    if (!docName.trim()) return;
-    toast.show(`서류 요청이 등록되었습니다: ${docName}`, "success");
-    setDocModalOpen(false);
-    setDocName("");
-    setDocDue("");
-  };
-
-  const bonds = selectedContract
-    ? MOCK_BONDS.filter((b) => b.contractId === selectedContract.id)
-    : [];
-  const docs = selectedContract
-    ? MOCK_DOC_REQUESTS.filter((d) => d.contractId === selectedContract.id)
-    : [];
-
-  const columns: Column[] = [
-    { key: "id", label: "계약번호", width: "130px", align: "center" },
-    { key: "title", label: "계약명", align: "left" },
-    { key: "vendorName", label: "업체명", width: "160px", align: "center" },
-    {
-      key: "amount",
-      label: "계약금액",
-      width: "140px",
-      align: "right",
-      render: (v) => fmt(Number(v)),
-    },
-    {
-      key: "startDate",
-      label: "계약기간",
-      width: "200px",
-      align: "center",
-      render: (v, row) => `${String(v)} ~ ${String(row.endDate)}`,
-    },
-    {
-      key: "status",
-      label: "상태",
-      width: "90px",
-      align: "center",
-      render: (v) => <StatusBadge status={String(v)} />,
-    },
-    {
-      key: "pmsStatus",
-      label: "PMS연동",
-      width: "90px",
-      align: "center",
-      render: (v) => <StatusBadge status={String(v ?? "PENDING")} />,
-    },
-    {
-      key: "id",
-      label: "액션",
-      width: "80px",
-      align: "center",
-      render: (v) => (
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            const contract = contracts.find((c) => c.id === v);
-            if (contract) { setSelectedContract(contract); setDrawerOpen(true); }
-          }}
           style={{
-            background: "#01ACC8",
-            color: "#fff",
-            border: "none",
-            borderRadius: 4,
-            padding: "3px 12px",
-            fontSize: 15,
+            padding: "8px 14px",
+            borderRadius: 6,
+            border: "1px solid #7DD3FC",
+            background: "#EFF6FF",
+            color: "#0369A1",
             cursor: "pointer",
             fontFamily: "inherit",
           }}
         >
-          상세
+          계약서 다운로드
         </button>
-      ),
+      </div>
+
+      {isPendingBusiness(contract) && contract.businessApprovalStatus !== "APPROVED" && (
+        <div style={{ background: "#FFF7ED", border: "1px solid #FED7AA", borderRadius: 10, padding: "14px 16px", fontSize: 15, color: "#9A3412" }}>
+          사업담당자 승인 전이라 계약 최종 확정 액션은 아직 노출하지 않습니다.
+        </div>
+      )}
+
+      {isFinalized(contract) && (
+        <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 10, padding: "14px 16px", fontSize: 15, color: "#1D4ED8" }}>
+          고객사 요구사항 강조포인트: 확정 이후에는 일반 수정이 아니라 계약변경 모달만 제공해 변경 이력을 남기도록 표현합니다.
+        </div>
+      )}
+
+      {(canEditDraft || canCancel || canFinalize || canChange) && (
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {canEditDraft && (
+            <button
+              style={{
+                padding: "8px 14px",
+                borderRadius: 6,
+                border: "1px solid #CBD5E1",
+                background: "#fff",
+                color: "#334155",
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              계약서 초안 수정
+            </button>
+          )}
+          {canCancel && (
+            <button
+              onClick={onCancelDraft}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 6,
+                border: "1px solid #FCA5A5",
+                background: "#FEF2F2",
+                color: "#B91C1C",
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              계약 취소
+            </button>
+          )}
+          {canFinalize && (
+            <button
+              onClick={onFinalApprove}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 6,
+                border: "none",
+                background: "#065F46",
+                color: "#fff",
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              계약 최종 확정
+            </button>
+          )}
+          {canChange && (
+            <button
+              onClick={onOpenChangeModal}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 6,
+                border: "1px solid #7DD3FC",
+                background: "#E0F2FE",
+                color: "#0369A1",
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              계약변경
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ContractOpsTab({
+  bonds,
+  docs,
+  canManage,
+  onApprove,
+  onReject,
+}: {
+  bonds: Bond[];
+  docs: DocRequest[];
+  canManage: boolean;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
+}) {
+  const columns: Column[] = [
+    { key: "type", label: "보증유형", width: "100px", align: "center" },
+    { key: "amount", label: "보증금액", width: "120px", align: "right", render: (value) => fmt(Number(value)) },
+    { key: "issuer", label: "발행기관", width: "110px", align: "center" },
+    { key: "endDate", label: "만료일", width: "110px", align: "center" },
+    { key: "status", label: "상태", width: "110px", align: "center", render: (value) => <StatusBadge status={String(value)} /> },
+    {
+      key: "id",
+      label: "액션",
+      width: "150px",
+      align: "center",
+      render: (value, row) => {
+        const actionable = canManage && row.status === "SUBMITTED";
+        if (!actionable) {
+          return <span style={{ fontSize: 14, color: "#94A3B8" }}>{row.status === "REJECTED" ? "반려 완료" : "대기중"}</span>;
+        }
+        return (
+          <div style={{ display: "flex", gap: 6, justifyContent: "center" }}>
+            <button
+              onClick={(event) => { event.stopPropagation(); onApprove(String(value)); }}
+              style={{ padding: "4px 10px", borderRadius: 6, border: "1px solid #A7F3D0", background: "#ECFDF5", color: "#166534", cursor: "pointer", fontFamily: "inherit" }}
+            >
+              승인
+            </button>
+            <button
+              onClick={(event) => { event.stopPropagation(); onReject(String(value)); }}
+              style={{ padding: "4px 10px", borderRadius: 6, border: "1px solid #FECACA", background: "#FEF2F2", color: "#B91C1C", cursor: "pointer", fontFamily: "inherit" }}
+            >
+              반려
+            </button>
+          </div>
+        );
+      },
     },
   ];
 
-  const drawerTabs = [
-    { id: "info", label: "계약정보" },
-    { id: "bond", label: "보증서확인" },
-    { id: "doc", label: "서류요청" },
-    { id: "pms", label: "PMS연동" },
-    { id: "history", label: "변경이력" },
+  const docColumns: Column[] = [
+    { key: "id", label: "요청번호", width: "130px", align: "center" },
+    { key: "docName", label: "서류명", align: "left" },
+    { key: "dueDate", label: "제출기한", width: "110px", align: "center" },
+    { key: "status", label: "상태", width: "100px", align: "center", render: (value) => <StatusBadge status={String(value)} /> },
   ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      {/* PMS 연동 안내 배너 */}
-      <div
-        style={{
-          background: "#EFF6FF",
-          border: "1px solid #BFDBFE",
-          borderRadius: 8,
-          padding: "12px 20px",
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
-        <span style={{ fontSize: 19, color: "#2563EB" }}>ℹ</span>
-        <span style={{ fontSize: 16, color: "#1E40AF", fontWeight: 500 }}>
-          <strong>PMS 공유접점:</strong> SRM_ORDER_CONTRACT 테이블이 PMS와 공유접점으로 연결됩니다.
-          PMS 계약 조회 시 이 데이터가 직접 참조됩니다.
-        </span>
+      <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 16px", fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
+        `서류요청`은 보증서 외 추가 계약 문서를 요청/추적하는 영역입니다.
+        보증 반려가 있으면 같은 탭 안에서 반려 상태와 추가 요청 문서를 함께 확인하게 구성했습니다.
       </div>
+      <DataTable columns={columns} data={bonds as unknown as Record<string, unknown>[]} sectionLabel="보증서 현황" showCheckbox={false} showExcel={false} />
+      {docs.length === 0 ? (
+        <EmptyState message="요청된 추가 서류가 없습니다." />
+      ) : (
+        <DataTable columns={docColumns} data={docs as unknown as Record<string, unknown>[]} sectionLabel="추가 서류요청" showCheckbox={false} showExcel={false} />
+      )}
+    </div>
+  );
+}
 
-      <PageHeader title="계약 관리 (계약담당자)" />
+function PmsTab({
+  contract,
+  canManage,
+  onResync,
+}: {
+  contract: Contract;
+  canManage: boolean;
+  onResync: () => void;
+}) {
+  const logs = MOCK_PMS_LOGS[contract.id] ?? [];
+  const pmsStatus = contract.pmsSyncStatus ?? contract.pmsStatus ?? "PMS_PENDING";
+
+  const columns: Column[] = [
+    { key: "requestedAt", label: "요청일시", width: "160px", align: "center" },
+    { key: "status", label: "상태", width: "110px", align: "center", render: (value) => <StatusBadge status={String(value)} /> },
+    { key: "responseCode", label: "응답코드", width: "90px", align: "center" },
+    { key: "note", label: "비고", align: "left" },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "130px 1fr", gap: "8px 12px", fontSize: 15 }}>
+        <span style={{ color: "#64748B" }}>PMS 전송상태</span>
+        <div><StatusBadge status={pmsStatus} /></div>
+        <span style={{ color: "#64748B" }}>PMS 계약 ID</span>
+        <strong>{pmsStatus === "PMS_SYNCED" ? `PMS-${contract.id}` : "-"}</strong>
+      </div>
+      {(pmsStatus === "PMS_FAILED" || pmsStatus === "PMS_PENDING") && (
+        canManage ? (
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button
+              onClick={onResync}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 6,
+                border: "none",
+                background: "#DC2626",
+                color: "#fff",
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              PMS 재전송
+            </button>
+          </div>
+        ) : (
+          <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 10, padding: "12px 14px", fontSize: 14, color: "#64748B" }}>
+            PMS 재전송은 계약담당자 권한에서만 처리합니다.
+          </div>
+        )
+      )}
+      <DataTable columns={columns} data={logs as unknown as Record<string, unknown>[]} sectionLabel="PMS 전송 이력" showCheckbox={false} showExcel={false} />
+    </div>
+  );
+}
+
+function HistoryTab({ contractId }: { contractId: string }) {
+  const items = MOCK_CONTRACT_HISTORIES.filter((item) => item.contractId === contractId);
+  if (items.length === 0) return <EmptyState message="변경 이력이 없습니다." />;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {items.map((item) => (
+        <div key={item.id} style={{ border: "1px solid #E2E8F0", borderRadius: 10, padding: 16 }}>
+          <div style={{ fontSize: 14, color: "#94A3B8", marginBottom: 4 }}>{item.changedAt} · {item.changedBy}</div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: "#111827", marginBottom: 6 }}>{item.item} 변경</div>
+          <div style={{ fontSize: 15, color: "#334155", marginBottom: 6 }}>{item.before} → {item.after}</div>
+          <div style={{ fontSize: 14, color: "#64748B" }}>사유: {item.reason}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function HistoryAndPmsTab({
+  contract,
+  canManage,
+  onResync,
+}: {
+  contract: Contract;
+  canManage: boolean;
+  onResync: () => void;
+}) {
+  const logs = MOCK_PMS_LOGS[contract.id] ?? [];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 16px", fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
+        이 탭은 계약변경 이력과 PMS 전송 이력을 함께 보여줍니다. 상태 3분리는 유지하되, 이력성 정보는 한 곳에서 보는 구조로 단순화했습니다.
+      </div>
+      <HistoryTab contractId={contract.id} />
+      <div>
+        <div style={{ fontSize: 16, fontWeight: 800, color: "#111827", marginBottom: 10 }}>PMS 전송 이력</div>
+        <PmsTab contract={contract} canManage={canManage} onResync={onResync} />
+      </div>
+    </div>
+  );
+}
+
+export default function CContractsPage() {
+  const toast = useToast();
+  const [authority] = useContractAuthority();
+  const [contracts, setContracts] = useState(MOCK_CONTRACTS);
+  const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [changeModalOpen, setChangeModalOpen] = useState(false);
+  const [rejectBondId, setRejectBondId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [changeReason, setChangeReason] = useState("");
+
+  const canManage = authority === "CONTRACT_MANAGER";
+  const bonds = selectedContract ? MOCK_BONDS.filter((bond) => bond.contractId === selectedContract.id) : [];
+  const docs = selectedContract ? MOCK_DOC_REQUESTS.filter((doc) => doc.contractId === selectedContract.id) : [];
+
+  const columns: Column[] = useMemo(
+    () => [
+      { key: "id", label: "계약번호", width: "120px", align: "center" },
+      { key: "title", label: "계약명", align: "left" },
+      { key: "vendorName", label: "업체명", width: "160px", align: "center" },
+      { key: "amount", label: "계약금액", width: "130px", align: "right", render: (value) => fmt(Number(value)) },
+      { key: "contractStatus", label: "계약상태", width: "110px", align: "center", render: (_value, row) => <StatusBadge status={String(row.contractStatus ?? row.status)} /> },
+      { key: "bondStatus", label: "보증상태", width: "110px", align: "center", render: (value) => <StatusBadge status={String(value ?? "NOT_SUBMITTED")} /> },
+      { key: "pmsSyncStatus", label: "PMS 전송", width: "110px", align: "center", render: (_value, row) => <StatusBadge status={String(row.pmsSyncStatus ?? row.pmsStatus ?? "PMS_PENDING")} /> },
+    ],
+    [],
+  );
+
+  function openContract(row: Record<string, unknown>) {
+    const found = contracts.find((item) => item.id === row.id);
+    if (!found) return;
+    setSelectedContract(found);
+    setDrawerOpen(true);
+  }
+
+  function handleApproveBond(id: string) {
+    toast.show(`보증서 ${id} 승인 처리되었습니다.`, "success");
+  }
+
+  function handleRejectBond(id: string) {
+    setRejectBondId(id);
+    setRejectReason("");
+    setRejectModalOpen(true);
+  }
+
+  function submitRejectReason() {
+    if (!rejectReason.trim()) return;
+    toast.show(`보증서 ${rejectBondId}가 반려되었습니다.`, "error");
+    setRejectModalOpen(false);
+  }
+
+  function handleDraftCancel() {
+    if (!selectedContract) return;
+    setContracts((prev) => prev.map((item) => (
+      item.id === selectedContract.id
+        ? { ...item, status: "CANCELLED", contractStatus: "CANCELLED", canCancel: false }
+        : item
+    )));
+    setSelectedContract((prev) => prev ? { ...prev, status: "CANCELLED", contractStatus: "CANCELLED", canCancel: false } : prev);
+    toast.show("초안 계약이 취소되었습니다.", "success");
+  }
+
+  function handleFinalApprove() {
+    if (!selectedContract) return;
+    setContracts((prev) => prev.map((item) => (
+      item.id === selectedContract.id
+        ? { ...item, status: "ACTIVE", contractStatus: "ACTIVE", pmsSyncStatus: "PMS_PENDING", pmsStatus: "PMS_PENDING" }
+        : item
+    )));
+    setSelectedContract((prev) => prev ? { ...prev, status: "ACTIVE", contractStatus: "ACTIVE", pmsSyncStatus: "PMS_PENDING", pmsStatus: "PMS_PENDING" } : prev);
+    toast.show("계약이 최종 확정되었습니다.", "success");
+  }
+
+  function handleResync() {
+    if (!selectedContract) return;
+    setContracts((prev) => prev.map((item) => (
+      item.id === selectedContract.id
+        ? { ...item, pmsSyncStatus: "PMS_SYNCED", pmsStatus: "PMS_SYNCED" }
+        : item
+    )));
+    setSelectedContract((prev) => prev ? { ...prev, pmsSyncStatus: "PMS_SYNCED", pmsStatus: "PMS_SYNCED" } : prev);
+    toast.show("PMS 재전송이 완료되었습니다.", "success");
+  }
+
+  function handleSubmitChange() {
+    if (!changeReason.trim()) return;
+    setChangeModalOpen(false);
+    toast.show("계약변경 요청이 변경이력으로 기록되었습니다.", "success");
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <PageHeader
+        title="계약 관리"
+        actions={<StatusGuide screenName="SCR-S-11 계약 관리" sections={CONTRACT_GUIDE} />}
+      />
+
+      <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 12, padding: "14px 18px", fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
+        현재 시연 권한: <strong>{CONTRACT_AUTHORITY_LABELS[authority]}</strong>
+        {" · "}
+        계약상태, 보증상태, PMS 전송상태를 분리해서 표시합니다.
+      </div>
 
       <SearchForm
         fields={[
           { label: "키워드", name: "keyword", type: "text", placeholder: "계약번호·계약명 검색" },
-          {
-            label: "상태",
-            name: "status",
-            type: "select",
-            options: [
-              { label: "진행중(ACTIVE)", value: "ACTIVE" },
-              { label: "완료(CLOSED)", value: "CLOSED" },
-            ],
-          },
-          { label: "계약기간", name: "period", type: "daterange" },
+          { label: "계약상태", name: "contractStatus", type: "select", options: [
+            { label: "초안", value: "DRAFT" },
+            { label: "협력업체 확인대기", value: "PENDING_SUPPLIER_APPROVAL" },
+            { label: "사업담당 승인대기", value: "PENDING_BUSINESS_APPROVAL" },
+            { label: "계약확정", value: "ACTIVE" },
+            { label: "계약종료", value: "TERMINATED" },
+          ] },
+          { label: "보증상태", name: "bondStatus", type: "select", options: [
+            { label: "미제출", value: "NOT_SUBMITTED" },
+            { label: "제출완료", value: "SUBMITTED" },
+            { label: "반려", value: "REJECTED" },
+            { label: "승인완료", value: "APPROVED" },
+          ] },
         ]}
       />
 
-      <DataTable
-        columns={columns}
-        data={contracts as unknown as Record<string, unknown>[]}
-        sectionLabel="계약 목록"
-        showCheckbox={false}
-        onRowClick={handleRowClick}
-      />
+      <DataTable columns={columns} data={contracts as unknown as Record<string, unknown>[]} sectionLabel="계약 목록" showCheckbox={false} onRowClick={openContract} />
 
-      {/* 계약 상세 Drawer */}
-      <Drawer
-        open={drawerOpen}
-        onClose={handleCloseDrawer}
-        title={selectedContract ? `${selectedContract.id} · ${selectedContract.title}` : "계약 상세"}
-        width={680}
-      >
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title={selectedContract ? `${selectedContract.id} · ${selectedContract.title}` : "계약 상세"} width={760}>
         {selectedContract && (
-          <Tabs tabs={drawerTabs}>
-            {(active) => (
-              <div>
-                {active === "info" && <ContractInfoTab contract={selectedContract} />}
-                {active === "bond" && (
-                  <BondTab
-                    bonds={bonds}
-                    onApprove={handleApprove}
-                    onReject={handleReject}
-                  />
-                )}
-                {active === "doc" && (
-                  <DocRequestTab
-                    docs={docs}
-                    onOpenRequestModal={() => setDocModalOpen(true)}
-                  />
-                )}
-                {active === "pms" && (
-                  <PmsTab
+          <Tabs tabs={[
+            { id: "info", label: "계약개요" },
+            { id: "ops", label: "보증/서류" },
+            { id: "history", label: "변경/PMS 이력" },
+          ]}>
+            {(tab) => (
+              <>
+                {tab === "info" && (
+                  <ContractInfoTab
                     contract={selectedContract}
-                    onResync={handleResync}
+                    canManage={canManage}
+                    onOpenChangeModal={() => setChangeModalOpen(true)}
+                    onCancelDraft={handleDraftCancel}
+                    onFinalApprove={handleFinalApprove}
                   />
                 )}
-                {active === "history" && <HistoryTab contractId={selectedContract.id} />}
-              </div>
+                {tab === "ops" && <ContractOpsTab bonds={bonds} docs={docs} canManage={canManage} onApprove={handleApproveBond} onReject={handleRejectBond} />}
+                {tab === "history" && <HistoryAndPmsTab contract={selectedContract} canManage={canManage} onResync={handleResync} />}
+              </>
             )}
           </Tabs>
         )}
       </Drawer>
 
-      {/* 서류 요청 Modal */}
-      <Modal
-        open={docModalOpen}
-        onClose={() => setDocModalOpen(false)}
-        title="서류 요청 등록"
-        width={480}
-        footer={
-          <>
-            <button
-              onClick={() => setDocModalOpen(false)}
-              style={{
-                background: "#fff",
-                border: "1px solid #ccc",
-                borderRadius: 4,
-                padding: "6px 16px",
-                fontSize: 16,
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
-            >
-              취소
-            </button>
-            <button
-              onClick={handleDocRequest}
-              disabled={!docName.trim()}
-              style={{
-                background: docName.trim() ? "#01ACC8" : "#ccc",
-                color: "#fff",
-                border: "none",
-                borderRadius: 4,
-                padding: "6px 16px",
-                fontSize: 16,
-                cursor: docName.trim() ? "pointer" : "not-allowed",
-                fontFamily: "inherit",
-              }}
-            >
-              요청 등록
-            </button>
-          </>
-        }
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <div>
-            <label style={{ fontSize: 16, color: "#555", display: "block", marginBottom: 4 }}>
-              서류명 <span style={{ color: "#DC2626" }}>*</span>
-            </label>
-            <input
-              value={docName}
-              onChange={(e) => setDocName(e.target.value)}
-              placeholder="요청할 서류명을 입력하세요"
-              style={{
-                width: "100%",
-                padding: "7px 10px",
-                border: "1px solid #ccc",
-                borderRadius: 4,
-                fontSize: 16,
-                fontFamily: "inherit",
-                boxSizing: "border-box",
-              }}
-            />
-          </div>
-          <div>
-            <label style={{ fontSize: 16, color: "#555", display: "block", marginBottom: 4 }}>
-              제출기한
-            </label>
-            <input
-              type="date"
-              value={docDue}
-              onChange={(e) => setDocDue(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "7px 10px",
-                border: "1px solid #ccc",
-                borderRadius: 4,
-                fontSize: 16,
-                fontFamily: "inherit",
-                boxSizing: "border-box",
-              }}
-            />
-          </div>
-        </div>
-      </Modal>
-
-      {/* 반려 사유 Modal */}
       <Modal
         open={rejectModalOpen}
         onClose={() => setRejectModalOpen(false)}
-        title="보증서 반려 사유 입력"
-        width={480}
+        title="보증서 반려"
         footer={
           <>
-            <button
-              onClick={() => setRejectModalOpen(false)}
-              style={{
-                background: "#fff",
-                border: "1px solid #ccc",
-                borderRadius: 4,
-                padding: "6px 16px",
-                fontSize: 16,
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
-            >
-              취소
-            </button>
-            <button
-              onClick={handleRejectSubmit}
-              disabled={!rejectReason.trim()}
-              style={{
-                background: rejectReason.trim() ? "#DC2626" : "#ccc",
-                color: "#fff",
-                border: "none",
-                borderRadius: 4,
-                padding: "6px 16px",
-                fontSize: 16,
-                cursor: rejectReason.trim() ? "pointer" : "not-allowed",
-                fontFamily: "inherit",
-              }}
-            >
-              반려 처리
-            </button>
+            <button style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #CBD5E1", background: "#fff", cursor: "pointer", fontFamily: "inherit" }} onClick={() => setRejectModalOpen(false)}>취소</button>
+            <button style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: rejectReason.trim() ? "#DC2626" : "#9CA3AF", color: "#fff", cursor: rejectReason.trim() ? "pointer" : "not-allowed", fontFamily: "inherit" }} disabled={!rejectReason.trim()} onClick={submitRejectReason}>반려 확정</button>
           </>
         }
       >
-        <div>
-          <label style={{ fontSize: 16, color: "#555", display: "block", marginBottom: 6 }}>
-            반려 사유 <span style={{ color: "#DC2626" }}>*</span>{" "}
-            <span style={{ color: "#9CA3AF", fontSize: 15 }}>(최대 1000자)</span>
-          </label>
-          <textarea
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            maxLength={1000}
-            rows={5}
-            placeholder="반려 사유를 상세히 입력하세요."
-            style={{
-              width: "100%",
-              padding: "8px 10px",
-              border: `1px solid ${rejectReason.trim() ? "#ccc" : "#FCA5A5"}`,
-              borderRadius: 4,
-              fontSize: 16,
-              fontFamily: "inherit",
-              resize: "vertical",
-              boxSizing: "border-box",
-            }}
-          />
-          {!rejectReason.trim() && (
-            <p style={{ fontSize: 15, color: "#DC2626", marginTop: 4 }}>
-              반려 사유를 입력해야 합니다.
-            </p>
-          )}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
+            고객사 요구사항 강조포인트: 보증서 반려 시 반려 사유 입력을 필수로 두고, 협력업체 재제출 흐름으로 연결합니다.
+          </div>
+          <textarea rows={4} value={rejectReason} onChange={(event) => setRejectReason(event.target.value)} placeholder="반려 사유를 입력하세요." style={{ width: "100%", padding: "10px 12px", borderRadius: 6, border: "1px solid #CBD5E1", fontSize: 15, fontFamily: "inherit", boxSizing: "border-box", resize: "vertical" }} />
+        </div>
+      </Modal>
+
+      <Modal
+        open={changeModalOpen}
+        onClose={() => setChangeModalOpen(false)}
+        title="계약변경 요청"
+        footer={
+          <>
+            <button style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #CBD5E1", background: "#fff", cursor: "pointer", fontFamily: "inherit" }} onClick={() => setChangeModalOpen(false)}>취소</button>
+            <button style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: changeReason.trim() ? "#01ACC8" : "#9CA3AF", color: "#fff", cursor: changeReason.trim() ? "pointer" : "not-allowed", fontFamily: "inherit" }} disabled={!changeReason.trim()} onClick={handleSubmitChange}>변경 요청 등록</button>
+          </>
+        }
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
+            확정 후에는 계약 본문을 직접 수정하지 않고, 변경 전/후 값과 사유를 남기는 계약변경 절차로만 처리합니다.
+          </div>
+          <textarea rows={4} value={changeReason} onChange={(event) => setChangeReason(event.target.value)} placeholder="변경 사유와 변경 전/후 항목을 입력하세요." style={{ width: "100%", padding: "10px 12px", borderRadius: 6, border: "1px solid #CBD5E1", fontSize: 15, fontFamily: "inherit", boxSizing: "border-box", resize: "vertical" }} />
         </div>
       </Modal>
     </div>

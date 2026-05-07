@@ -6,7 +6,9 @@ import { Bell, User, LogOut, ChevronDown } from "lucide-react";
 import { useRole } from "@/lib/role";
 import { ROLE_LABELS } from "@/lib/types";
 import { MENUS } from "@/lib/menu";
+import { getDefaultPath } from "@/lib/access";
 import RoleSwitcher from "@/components/RoleSwitcher";
+import ContractAuthoritySwitcher from "@/components/ContractAuthoritySwitcher";
 import { MOCK_NOTIFICATIONS } from "@/lib/mock/common";
 
 interface HeaderProps { onMenuClick?: () => void; }
@@ -16,6 +18,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const [showNotif, setShowNotif] = useState(false);
   const [showUser, setShowUser] = useState(false);
   const unreadCount = MOCK_NOTIFICATIONS.filter((n) => !n.read).length;
+  const myPageHref = role === "A" ? getDefaultPath(role) : `/${role.toLowerCase()}/mypage/`;
 
   return (
     <header style={{
@@ -44,6 +47,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
         {/* 역할 스위처 */}
         <RoleSwitcher />
+        <ContractAuthoritySwitcher />
 
         {/* 알림 */}
         <div style={{ position: "relative" }}>
@@ -99,7 +103,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
               borderRadius: 8, boxShadow: "0 8px 24px rgba(0,0,0,0.2)", zIndex: 200,
             }}>
               {[
-                { label: "마이페이지", href: `/${role.toLowerCase()}/mypage/` },
+                { label: "마이페이지", href: myPageHref },
                 { label: "비밀번호 변경", href: "#" },
               ].map((item) => (
                 <Link
