@@ -257,7 +257,7 @@ export default function VContractsPage() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader
         title="계약·보증 관리"
         actions={<StatusGuide screenName="SCR-S-12 협력업체 계약·보증" sections={CONTRACT_VENDOR_GUIDE} />}

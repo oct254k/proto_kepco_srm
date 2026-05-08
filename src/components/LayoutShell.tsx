@@ -35,7 +35,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
         {isOpen && (
           <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setIsOpen(false)} />
         )}
-        <main style={{ flex: 1, minWidth: 0, background: "#ffffff", padding: "24px 32px 40px" }}>
+        <main style={{ flex: 1, minWidth: 0, background: "#ffffff", padding: "12px 32px 40px" }}>
           {unauthorized ? <ForbiddenView /> : children}
         </main>
       </div>

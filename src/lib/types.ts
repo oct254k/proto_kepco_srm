@@ -26,6 +26,11 @@ export interface Order {
   pmsProjectName?: string;
   editableByRequester?: boolean;
   canCancel?: boolean;
+  category?: string;
+  checklistStatus?: string;
+  progressStatus?: string;
+  contractNo?: string;
+  contractName?: string;
 }
 
 export interface Bid {

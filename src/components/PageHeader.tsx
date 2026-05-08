@@ -20,8 +20,9 @@ export default function PageHeader({ title, actions, showBack = true, onBack }: 
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        margin: "8px 0 24px",
+        margin: "0 0 20px",
         gap: 12,
+        height: 44,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -45,7 +46,7 @@ export default function PageHeader({ title, actions, showBack = true, onBack }: 
         )}
         <h1
           style={{
-            fontSize: 22,
+            fontSize: 28,
             fontWeight: 700,
             color: "#1a1a1a",
             margin: 0,

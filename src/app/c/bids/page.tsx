@@ -426,7 +426,7 @@ export default function CBidsPage() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader
         title="입찰계획·공고 관리"
         actions={

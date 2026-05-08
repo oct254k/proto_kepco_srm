@@ -368,7 +368,7 @@ export default function COrdersPage() {
   ];
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader title="발주계약 관리" />
 
       <SearchForm fields={searchFields} onSearch={() => {}} />

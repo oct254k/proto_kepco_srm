@@ -59,8 +59,8 @@ export default function DataTable({
         }}
       >
         <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-          <span style={{ fontSize: 17, fontWeight: 700, color: "#1a1a1a" }}>{sectionLabel}</span>
-          <span style={{ fontSize: 17, fontWeight: 700 }}>
+          <span style={{ fontSize: 20, fontWeight: 700, color: "#1a1a1a" }}>{sectionLabel}</span>
+          <span style={{ fontSize: 15, fontWeight: 700 }}>
             <span style={{ color: "#D58040" }}>{count.toLocaleString()}</span>
             <span style={{ color: "#1a1a1a" }}>건</span>
           </span>
@@ -128,7 +128,7 @@ export default function DataTable({
                   key={col.key}
                   style={{
                     padding: "12px 12px",
-                    textAlign: "center",
+                    textAlign: col.align || "center",
                     fontWeight: 600,
                     color: "#555",
                     whiteSpace: "nowrap",

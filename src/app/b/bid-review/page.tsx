@@ -366,7 +366,7 @@ export default function BBidReviewPage() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader title="나의 배정 심사 (입찰심사)" />
 
       <SearchForm

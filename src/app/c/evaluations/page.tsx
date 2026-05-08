@@ -391,7 +391,7 @@ export default function CEvaluationsPage() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader title="참여업체 평가·심사 관리" />
 
       <div style={{ background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: 6, padding: "8px 14px", fontSize: 15, color: "#92400E" }}>

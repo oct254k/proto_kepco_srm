@@ -913,7 +913,7 @@ export default function AdminVendorsPage() {
   const activePendingCount = pendingVendors.filter((v) => v.status === "PENDING").length;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader title="협력업체 승인 관리 (SCR-S-16)" />
 
       <Tabs

@@ -175,7 +175,7 @@ export default function BBidsPage() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader title="입찰계획·공고 관리 (조회 전용)" />
 
       <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 6, padding: "10px 16px", fontSize: 16, color: "#1E40AF" }}>

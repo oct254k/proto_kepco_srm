@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Search, LayoutDashboard, Users, Building2, Database, Settings,
+  ChevronRight, ChevronDown,
 } from "lucide-react";
 import type { LucideProps } from "lucide-react";
 
@@ -77,34 +78,34 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         height: "calc(100vh - 80px)",
         background: "#ffffff",
         borderRight: "none",
+        padding: "40px 31px 0px",
+        boxSizing: "border-box",
       }}
     >
       {/* 메뉴 검색 */}
-      <div style={{ padding: "20px 25px 10px" }}>
-        <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="메뉴를 검색하세요."
-            style={{
-              width: "100%",
-              height: 36,
-              padding: "4px 36px 4px 12px",
-              border: "1px solid #E6EAF1",
-              borderRadius: 8,
-              background: "#F9F9F9",
-              fontSize: 13,
-              fontFamily: "inherit",
-              color: "#1a1a1a",
-              outline: "none",
-            }}
-          />
-          <Search size={16} color="#8F95A9" style={{ position: "absolute", right: 10, pointerEvents: "none" }} />
-        </div>
+      <div style={{ position: "relative", display: "flex", alignItems: "center", marginBottom: 20 }}>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="메뉴를 검색하세요."
+          style={{
+            width: "100%",
+            height: 44,
+            padding: "0 40px 0 14px",
+            border: "1px solid #E6EAF1",
+            borderRadius: 9999,
+            background: "#F9F9F9",
+            fontSize: 13,
+            fontFamily: "inherit",
+            color: "#1a1a1a",
+            outline: "none",
+          }}
+        />
+        <Search size={16} color="#8F95A9" style={{ position: "absolute", right: 10, pointerEvents: "none" }} />
       </div>
 
       {/* 메뉴 목록 */}
-      <nav style={{ padding: "6px 25px 20px" }}>
+      <nav>
         {filtered.map((group) => {
           const groupActive = isGroupActive(group);
           const svgSrc = SVG_ICON_MAP[group.icon];
@@ -163,7 +164,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     />
                   ) : null;
                 })()}
-                <span>{group.label}</span>
+                <span style={{ flex: 1 }}>{group.label}</span>
+                {hasMultipleItems && groupActive
+                  ? <ChevronDown size={16} color={groupActive ? ACTIVE_FG : REST_FG} style={{ flexShrink: 0 }} />
+                  : <ChevronRight size={16} color={groupActive ? ACTIVE_FG : REST_FG} style={{ flexShrink: 0 }} />
+                }
               </Link>
 
               {hasMultipleItems && (

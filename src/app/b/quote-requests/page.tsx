@@ -529,7 +529,7 @@ export default function BQuoteRequestsPage() {
   ];
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader
         title="견적요청 관리"
         actions={

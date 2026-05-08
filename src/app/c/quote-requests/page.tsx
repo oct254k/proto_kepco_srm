@@ -223,7 +223,7 @@ export default function CQuoteRequestsPage() {
   ];
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader title="견적요청 조회" />
 
       <SearchForm fields={searchFields} onSearch={() => {}} />

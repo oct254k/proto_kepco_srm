@@ -975,7 +975,7 @@ export default function AdminUsersPage() {
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader title="사용자·협력업체 관리 (SCR-S-15)" />
 
       <Tabs

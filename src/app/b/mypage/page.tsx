@@ -693,7 +693,7 @@ export default function BMypagePage() {
   ];
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader title="마이페이지" />
       <ProfileCard />
       <div

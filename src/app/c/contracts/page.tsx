@@ -162,7 +162,7 @@ function ContractInfoTab({
   const canFinalize = canManage && isPendingBusiness(contract) && contract.businessApprovalStatus === "APPROVED";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <StatusSummaryBar contract={contract} />
       <div
         style={{
@@ -349,7 +349,7 @@ function ContractOpsTab({
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 16px", fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
         `서류요청`은 보증서 외 추가 계약 문서를 요청/추적하는 영역입니다.
         보증 반려가 있으면 같은 탭 안에서 반려 상태와 추가 요청 문서를 함께 확인하게 구성했습니다.
@@ -384,7 +384,7 @@ function PmsTab({
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div style={{ display: "grid", gridTemplateColumns: "130px 1fr", gap: "8px 12px", fontSize: 15 }}>
         <span style={{ color: "#64748B" }}>PMS 전송상태</span>
         <div><StatusBadge status={pmsStatus} /></div>
@@ -450,7 +450,7 @@ function HistoryAndPmsTab({
   const logs = MOCK_PMS_LOGS[contract.id] ?? [];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 16px", fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
         이 탭은 계약변경 이력과 PMS 전송 이력을 함께 보여줍니다. 상태 3분리는 유지하되, 이력성 정보는 한 곳에서 보는 구조로 단순화했습니다.
       </div>
@@ -555,7 +555,7 @@ export default function CContractsPage() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <PageHeader
         title="계약 관리"
         actions={<StatusGuide screenName="SCR-S-11 계약 관리" sections={CONTRACT_GUIDE} />}
