@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 export interface Column {
   key: string;
@@ -58,7 +59,7 @@ export default function DataTable({
       >
         <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
           <span style={{ fontSize: 17, fontWeight: 700, color: "#1a1a1a" }}>{sectionLabel}</span>
-          <span style={{ fontSize: 16, fontWeight: 700 }}>
+          <span style={{ fontSize: 17, fontWeight: 700 }}>
             <span style={{ color: "#D58040" }}>{count.toLocaleString()}</span>
             <span style={{ color: "#1a1a1a" }}>건</span>
           </span>
@@ -75,9 +76,9 @@ export default function DataTable({
                 background: "#ffffff",
                 color: "#1a1a1a",
                 border: "1px solid #CFCFCF",
-                borderRadius: 6,
-                height: 32,
-                padding: "0 12px",
+                borderRadius: 8,
+                height: 36,
+                padding: "0 14px",
                 fontSize: 13,
                 fontWeight: 500,
                 cursor: "pointer",
@@ -87,23 +88,7 @@ export default function DataTable({
                 gap: 8,
               }}
             >
-              <span
-                aria-hidden
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: 18,
-                  height: 18,
-                  borderRadius: 3,
-                  background: "#16A34A",
-                  color: "#fff",
-                  fontSize: 11,
-                  fontWeight: 800,
-                }}
-              >
-                X
-              </span>
+              <Image src="/icons/excel.svg" width={24} height={24} alt="" unoptimized />
               다운로드
             </button>
           )}
