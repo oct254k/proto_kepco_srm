@@ -210,8 +210,6 @@ function Widget({ title, children, style }: { title: string; children: React.Rea
         border: "1px solid #E5E7EB",
         borderRadius: 8,
         padding: "20px",
-        minWidth: 0,
-        overflow: "hidden",
         ...style,
       }}
     >
@@ -257,9 +255,17 @@ export default function ContractDashboardPage() {
 
   // ── 견적요청 대기 목록 컬럼
   const quoteColumns: Column[] = [
+    { key: "id", label: "견적ID", width: "130px", align: "center" },
     { key: "title", label: "견적 제목", align: "left" },
-    { key: "deadline", label: "마감일", width: "90px", align: "center" },
-    { key: "status", label: "상태", width: "90px", align: "center", render: (val) => <StatusBadge status={String(val)} /> },
+    { key: "requestedAt", label: "요청일", width: "100px", align: "center" },
+    { key: "deadline", label: "마감일", width: "100px", align: "center" },
+    {
+      key: "status",
+      label: "상태",
+      width: "100px",
+      align: "center",
+      render: (val) => <StatusBadge status={String(val)} />,
+    },
   ];
 
   // ── 입찰 현황 컬럼
@@ -310,14 +316,16 @@ export default function ContractDashboardPage() {
   const contractColumns: Column[] = [
     { key: "id", label: "계약ID", width: "130px", align: "center" },
     { key: "title", label: "계약명", align: "left" },
-    { key: "vendorName", label: "업체명", width: "140px", align: "center" },
+    { key: "vendorName", label: "업체명", width: "160px", align: "center" },
     {
       key: "amount",
       label: "계약금액",
-      width: "120px",
+      width: "130px",
       align: "right",
       render: (val) => `${Number(val).toLocaleString()}원`,
     },
+    { key: "startDate", label: "계약시작일", width: "100px", align: "center" },
+    { key: "endDate", label: "계약종료일", width: "100px", align: "center" },
     {
       key: "status",
       label: "계약상태",
@@ -383,7 +391,7 @@ export default function ContractDashboardPage() {
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       {/* ── 페이지 헤더 */}
       <PageHeader
         title="계약담당자 대시보드"
@@ -398,7 +406,7 @@ export default function ContractDashboardPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+          gridTemplateColumns: "repeat(5, 1fr)",
           gap: 12,
         }}
       >
@@ -440,7 +448,7 @@ export default function ContractDashboardPage() {
       </div>
 
       {/* ── Row 2: 캘린더(2/3) + 공지사항(1/3) */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, minWidth: 0 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 }}>
         {/* 캘린더 위젯 */}
         <Widget title="담당 입찰 일정 (2026년 04월)">
           <MiniCalendar events={C_CALENDAR_EVENTS} />
@@ -549,7 +557,7 @@ export default function ContractDashboardPage() {
       </Widget>
 
       {/* ── Row 4: 견적요청 대기 + 입찰 현황 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, minWidth: 0 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <Widget title="견적요청 대기 목록">
           <DataTable
             columns={quoteColumns}
@@ -572,7 +580,7 @@ export default function ContractDashboardPage() {
       </div>
 
       {/* ── Row 5: 낙찰 확정 대기 + 계약 목록 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, minWidth: 0 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <Widget title="낙찰 확정 대기">
           <DataTable
             columns={awardColumns}

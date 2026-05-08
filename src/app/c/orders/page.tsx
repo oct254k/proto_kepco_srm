@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { CheckCircle, RotateCcw, FileText } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import SearchForm from "@/components/SearchForm";
 import DataTable from "@/components/DataTable";
@@ -138,9 +137,8 @@ function PlanTab({ order, onConfirm }: PlanTabProps) {
         <div style={{ textAlign: "right" }}>
           <button
             onClick={handleConfirm}
-            style={{ padding: "9px 22px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6 }}
+            style={{ padding: "9px 22px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
-            <CheckCircle size={14} />
             발주계획 확정
           </button>
         </div>
@@ -196,16 +194,13 @@ function OrderDetailDrawer({ order, open, onClose, onPlanConfirm }: OrderDetailD
                 </div>
                 {/* C 역할 액션 버튼 */}
                 <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <button style={{ padding: "7px 16px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 5 }}>
-                    <CheckCircle size={13} />
+                  <button style={{ padding: "7px 16px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
                     접수처리
                   </button>
-                  <button style={{ padding: "7px 16px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 5 }}>
-                    <FileText size={13} />
+                  <button style={{ padding: "7px 16px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
                     자료보완요청
                   </button>
-                  <button style={{ padding: "7px 16px", background: "#ffffff", color: "#B91C1C", border: "1px solid #FECACA", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 5 }}>
-                    <RotateCcw size={13} />
+                  <button style={{ padding: "7px 16px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
                     반려
                   </button>
                 </div>
@@ -332,9 +327,8 @@ export default function COrdersPage() {
               e.stopPropagation();
               toast.show(`${row.id as string} 발주계획 확정 처리`, "info");
             }}
-            style={{ padding: "4px 10px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 3, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 4 }}
+            style={{ padding: "4px 10px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 3, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
-            <CheckCircle size={12} />
             계획확정
           </button>
         ) : null
@@ -343,9 +337,9 @@ export default function COrdersPage() {
   ];
 
   const searchFields = [
-    { label: "기간", type: "daterange" as const, name: "period", required: true },
+    { label: "기간", type: "daterange" as const, name: "period" },
     {
-      label: "진행상태",
+      label: "상태",
       type: "select" as const,
       name: "status",
       options: [
@@ -356,20 +350,32 @@ export default function COrdersPage() {
       ],
     },
     {
-      label: "체크리스트",
+      label: "선정방법",
       type: "select" as const,
-      name: "checklist",
-      options: [
-        { label: "작성중", value: "DRAFTING" },
-        { label: "완료", value: "DONE" },
-      ],
+      name: "method",
+      options: Object.entries(METHOD_LABELS).map(([k, v]) => ({ label: v, value: k })),
     },
-    { label: "키워드", type: "text" as const, name: "keyword" },
+    { label: "키워드", type: "text" as const, name: "keyword", placeholder: "발주명 검색" },
   ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <PageHeader title="발주계약 관리" />
+      <PageHeader title="발주계획 관리 (계약담당자)" />
+
+      {/* PMS 연동 상태 카드 */}
+      <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 8, padding: "14px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#22C55E", display: "inline-block" }} />
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#1E40AF" }}>PMS 연동 상태: {PMS_SYNC_INFO.status}</span>
+        </div>
+        <span style={{ fontSize: 16, color: "#374151" }}>마지막 동기화: {PMS_SYNC_INFO.lastSync}</span>
+        <span style={{ fontSize: 16, color: "#374151" }}>대기중 발주 {PMS_SYNC_INFO.pendingCount}건</span>
+        <button
+          style={{ marginLeft: "auto", padding: "6px 14px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+        >
+          PMS 수동 동기화
+        </button>
+      </div>
 
       <SearchForm fields={searchFields} onSearch={() => {}} />
 
@@ -377,29 +383,10 @@ export default function COrdersPage() {
         columns={columns}
         data={MOCK_ORDERS as unknown as Record<string, unknown>[]}
         totalCount={MOCK_ORDERS.length}
-        sectionLabel="발주계약요청 목록"
+        sectionLabel="발주계약요청 목록 (전체)"
         showExcel={true}
-        showCheckbox={true}
+        showCheckbox={false}
         onRowClick={handleRowClick}
-        actionButton={
-          <button
-            type="button"
-            style={{
-              background: "#654024",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              height: 36,
-              padding: "0 18px",
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-              fontFamily: "inherit",
-            }}
-          >
-            체크리스트 작성
-          </button>
-        }
       />
 
       <OrderDetailDrawer
