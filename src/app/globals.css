@@ -9,7 +9,7 @@
 }
 
 @theme {
-  --font-sans: "Nanum Gothic", "Pretendard", "돋움", dotum, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", Helvetica, sans-serif;
+  --font-sans: "Pretendard", "Nanum Gothic", "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, BlinkMacSystemFont, "돋움", dotum, Helvetica, sans-serif;
 
   /* ── 브랜드 (PMS) ── */
   --color-primary: #00a7ea;
@@ -192,7 +192,54 @@ button, input, select, textarea {
   color: #333;
 }
 
-/* ── SRM 한 줄 필터 ── */
+/* ── SRM 검색폼 (figma SRM 발주계약관리 기준) ── */
+.srm-search-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  width: 100%;
+}
+
+.srm-search-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px 20px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.srm-search-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.srm-search-actions-r {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 1180px) {
+  .srm-search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .srm-search-actions-r {
+    justify-content: flex-end;
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .srm-search-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── SRM 한 줄 필터 (legacy) ── */
 .srm-filter-row {
   display: flex;
   flex-wrap: wrap;

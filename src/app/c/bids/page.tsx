@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Search } from "lucide-react";
 import DataTable from "@/components/DataTable";
 import type { Column } from "@/components/DataTable";
 import StatusBadge from "@/components/StatusBadge";
@@ -58,7 +59,7 @@ function PlanForm({ onSave }: { onSave: () => void }) {
       <div style={fieldRow}>
         <span style={label}>발주계획 연계</span>
         <input style={{ ...input, flex: "none", width: 200 }} placeholder="발주계획 검색" readOnly />
-        <button style={{ ...btn("secondary"), fontSize: 12 }}>🔍 검색</button>
+        <button style={{ ...btn("secondary"), fontSize: 12, display:"inline-flex", alignItems:"center", gap:5 }}><Search size={13} />검색</button>
         <span style={{ fontSize: 15, color: "#888" }}>ORD-PLAN-2026-010 — 태양광 인버터 구매</span>
       </div>
 
@@ -102,7 +103,7 @@ function PlanForm({ onSave }: { onSave: () => void }) {
           <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>지명경쟁 대상 업체 지정</div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <input style={{ ...input, flex: "none", width: 160 }} placeholder="업체명 검색" />
-            <button style={{ ...btn("secondary"), fontSize: 12 }}>🔍 검색</button>
+            <button style={{ ...btn("secondary"), fontSize: 12, display:"inline-flex", alignItems:"center", gap:5 }}><Search size={13} />검색</button>
           </div>
           <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
             {["(주)대성전기", "(주)한진산업"].map((v) => (

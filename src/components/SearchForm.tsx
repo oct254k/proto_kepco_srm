@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, RefreshCw } from "lucide-react";
+import { Calendar, ChevronDown } from "lucide-react";
 
 export interface SearchField {
   label: string;
@@ -9,6 +9,7 @@ export interface SearchField {
   name: string;
   placeholder?: string;
   options?: { label: string; value: string }[];
+  required?: boolean;
 }
 
 interface SearchFormProps {
@@ -32,17 +33,18 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
     setValues({});
   };
 
-  const inputStyle: React.CSSProperties = {
-    padding: "0 9px",
+  const inputBaseStyle: React.CSSProperties = {
+    width: "100%",
+    height: 36,
+    padding: "0 12px",
     border: "1px solid #becacf",
-    borderRadius: "4px",
-    fontSize: "12px",
+    borderRadius: 6,
+    fontSize: 13,
     fontFamily: "inherit",
     background: "#fff",
-    height: "26px",
     boxSizing: "border-box",
-    minWidth: 0,
     outline: "none",
+    color: "#1a1a1a",
   };
 
   return (
@@ -50,92 +52,125 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
       style={{
         background: "#FAF7F2",
         border: "1px solid #E8E8E8",
-        borderRadius: "8px",
-        padding: "0.75rem 1rem",
-        marginBottom: "1rem",
+        borderRadius: 8,
+        padding: "20px 24px",
+        marginBottom: 16,
       }}
     >
       <form onSubmit={handleSubmit}>
-        <div className="srm-filter-row">
-          {fields.map((field) => (
-            <div key={field.name} className="srm-filter-item">
-              <label
-                style={{
-                  fontSize: "12px",
-                  color: "#555",
-                  fontWeight: 400,
-                  whiteSpace: "nowrap",
-                  flex: "0 0 auto",
-                }}
-              >
-                {field.label}
-              </label>
-              {field.type === "select" ? (
-                <select
-                  value={values[field.name] || ""}
-                  onChange={(e) => handleChange(field.name, e.target.value)}
-                  style={{ ...inputStyle, width: 140 }}
+        <div className="srm-search-row">
+          <div className="srm-search-grid">
+            {fields.map((field) => (
+              <div key={field.name} className="srm-search-cell">
+                <label
+                  style={{
+                    fontSize: 12,
+                    color: "#555",
+                    fontWeight: 500,
+                    letterSpacing: "-0.01em",
+                  }}
                 >
-                  <option value="">전체</option>
-                  {field.options?.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              ) : field.type === "daterange" ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <input
-                    type="date"
-                    value={values[field.name + "_from"] || ""}
-                    onChange={(e) => handleChange(field.name + "_from", e.target.value)}
-                    style={{ ...inputStyle, width: 130 }}
-                  />
-                  <span style={{ fontSize: "12px", color: "#888" }}>~</span>
-                  <input
-                    type="date"
-                    value={values[field.name + "_to"] || ""}
-                    onChange={(e) => handleChange(field.name + "_to", e.target.value)}
-                    style={{ ...inputStyle, width: 130 }}
-                  />
-                </div>
-              ) : (
-                <input
-                  type={field.type}
-                  value={values[field.name] || ""}
-                  onChange={(e) => handleChange(field.name, e.target.value)}
-                  placeholder={field.placeholder}
-                  style={{ ...inputStyle, width: 160 }}
-                />
-              )}
-            </div>
-          ))}
+                  {field.label}
+                  {field.required && (
+                    <span style={{ color: "#ff0b3a", marginLeft: 2 }}>*</span>
+                  )}
+                </label>
 
-          <div className="srm-filter-actions">
-            <button
-              type="submit"
-              style={{
-                background: "#654024",
-                color: "#fff",
-                border: "1px solid #DFE8F0",
-                borderRadius: "4px",
-                padding: "0 12px",
-                height: "28px",
-                fontSize: "12px",
-                fontWeight: 400,
-                cursor: "pointer",
-                fontFamily: "inherit",
-                display: "inline-flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "4px",
-                whiteSpace: "nowrap",
-                minWidth: 54,
-              }}
-            >
-              <Search size={12} />
-              검색
-            </button>
+                {field.type === "select" ? (
+                  <div style={{ position: "relative" }}>
+                    <select
+                      value={values[field.name] || ""}
+                      onChange={(e) => handleChange(field.name, e.target.value)}
+                      style={{
+                        ...inputBaseStyle,
+                        appearance: "none",
+                        WebkitAppearance: "none",
+                        paddingRight: 32,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <option value="">전체</option>
+                      {field.options?.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      size={14}
+                      color="#6c757d"
+                      style={{
+                        position: "absolute",
+                        right: 10,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                      }}
+                    />
+                  </div>
+                ) : field.type === "daterange" ? (
+                  (() => {
+                    const fmt = (s: string) => (s ? s.replaceAll("-", ".") : "");
+                    const from = values[field.name + "_from"] || "";
+                    const to = values[field.name + "_to"] || "";
+                    const display = from || to ? `${fmt(from)}~${fmt(to)}` : "";
+                    return (
+                      <div style={{ position: "relative" }}>
+                        <input
+                          type="text"
+                          readOnly
+                          value={display}
+                          placeholder="기간 선택"
+                          style={{ ...inputBaseStyle, paddingRight: 32, cursor: "pointer" }}
+                        />
+                        <Calendar
+                          size={14}
+                          color="#6c757d"
+                          style={{
+                            position: "absolute",
+                            right: 10,
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            pointerEvents: "none",
+                          }}
+                        />
+                      </div>
+                    );
+                  })()
+                ) : field.type === "date" ? (
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="date"
+                      value={values[field.name] || ""}
+                      onChange={(e) => handleChange(field.name, e.target.value)}
+                      style={{ ...inputBaseStyle, paddingRight: 32 }}
+                    />
+                    <Calendar
+                      size={14}
+                      color="#6c757d"
+                      style={{
+                        position: "absolute",
+                        right: 10,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <input
+                    type="text"
+                    value={values[field.name] || ""}
+                    onChange={(e) => handleChange(field.name, e.target.value)}
+                    placeholder={field.placeholder}
+                    style={inputBaseStyle}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="srm-search-actions-r">
             <button
               type="button"
               onClick={handleReset}
@@ -143,22 +178,35 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
                 background: "#ffffff",
                 color: "#654024",
                 border: "1px solid #CFCFCF",
-                borderRadius: "4px",
-                padding: "0 12px",
-                height: "28px",
-                fontSize: "12px",
+                borderRadius: 6,
+                padding: "0 18px",
+                height: 36,
+                fontSize: 13,
+                fontWeight: 600,
                 cursor: "pointer",
                 fontFamily: "inherit",
-                display: "inline-flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "4px",
                 whiteSpace: "nowrap",
-                minWidth: 54,
               }}
             >
-              <RefreshCw size={12} />
               초기화
+            </button>
+            <button
+              type="submit"
+              style={{
+                background: "#654024",
+                color: "#fff",
+                border: "1px solid #DFE8F0",
+                borderRadius: 6,
+                padding: "0 22px",
+                height: 36,
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+                fontFamily: "inherit",
+                whiteSpace: "nowrap",
+              }}
+            >
+              검색
             </button>
           </div>
         </div>

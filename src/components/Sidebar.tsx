@@ -1,139 +1,199 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Search, LayoutDashboard, Users, Building2, Database, Settings,
+} from "lucide-react";
+import type { LucideProps } from "lucide-react";
+
+const LUCIDE_FALLBACK: Partial<Record<MenuIconName, React.ComponentType<LucideProps>>> = {
+  LayoutDashboard,
+  Users,
+  Building2,
+  Database,
+  Settings,
+};
 import { useRole } from "@/lib/role";
-import { MENUS } from "@/lib/menu";
+import { MENUS, type MenuGroup, type MenuIconName } from "@/lib/menu";
 
 interface SidebarProps { isOpen: boolean; onClose: () => void; }
 
-const ACTIVE_BG = "#D58040";
-const HOVER_BG = "#fae6d4";
-const ACTIVE_FG = "#ffffff";
-const HOVER_FG = "#654024";
-const REST_FG = "#555555";
-const ITEM_RADIUS = 20;
+const SVG_ICON_MAP: Partial<Record<MenuIconName, string>> = {
+  Receipt:       "/icons/lnb/icon-quote.svg",
+  Package:       "/icons/lnb/icon-order.svg",
+  Gavel:         "/icons/lnb/icon-bid.svg",
+  ClipboardCheck:"/icons/lnb/icon-eval.svg",
+  Trophy:        "/icons/lnb/icon-award.svg",
+  FileSignature: "/icons/lnb/icon-contract.svg",
+  CircleUser:    "/icons/lnb/icon-mypage.svg",
+  Settings:      "/icons/lnb/icon-system.svg",
+};
+
+const ACTIVE_BG   = "#D58040";
+const ACTIVE_FG   = "#ffffff";
+const REST_FG     = "#3B414E";
+const HOVER_BG    = "#FFF3E8";
+const SUB_ACTIVE_BG = "#FDF3EB";
+const SUB_ACTIVE_FG = "#9A4A1A";
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [role] = useRole();
   const groups = MENUS[role];
-  const [openGroups, setOpenGroups] = useState<Set<string>>(
-    () => new Set(groups.map((g) => g.label))
-  );
+  const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    setOpenGroups(new Set(groups.map((g) => g.label)));
-  }, [groups]);
+  const cleanPath = pathname.replace(/\/$/, "");
 
-  function toggleGroup(label: string) {
-    setOpenGroups((prev) => {
-      const next = new Set(prev);
-      next.has(label) ? next.delete(label) : next.add(label);
-      return next;
-    });
-  }
+  const isLeafActive = (href: string) => cleanPath === href.replace(/\/$/, "");
+  const isGroupActive = (group: MenuGroup) => group.items.some((it) => isLeafActive(it.href));
 
-  const activeHref = useMemo(() => {
-    const allHrefs = groups.flatMap((g) =>
-      g.items.map((i) => i.href.replace(/\/$/, "")).filter((h): h is string => Boolean(h))
-    );
-    const cleanPath = pathname.replace(/\/$/, "");
-    return allHrefs
-      .filter((h) => cleanPath === h || cleanPath.startsWith(h + "/"))
-      .sort((a, b) => b.length - a.length)[0];
-  }, [pathname, groups]);
-
-  const isActive = (href: string) => href.replace(/\/$/, "") === activeHref;
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return groups;
+    return groups
+      .map((g) => ({
+        ...g,
+        items: g.items.filter(
+          (it) => it.label.toLowerCase().includes(q) || g.label.toLowerCase().includes(q)
+        ),
+      }))
+      .filter((g) => g.items.length > 0 || g.label.toLowerCase().includes(q));
+  }, [groups, query]);
 
   return (
     <aside
       className={[
-        "fixed left-0 bottom-0 w-[220px] bg-white border-r overflow-y-auto z-40",
+        "fixed left-0 bottom-0 z-40 overflow-y-auto",
         "transition-transform duration-200",
         "lg:sticky lg:shrink-0 lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full",
       ].join(" ")}
       style={{
         top: 48,
+        width: 220,
+        minWidth: 220,
         height: "calc(100vh - 48px)",
-        borderRightColor: "#e6ebf0",
+        background: "#ffffff",
+        borderRight: "1px solid #E8E8E8",
       }}
     >
-      <nav style={{ padding: "0.25rem 0" }}>
-        {groups.map((group) => {
-          const open = openGroups.has(group.label);
+      {/* 메뉴 검색 */}
+      <div style={{ padding: "14px 12px 8px" }}>
+        <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="메뉴를 검색하세요."
+            style={{
+              width: "100%",
+              height: 34,
+              padding: "0 34px 0 12px",
+              border: "1px solid #E8E8E8",
+              borderRadius: 6,
+              background: "#fff",
+              fontSize: 12,
+              fontFamily: "inherit",
+              color: "#1a1a1a",
+              outline: "none",
+            }}
+          />
+          <Search size={13} color="#9CA3AF" style={{ position: "absolute", right: 10, pointerEvents: "none" }} />
+        </div>
+      </div>
+
+      {/* 메뉴 목록 */}
+      <nav style={{ padding: "4px 10px 16px" }}>
+        {filtered.map((group) => {
+          const groupActive = isGroupActive(group);
+          const svgSrc = SVG_ICON_MAP[group.icon];
+          const hasMultipleItems = group.items.length > 1;
+
           return (
-            <div key={group.label}>
-              <button
-                onClick={() => toggleGroup(group.label)}
+            <React.Fragment key={group.href}>
+              {group.divider && (
+                <div aria-hidden style={{ height: 1, background: "#E8E8E8", margin: "8px 4px" }} />
+              )}
+
+              <Link
+                href={group.href}
+                onClick={onClose}
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "0.5rem",
-                  width: "100%",
-                  padding: "0.625rem 1rem",
-                  fontSize: 15,
-                  fontWeight: 400,
-                  color: "#1a1a1a",
-                  background: "#f5f7fa",
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  textAlign: "left",
-                  userSelect: "none",
+                  gap: 10,
+                  margin: "2px 0",
+                  padding: "9px 12px",
+                  borderRadius: 999,
+                  fontSize: 13,
+                  fontWeight: groupActive ? 700 : 500,
+                  color: groupActive ? ACTIVE_FG : REST_FG,
+                  background: groupActive ? ACTIVE_BG : "transparent",
+                  textDecoration: "none",
+                  transition: "background 0.12s ease, color 0.12s ease",
                 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#ebeef2"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#f5f7fa"; }}
+                onMouseEnter={(e) => {
+                  if (!groupActive) (e.currentTarget as HTMLAnchorElement).style.background = HOVER_BG;
+                }}
+                onMouseLeave={(e) => {
+                  if (!groupActive) (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                }}
               >
-                {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                {svgSrc ? (
+                  <Image
+                    src={svgSrc}
+                    width={18}
+                    height={18}
+                    alt=""
+                    unoptimized
+                    style={{
+                      filter: groupActive ? "brightness(0) invert(1)" : "none",
+                      flexShrink: 0,
+                    }}
+                  />
+                ) : (() => {
+                  const FallbackIcon = LUCIDE_FALLBACK[group.icon];
+                  return FallbackIcon ? (
+                    <FallbackIcon
+                      size={18}
+                      strokeWidth={groupActive ? 2.4 : 2}
+                      color={groupActive ? ACTIVE_FG : REST_FG}
+                      style={{ flexShrink: 0 }}
+                    />
+                  ) : null;
+                })()}
                 <span>{group.label}</span>
-              </button>
-              {open && (
-                <div>
-                  {group.items.map((item) => {
-                    const active = isActive(item.href);
+              </Link>
+
+              {hasMultipleItems && (
+                <div style={{ margin: "2px 0 4px" }}>
+                  {group.items.map((sub) => {
+                    const subActive = isLeafActive(sub.href);
                     return (
                       <Link
-                        key={item.href}
-                        href={item.href}
+                        key={sub.href}
+                        href={sub.href}
                         onClick={onClose}
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.5rem",
-                          padding: "0.5rem 1rem 0.5rem 2.5rem",
-                          margin: "2px 0.5rem",
-                          borderRadius: ITEM_RADIUS,
-                          fontSize: 14,
-                          color: active ? ACTIVE_FG : REST_FG,
-                          background: active ? ACTIVE_BG : "transparent",
+                          display: "block",
+                          margin: "1px 4px 1px 40px",
+                          padding: "6px 12px",
+                          borderRadius: 999,
+                          fontSize: 12,
+                          fontWeight: subActive ? 700 : 400,
+                          color: subActive ? SUB_ACTIVE_FG : "#6B7280",
+                          background: subActive ? SUB_ACTIVE_BG : "transparent",
                           textDecoration: "none",
-                          fontWeight: active ? 700 : 400,
-                          transition: "background-color 0.12s ease, color 0.12s ease",
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!active) {
-                            (e.currentTarget as HTMLAnchorElement).style.background = HOVER_BG;
-                            (e.currentTarget as HTMLAnchorElement).style.color = HOVER_FG;
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!active) {
-                            (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
-                            (e.currentTarget as HTMLAnchorElement).style.color = REST_FG;
-                          }
                         }}
                       >
-                        {item.label}
+                        {sub.label}
                       </Link>
                     );
                   })}
                 </div>
               )}
-              <div style={{ height: 1, background: "#e6ebf0", margin: "0.25rem 0" }} />
-            </div>
+            </React.Fragment>
           );
         })}
       </nav>
