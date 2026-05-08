@@ -687,7 +687,7 @@ export default function BDashboardPage() {
   const CARD_ACCENTS = ["#00a7ea", "#41C1D6", "#80D6E4", "#C0EAF1"];
 
   return (
-    <div style={{ maxWidth: 1400 }}>
+    <div style={{ width: "100%" }}>
       {/* 인사말 + 날짜 */}
       <div
         style={{
@@ -715,7 +715,7 @@ export default function BDashboardPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
           gap: 16,
           marginBottom: 20,
         }}
@@ -730,7 +730,7 @@ export default function BDashboardPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           gap: 16,
           marginBottom: 20,
         }}
@@ -776,7 +776,7 @@ export default function BDashboardPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "2fr 1fr",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
           gap: 16,
           marginBottom: 20,
         }}

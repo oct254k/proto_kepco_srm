@@ -1,10 +1,16 @@
 export type Role = "B" | "V" | "C" | "A";
+export type ContractAuthority = "CONTRACT_MANAGER" | "PRICE_REVIEWER";
 
 export const ROLE_LABELS: Record<Role, string> = {
   B: "사업담당자",
   V: "협력업체",
   C: "계약담당자",
   A: "관리자",
+};
+
+export const CONTRACT_AUTHORITY_LABELS: Record<ContractAuthority, string> = {
+  CONTRACT_MANAGER: "계약담당자",
+  PRICE_REVIEWER: "가격등록자/임원",
 };
 
 // 공통 도메인 타입
@@ -16,6 +22,10 @@ export interface Quote {
 export interface Order {
   id: string; title: string; method: string; amount: number;
   status: string; requestedAt: string; assignee: string;
+  pmsProjectId?: string;
+  pmsProjectName?: string;
+  editableByRequester?: boolean;
+  canCancel?: boolean;
 }
 
 export interface Bid {
@@ -49,7 +59,17 @@ export interface BidParticipant {
 
 export interface Contract {
   id: string; title: string; vendorName: string; amount: number;
-  startDate: string; endDate: string; status: string; pmsStatus?: string;
+  startDate: string; endDate: string;
+  status: string;
+  contractStatus?: string;
+  bondStatus?: string;
+  pmsStatus?: string;
+  pmsSyncStatus?: string;
+  businessApprovalStatus?: "PENDING" | "APPROVED";
+  canAmend?: boolean;
+  canTerminate?: boolean;
+  canCancel?: boolean;
+  selectedReason?: string;
 }
 
 export interface Vendor {

@@ -2,16 +2,11 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useRole } from "@/lib/role";
+import { getDefaultPath } from "@/lib/access";
 import type { Role } from "@/lib/types";
 import { ROLE_LABELS } from "@/lib/types";
 
 const ROLES: Role[] = ["B", "V", "C", "A"];
-const DASHBOARD_PATH: Record<Role, string> = {
-  B: "/b/dashboard/",
-  V: "/v/dashboard/",
-  C: "/c/dashboard/",
-  A: "/a/system/",
-};
 
 export default function RoleSwitcher() {
   const [role, setRole] = useRole();
@@ -19,7 +14,7 @@ export default function RoleSwitcher() {
 
   const handleRoleChange = (nextRole: Role) => {
     setRole(nextRole);
-    router.push(DASHBOARD_PATH[nextRole]);
+    router.push(getDefaultPath(nextRole));
   };
 
   return (

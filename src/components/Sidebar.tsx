@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -22,6 +22,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [openGroups, setOpenGroups] = useState<Set<string>>(
     () => new Set(groups.map((g) => g.label))
   );
+
+  useEffect(() => {
+    setOpenGroups(new Set(groups.map((g) => g.label)));
+  }, [groups]);
 
   function toggleGroup(label: string) {
     setOpenGroups((prev) => {

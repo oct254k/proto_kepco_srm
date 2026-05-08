@@ -32,8 +32,10 @@ export const BID_STATUS_LABELS: Record<string, string> = {
 
 // V역할: 참여 중인 입찰
 export const V_MY_BIDS = [
-  { bidId: "BID-2026-005", title: "태양광 인버터 구매 입찰", step: 2, stepLabel: "심사중", status: "IN_PROGRESS", method: "LIMITED", estAmount: 450000000, deadline: "2026-04-30" },
+  { bidId: "BID-2026-005", title: "태양광 인버터 구매 입찰", step: 2, stepLabel: "자가심사 탈락", status: "DISQUALIFIED", method: "LIMITED", estAmount: 450000000, deadline: "2026-04-30" },
+  { bidId: "BID-2026-004", title: "변압기 교체 공사 입찰", step: 2, stepLabel: "자가심사 통과", status: "QUALIFIED", method: "TWO_STAGE", estAmount: 320000000, deadline: "2026-04-22" },
   { bidId: "BID-2026-003", title: "배전반 유지보수 입찰", step: 3, stepLabel: "투찰완료", status: "SUBMITTED", method: "LOWEST_PRICE", estAmount: 95000000, deadline: "2026-04-18" },
+  { bidId: "BID-2026-001", title: "사무용 PC 납품", step: 4, stepLabel: "낙찰확정", status: "AWARDED", method: "QUALIFIED", estAmount: 78000000, deadline: "2026-03-20" },
 ];
 
 // 참여 업체 목록 — BidParticipant 타입 적용 (설계서 05_ERD/02 VENDOR_PROPOSALS_JSON shape)

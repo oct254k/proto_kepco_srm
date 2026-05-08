@@ -1,442 +1,458 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Stepper from "@/components/Stepper";
 import StatusBadge from "@/components/StatusBadge";
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import Drawer from "@/components/Drawer";
+import StatusGuide, { type StatusGuideSection } from "@/components/StatusGuide";
 import { useToast } from "@/components/Toast";
-import { V_MY_BIDS, MOCK_BIDS, METHOD_LABELS } from "@/lib/mock/bids";
-
-const btn = (variant: "primary" | "secondary" | "danger" | "ghost" = "primary"): React.CSSProperties => ({
-  padding: "6px 16px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-  border: variant === "primary" ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
-  background: variant === "primary" ? "#654024" : "#ffffff",
-  color: variant === "primary" ? "#ffffff" : "#654024",
-});
+import { METHOD_LABELS, MOCK_BIDS, V_MY_BIDS } from "@/lib/mock/bids";
 
 const PIPELINE_STEPS = [
-  { label: "공고목록" },
+  { label: "공고확인" },
   { label: "참여신청" },
   { label: "자가심사" },
   { label: "투찰" },
   { label: "결과조회" },
 ];
 
-// ── Step 0: 공고확인 ──────────────────────────────────────────
-function Step0Panel({ bidId, onApply }: { bidId: string; onApply: () => void }) {
-  const bid = MOCK_BIDS.find((b) => b.id === bidId);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+const BID_PIPELINE_GUIDE: StatusGuideSection[] = [
+  {
+    title: "입찰 파이프라인 상태",
+    description: "협력업체는 자기 업체 기준 단계만 볼 수 있고, 타 업체 금액과 순위는 개찰 전 공개하지 않습니다.",
+    items: [
+      {
+        code: "OPEN_NOTICE",
+        label: "공고확인",
+        meaning: "공고문과 첨부문서를 검토하는 단계입니다.",
+        owner: "협력업체",
+        actions: "공고 열람, 참여신청 이동",
+        next: "참여신청",
+        limit: "타 업체 참여 현황 비노출",
+      },
+      {
+        code: "SELF_REVIEW",
+        label: "자가심사중",
+        meaning: "필수 서류 제출 후 자가심사 결과를 입력하는 단계입니다.",
+        owner: "협력업체",
+        actions: "응답 입력, 제출",
+        next: "투찰 또는 심사탈락",
+        limit: "탈락 시 투찰 화면 진입 차단",
+      },
+      {
+        code: "DISQUALIFIED",
+        label: "심사탈락",
+        meaning: "자가심사 또는 심사 결과 기준 미달로 투찰이 제한된 상태입니다.",
+        owner: "계약담당자, 협력업체",
+        actions: "반려 사유 확인",
+        next: "없음",
+        limit: "투찰 작성/제출 불가",
+      },
+      {
+        code: "SUBMITTED",
+        label: "투찰제출완료",
+        meaning: "투찰 금액을 최종 제출한 상태입니다.",
+        owner: "협력업체",
+        actions: "마감 전까지 수정",
+        next: "개찰결과",
+        limit: "타 업체 금액·순위 비노출",
+      },
+      {
+        code: "AWARDED",
+        label: "낙찰",
+        meaning: "개찰과 평가를 거쳐 낙찰이 확정된 상태입니다.",
+        owner: "계약담당자",
+        actions: "계약·보증 화면으로 이동",
+        next: "계약 진행",
+        limit: "개찰 전에는 이 결과를 노출하지 않음",
+      },
+    ],
+  },
+];
 
-  if (!bid) return null;
+const btn = (variant: "primary" | "secondary" | "danger" | "ghost" = "primary"): React.CSSProperties => ({
+  padding: "8px 18px",
+  borderRadius: 6,
+  fontSize: 16,
+  fontWeight: 700,
+  cursor: "pointer",
+  fontFamily: "inherit",
+  border: variant === "primary" ? "1px solid #DFE8F0" : variant === "danger" ? "1px solid #FCA5A5" : "1px solid #CBD5E1",
+  background: variant === "primary" ? "#654024" : variant === "danger" ? "#FEF2F2" : "#fff",
+  color: variant === "primary" ? "#fff" : variant === "danger" ? "#B91C1C" : "#334155",
+});
+
+type MyBid = typeof V_MY_BIDS[number];
+
+function BidNoticePanel({ bid, onApply }: { bid: MyBid; onApply: () => void }) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const detail = MOCK_BIDS.find((item) => item.id === bid.bidId);
+
+  if (!detail) return null;
 
   return (
-    <div>
-      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24, marginBottom: 16 }}>
+    <>
+      <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: 24 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 24px" }}>
           {[
-            { label: "공고번호", value: bid.id },
-            { label: "상태", value: <StatusBadge status={bid.status} /> },
-            { label: "공고명", value: bid.title },
-            { label: "선정방법", value: METHOD_LABELS[bid.method] ?? bid.method },
-            { label: "예정금액", value: `${bid.estAmount.toLocaleString()}원` },
-            { label: "공고일", value: bid.publishedAt },
-            { label: "마감일", value: bid.deadline },
-            { label: "참여조건", value: "제한 없음 (공개입찰)" },
-          ].map((item) => (
-            <div key={item.label} style={{ paddingBottom: 12, borderBottom: "1px solid #f0f0f0" }}>
-              <div style={{ fontSize: 15, color: "#888", marginBottom: 3 }}>{item.label}</div>
-              <div style={{ fontSize: 17, fontWeight: 500 }}>{item.value}</div>
+            ["공고번호", detail.id],
+            ["공고상태", <StatusBadge key="status" status={detail.status} />],
+            ["공고명", detail.title],
+            ["선정방법", METHOD_LABELS[detail.method] ?? detail.method],
+            ["예정금액", `${detail.estAmount.toLocaleString()}원`],
+            ["마감일", detail.deadline],
+            ["참여조건", "자가심사 통과 업체만 투찰 가능"],
+            ["데이터 공개", "개찰 전까지 타 업체 금액/순위 비공개"],
+          ].map(([label, value], index) => (
+            <div key={`${String(label)}-${index}`}>
+              <div style={{ fontSize: 14, color: "#64748B", marginBottom: 4 }}>{label}</div>
+              <div style={{ fontSize: 17, fontWeight: 600, color: "#0F172A" }}>{value}</div>
             </div>
           ))}
         </div>
-        <div style={{ display: "flex", gap: 8, marginTop: 20, justifyContent: "flex-end" }}>
-          <button style={btn("ghost")} onClick={() => setDrawerOpen(true)}>공고 상세 보기</button>
-          <button style={btn("primary")} onClick={onApply}>참여 신청 →</button>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
+          <button style={btn("secondary")} onClick={() => setDrawerOpen(true)}>공고 상세 보기</button>
+          <button style={btn("primary")} onClick={onApply}>참여신청</button>
         </div>
       </div>
-
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="공고 상세" width={560}>
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="공고 상세" width={580}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div>
-            <div style={{ fontSize: 15, color: "#888", marginBottom: 4 }}>공고번호</div>
-            <div style={{ fontSize: 17, fontWeight: 600 }}>{bid.id}</div>
+          <div style={{ fontSize: 16, color: "#334155", lineHeight: 1.6 }}>
+            공고문, 내역서, 자가심사 기준은 본인 업체 기준으로만 조회됩니다.
+            타 업체 참여 여부와 제출 상태는 보이지 않습니다.
           </div>
-          <div>
-            <div style={{ fontSize: 15, color: "#888", marginBottom: 4 }}>공고명</div>
-            <div style={{ fontSize: 17, fontWeight: 600 }}>{bid.title}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 15, color: "#888", marginBottom: 4 }}>입찰방법</div>
-            <div>{METHOD_LABELS[bid.method] ?? bid.method}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 15, color: "#888", marginBottom: 4 }}>마감일시</div>
-            <div>{bid.deadline}</div>
-          </div>
-          <div style={{ borderTop: "1px solid #e0e0e0", paddingTop: 16 }}>
-            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 10 }}>품목 목록</div>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 16 }}>
-              <thead>
-                <tr style={{ background: "#f5f5f5" }}>
-                  {["품목명", "수량", "단위"].map((h) => (
-                    <th key={h} style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[{ name: "태양광 인버터 5kW", qty: 5, unit: "EA" }, { name: "태양광 인버터 10kW", qty: 3, unit: "EA" }].map((item, i) => (
-                  <tr key={i}>
-                    <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0" }}>{item.name}</td>
-                    <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>{item.qty}</td>
-                    <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>{item.unit}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ borderTop: "1px solid #e0e0e0", paddingTop: 16 }}>
-            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 10 }}>첨부파일</div>
-            {[{ name: "입찰공고문.pdf", size: "2.1 MB" }, { name: "공사내역서.xlsx", size: "1.5 MB" }].map((f, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #f5f5f5", fontSize: 16 }}>
-                <span>📎 {f.name} ({f.size})</span>
-                <button style={{ ...btn("secondary"), padding: "2px 8px", fontSize: 12 }}>다운로드</button>
-              </div>
-            ))}
-          </div>
-          <button style={{ ...btn("primary"), marginTop: 8 }} onClick={() => { setDrawerOpen(false); onApply(); }}>
-            참여신청 하기 →
-          </button>
+          <button style={btn("primary")} onClick={() => { setDrawerOpen(false); onApply(); }}>참여신청으로 이동</button>
         </div>
       </Drawer>
-    </div>
+    </>
   );
 }
 
-// ── Step 1: 참여신청 ──────────────────────────────────────────
-function Step1Panel({ onSubmit, onPrev }: { onSubmit: () => void; onPrev: () => void }) {
+function ApplyPanel({ onPrev, onSubmit }: { onPrev: () => void; onSubmit: () => void }) {
   const toast = useToast();
   const [docs, setDocs] = useState([
-    { name: "사업자등록증 사본", required: true, uploaded: false },
-    { name: "법인인감증명서", required: true, uploaded: false },
-    { name: "입찰참가자격등록증", required: true, uploaded: false },
+    { name: "사업자등록증 사본", uploaded: true },
+    { name: "법인인감증명서", uploaded: true },
+    { name: "입찰참가자격등록증", uploaded: false },
   ]);
 
-  const handleSubmit = () => {
-    const allUploaded = docs.every((d) => !d.required || d.uploaded);
+  function handleSubmit() {
+    const allUploaded = docs.every((item) => item.uploaded);
     if (!allUploaded) {
       toast.show("필수 서류를 모두 첨부해 주세요.", "error");
       return;
     }
+    toast.show("참여신청이 완료되었습니다.", "success");
     onSubmit();
-    setTimeout(() => toast.show("참여신청이 완료되었습니다.", "success"), 4000);
-  };
+  }
 
   return (
-    <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
-      <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 20, color: "#222" }}>참여자격 확인 (필수 서류 첨부)</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
-        {docs.map((doc, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: doc.uploaded ? "#F0FDF4" : "#F9FAFB", border: `1px solid ${doc.uploaded ? "#BBF7D0" : "#e0e0e0"}`, borderRadius: 6 }}>
+    <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: 24 }}>
+      <div style={{ fontSize: 19, fontWeight: 800, marginBottom: 16 }}>참여신청</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+        {docs.map((doc, index) => (
+          <label key={doc.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", border: "1px solid #E2E8F0", borderRadius: 8 }}>
             <input
               type="checkbox"
               checked={doc.uploaded}
-              onChange={(e) => setDocs(docs.map((d, di) => di === i ? { ...d, uploaded: e.target.checked } : d))}
+              onChange={(event) => setDocs((prev) => prev.map((item, itemIndex) => (itemIndex === index ? { ...item, uploaded: event.target.checked } : item)))}
             />
-            <span style={{ flex: 1, fontSize: 16 }}>
-              {doc.name} {doc.required && <span style={{ color: "#DC2626", fontSize: 14 }}>(필수)</span>}
-            </span>
-            {doc.uploaded ? (
-              <span style={{ fontSize: 15, color: "#065F46", fontWeight: 600 }}>✓ 업로드완료</span>
-            ) : (
-              <button
-                style={{ ...btn("secondary"), fontSize: 12, padding: "4px 10px" }}
-                onClick={() => setDocs(docs.map((d, di) => di === i ? { ...d, uploaded: true } : d))}
-              >
-                파일첨부
-              </button>
-            )}
-          </div>
+            <span style={{ fontSize: 16, color: "#0F172A", flex: 1 }}>{doc.name}</span>
+            <StatusBadge status={doc.uploaded ? "APPROVED" : "NOT_SUBMITTED"} label={doc.uploaded ? "첨부완료" : "미첨부"} />
+          </label>
         ))}
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <button style={btn("ghost")} onClick={onPrev}>← 이전: 공고확인</button>
+        <button style={btn("secondary")} onClick={onPrev}>이전</button>
         <button style={btn("primary")} onClick={handleSubmit}>참여신청 제출</button>
       </div>
     </div>
   );
 }
 
-// ── Step 2: 심사 ──────────────────────────────────────────────
-function Step2Panel({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) {
-  return (
-    <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
-      <div style={{ background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: 8, padding: 20, marginBottom: 24, textAlign: "center" }}>
-        <div style={{ fontSize: 27, marginBottom: 8 }}>⏳</div>
-        <div style={{ fontSize: 19, fontWeight: 700, color: "#92400E", marginBottom: 6 }}>심사 진행 중</div>
-        <div style={{ fontSize: 16, color: "#78350F" }}>
-          계약담당자가 배정한 심사위원들이 귀사의 서류를 검토하고 있습니다.
+function SelfReviewPanel({
+  qualified,
+  disqualified,
+  onPrev,
+  onPass,
+}: {
+  qualified: boolean;
+  disqualified: boolean;
+  onPrev: () => void;
+  onPass: () => void;
+}) {
+  const [answers, setAnswers] = useState([true, true, !disqualified]);
+
+  if (disqualified) {
+    return (
+      <div style={{ background: "#fff", border: "1px solid #FECACA", borderRadius: 12, padding: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <StatusBadge status="DISQUALIFIED" />
+          <strong style={{ fontSize: 20, color: "#991B1B" }}>자가심사 탈락</strong>
+        </div>
+        <div style={{ fontSize: 16, color: "#7F1D1D", lineHeight: 1.7, marginBottom: 18 }}>
+          제출 서류 중 필수 면허 증빙이 부족하여 투찰 단계로 진입할 수 없습니다.
+          이 화면에서는 탈락 사유만 확인할 수 있고, 투찰 작성/제출 버튼은 제공하지 않습니다.
+        </div>
+        <div style={{ background: "#FFF1F2", border: "1px solid #FECDD3", borderRadius: 10, padding: "14px 16px", fontSize: 15, color: "#9F1239", marginBottom: 18 }}>
+          고객사 요구사항 강조포인트: 자가심사 불합격 시 투찰 단계 접근을 차단해 핵심 업무 규칙을 프로토타입에서 명확히 표현합니다.
+        </div>
+        <button style={btn("secondary")} onClick={onPrev}>이전</button>
+      </div>
+    );
+  }
+
+  if (qualified) {
+    return (
+      <div style={{ background: "#fff", border: "1px solid #BBF7D0", borderRadius: 12, padding: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <StatusBadge status="QUALIFIED" />
+          <strong style={{ fontSize: 20, color: "#166534" }}>자가심사 통과</strong>
+        </div>
+        <div style={{ fontSize: 16, color: "#166534", lineHeight: 1.7, marginBottom: 18 }}>
+          제출 서류와 자가심사 결과가 기준을 충족해 투찰 단계로 진행할 수 있습니다.
+          같은 화면에서 탈락 케이스와 비교 검토가 가능하도록 통과 시나리오를 별도로 준비했습니다.
+        </div>
+        <div style={{ background: "#ECFDF5", border: "1px solid #A7F3D0", borderRadius: 10, padding: "14px 16px", fontSize: 15, color: "#166534", marginBottom: 18 }}>
+          고객사 요구사항 강조포인트: 자가심사 합격 업체만 투찰 화면에 접근 가능하다는 규칙을 비교 가능한 데이터로 표현합니다.
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <button style={btn("secondary")} onClick={onPrev}>이전</button>
+          <button style={btn("primary")} onClick={onPass}>투찰 단계로 이동</button>
         </div>
       </div>
-      <div style={{ background: "#F9FAFB", borderRadius: 8, padding: 16, marginBottom: 20 }}>
-        <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>심사위원 현황</div>
-        {[
-          { name: "이계약", dept: "계약팀", role: "주심사", status: "제출완료" },
-          { name: "김사업", dept: "전력사업팀", role: "심사위원", status: "진행중" },
-          { name: "박담당", dept: "구매팀", role: "심사위원", status: "미시작" },
-        ].map((r, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "1px solid #f0f0f0" }}>
-            <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#e0e0e0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 700 }}>
-              {r.name[0]}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 500 }}>{r.name} ({r.dept})</div>
-              <div style={{ fontSize: 15, color: "#888" }}>{r.role}</div>
-            </div>
-            <span style={{ fontSize: 15, color: r.status === "제출완료" ? "#065F46" : r.status === "진행중" ? "#92400E" : "#888" }}>
-              {r.status === "제출완료" ? "✅ " : r.status === "진행중" ? "🟡 " : "⬜ "}{r.status}
-            </span>
-          </div>
+    );
+  }
+
+  return (
+    <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: 24 }}>
+      <div style={{ fontSize: 19, fontWeight: 800, marginBottom: 16 }}>자가심사</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+        {["해당 면허를 보유하고 있습니다.", "최근 3년 유사 실적이 있습니다.", "재무 건전성 기준을 충족합니다."].map((question, index) => (
+          <label key={question} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", border: "1px solid #E2E8F0", borderRadius: 8 }}>
+            <input
+              type="checkbox"
+              checked={answers[index]}
+              onChange={(event) => setAnswers((prev) => prev.map((value, valueIndex) => (valueIndex === index ? event.target.checked : value)))}
+            />
+            <span style={{ fontSize: 16, color: "#0F172A" }}>{question}</span>
+          </label>
         ))}
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <button style={btn("ghost")} onClick={onPrev}>← 이전: 참여신청</button>
-        <button style={{ ...btn("primary") }} onClick={onNext}>투찰 단계로 →</button>
+        <button style={btn("secondary")} onClick={onPrev}>이전</button>
+        <button style={btn("primary")} onClick={onPass}>심사결과 제출</button>
       </div>
     </div>
   );
 }
 
-// ── Step 3: 투찰 ──────────────────────────────────────────────
-function Step3Panel({ onSubmit, onPrev }: { onSubmit: () => void; onPrev: () => void }) {
+function BidPanel({
+  closed,
+  onPrev,
+  onSubmitted,
+}: {
+  closed: boolean;
+  onPrev: () => void;
+  onSubmitted: () => void;
+}) {
   const toast = useToast();
-  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [items, setItems] = useState([
-    { name: "태양광 인버터 5kW", qty: 5, unit: "EA", unitPrice: 0 },
-    { name: "태양광 인버터 10kW", qty: 3, unit: "EA", unitPrice: 0 },
+    { name: "배전반 유지보수", qty: 1, amount: 93000000 },
   ]);
+  const [draftSaved, setDraftSaved] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const total = items.reduce((s, it) => s + it.qty * it.unitPrice, 0);
-  const vat = Math.floor(total * 0.1);
-  const grandTotal = total + vat;
+  const total = useMemo(() => items.reduce((sum, item) => sum + item.amount, 0), [items]);
 
-  const handleConfirm = () => {
-    setConfirmModalOpen(false);
-    onSubmit();
-    setTimeout(() => toast.show("투찰이 정상적으로 제출되었습니다.", "info"), 4000);
-  };
+  function handleTempSave() {
+    setDraftSaved(true);
+    toast.show("임시저장되었습니다. 최종 제출 전까지 수정 가능합니다.", "info");
+  }
+
+  function handleSubmit() {
+    setConfirmOpen(false);
+    toast.show("투찰이 최종 제출되었습니다.", "success");
+    onSubmitted();
+  }
 
   return (
-    <div>
-      {/* 카운트다운 배너 */}
-      <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 8, padding: "12px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
-        <span style={{ fontSize: 23 }}>⏱</span>
-        <span style={{ fontSize: 16, color: "#DC2626", fontWeight: 600 }}>
-          투찰 마감까지: <span style={{ fontSize: 21, fontFamily: "monospace" }}>07 일 22 시간 15 분</span>
-        </span>
+    <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <div style={{ fontSize: 19, fontWeight: 800 }}>투찰</div>
+        <StatusBadge status={closed ? "CLOSED" : "BID_OPEN"} label={closed ? "투찰마감" : "투찰가능"} />
       </div>
-
-      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
-        <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 16, color: "#222" }}>투찰금액 입력</div>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 16, marginBottom: 16 }}>
-          <thead>
-            <tr style={{ background: "#f5f5f5" }}>
-              {["품목명", "수량", "단위", "투찰단가(원)", "합계(원)"].map((h) => (
-                <th key={h} style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item, i) => (
-              <tr key={i}>
-                <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0" }}>{item.name}</td>
-                <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>{item.qty}</td>
-                <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>{item.unit}</td>
-                <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0" }}>
-                  <input
-                    type="number"
-                    min="0"
-                    style={{ width: "100%", padding: "4px 6px", border: "1px solid #ccc", borderRadius: 3, fontSize: 16, fontFamily: "inherit", textAlign: "right" }}
-                    value={item.unitPrice || ""}
-                    onChange={(e) => setItems(items.map((it, idx) => idx === i ? { ...it, unitPrice: Number(e.target.value) } : it))}
-                    placeholder="0"
-                  />
-                </td>
-                <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "right" }}>
-                  {(item.qty * item.unitPrice).toLocaleString()}
-                </td>
-              </tr>
+      <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 10, padding: "12px 16px", fontSize: 15, color: "#991B1B", marginBottom: 16 }}>
+        타 업체 금액, 순위, 개찰 예정 결과는 개찰 전까지 공개되지 않습니다.
+      </div>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 15, marginBottom: 16 }}>
+        <thead>
+          <tr style={{ background: "#F8FAFC" }}>
+            {["품목명", "수량", "투찰단가(원)"].map((header) => (
+              <th key={header} style={{ padding: "8px 10px", borderBottom: "1px solid #E2E8F0", textAlign: "center" }}>{header}</th>
             ))}
-          </tbody>
-        </table>
-
-        <div style={{ background: "#F9FAFB", borderRadius: 6, padding: 16, marginBottom: 20 }}>
-          {[
-            { label: "공급가액 합계", value: total },
-            { label: "VAT (10%)", value: vat },
-            { label: "총 투찰금액 (VAT 포함)", value: grandTotal },
-          ].map((row, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", fontWeight: i === 2 ? 700 : 400, fontSize: i === 2 ? 15 : 13, borderTop: i === 2 ? "1px solid #e0e0e0" : "none", color: i === 2 ? "#00a7ea" : "#333" }}>
-              <span>{row.label}</span>
-              <span>{row.value.toLocaleString()}원</span>
-            </div>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item, index) => (
+            <tr key={item.name}>
+              <td style={{ padding: "8px 10px", borderBottom: "1px solid #E2E8F0" }}>{item.name}</td>
+              <td style={{ padding: "8px 10px", borderBottom: "1px solid #E2E8F0", textAlign: "center" }}>{item.qty}</td>
+              <td style={{ padding: "8px 10px", borderBottom: "1px solid #E2E8F0" }}>
+                <input
+                  type="number"
+                  disabled={closed}
+                  value={item.amount}
+                  onChange={(event) => setItems((prev) => prev.map((value, valueIndex) => (valueIndex === index ? { ...value, amount: Number(event.target.value) } : value)))}
+                  style={{ width: "100%", padding: "6px 8px", borderRadius: 6, border: "1px solid #CBD5E1", fontSize: 15, fontFamily: "inherit", textAlign: "right" }}
+                />
+              </td>
+            </tr>
           ))}
+        </tbody>
+      </table>
+      <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 16px", marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 700 }}>
+          <span>총 투찰금액</span>
+          <span>{total.toLocaleString()}원</span>
         </div>
-
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <button style={btn("ghost")} onClick={onPrev}>← 이전: 심사</button>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button style={btn("secondary")}>투찰 포기</button>
-            <button
-              style={{ ...btn("primary"), opacity: grandTotal === 0 ? 0.5 : 1 }}
-              disabled={grandTotal === 0}
-              onClick={() => setConfirmModalOpen(true)}
-            >
-              투찰 제출
-            </button>
-          </div>
+        <div style={{ fontSize: 14, color: "#64748B", marginTop: 6 }}>
+          {draftSaved ? "임시저장본이 있습니다. 제출 전까지 수정 가능합니다." : "임시저장 후 최종 제출을 구분해서 처리합니다."}
         </div>
       </div>
-
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <button style={btn("secondary")} onClick={onPrev}>이전</button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button style={btn("secondary")} disabled={closed} onClick={handleTempSave}>임시저장</button>
+          <button style={btn("danger")} disabled={closed}>투찰 포기</button>
+          <button style={btn("primary")} disabled={closed} onClick={() => setConfirmOpen(true)}>최종 제출</button>
+        </div>
+      </div>
       <Modal
-        open={confirmModalOpen}
-        onClose={() => setConfirmModalOpen(false)}
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
         title="투찰 제출 확인"
         footer={
           <>
-            <button style={btn("secondary")} onClick={() => setConfirmModalOpen(false)}>취소</button>
-            <button style={btn("primary")} onClick={handleConfirm}>확인 — 투찰 제출</button>
+            <button style={btn("secondary")} onClick={() => setConfirmOpen(false)}>취소</button>
+            <button style={btn("primary")} onClick={handleSubmit}>최종 제출</button>
           </>
         }
       >
-        <div>
-          <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 6, padding: 16, marginBottom: 16 }}>
-            <div style={{ fontSize: 16, marginBottom: 8 }}>총 투찰금액 (VAT 포함)</div>
-            <div style={{ fontSize: 25, fontWeight: 700, color: "#00a7ea" }}>{grandTotal.toLocaleString()}원</div>
-          </div>
-          <div style={{ fontSize: 16, color: "#DC2626", marginBottom: 8 }}>⚠ 제출 후 마감일 이전에만 수정이 가능합니다.</div>
-          <div style={{ fontSize: 16, color: "#555" }}>투찰을 제출하시겠습니까?</div>
+        <div style={{ fontSize: 16, color: "#334155", lineHeight: 1.7 }}>
+          제출 후에는 마감 전까지만 수정할 수 있습니다. 투찰 금액을 최종 제출하시겠습니까?
         </div>
       </Modal>
     </div>
   );
 }
 
-// ── Step 4: 결과확인 ──────────────────────────────────────────
-function Step4Panel() {
+function ResultPanel({ awarded }: { awarded: boolean }) {
+  if (!awarded) {
+    return (
+      <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: 24 }}>
+        <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 10, padding: "18px 20px", fontSize: 16, color: "#475569", lineHeight: 1.7 }}>
+          개찰 전에는 타 업체 금액, 순위, 낙찰 결과가 보이지 않습니다.
+          이 화면에서는 본인 제출 상태와 결과 공개 여부만 확인할 수 있습니다.
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: 24 }}>
-      <div style={{ background: "#EDE9FE", border: "1px solid #DDD6FE", borderRadius: 12, padding: 24, textAlign: "center", marginBottom: 24 }}>
-        <div style={{ fontSize: 35, marginBottom: 8 }}>🏆</div>
-        <div style={{ fontSize: 25, fontWeight: 800, color: "#5B21B6", marginBottom: 6 }}>낙찰</div>
-        <div style={{ fontSize: 17, color: "#6D28D9" }}>(주)한국전기솔루션 귀중</div>
+    <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: 24 }}>
+      <div style={{ background: "#EDE9FE", border: "1px solid #DDD6FE", borderRadius: 12, padding: 24, textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 28, fontWeight: 900, color: "#6D28D9", marginBottom: 6 }}>낙찰</div>
+        <div style={{ fontSize: 16, color: "#5B21B6" }}>낙찰 확정 이후 계약·보증 화면으로 진행합니다.</div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 24px", marginBottom: 24 }}>
-        {[
-          { label: "본인 투찰금액", value: "21,835,000원" },
-          { label: "예정가 (공개)", value: "22,100,000원" },
-          { label: "낙찰하한금액", value: "20,890,000원" },
-          { label: "참여업체 수", value: "5개사" },
-          { label: "개찰일시", value: "2026-05-02 10:00" },
-          { label: "낙찰순위", value: "1위" },
-        ].map((item) => (
-          <div key={item.label} style={{ paddingBottom: 12, borderBottom: "1px solid #f0f0f0" }}>
-            <div style={{ fontSize: 15, color: "#888", marginBottom: 3 }}>{item.label}</div>
-            <div style={{ fontSize: 17, fontWeight: 600 }}>{item.value}</div>
-          </div>
-        ))}
-      </div>
-      <div style={{ background: "#F0FDF4", borderRadius: 6, padding: 14, fontSize: 16, color: "#065F46", marginBottom: 16 }}>
-        낙찰 후 계약 진행을 위해 계약담당자에게 연락하세요.
-      </div>
-      <div style={{ textAlign: "right" }}>
-        <button style={btn("primary")}>계약·보증 안내 →</button>
+      <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: "8px 12px", fontSize: 15 }}>
+        <span style={{ color: "#64748B" }}>본인 투찰금액</span>
+        <strong>76,000,000원</strong>
+        <span style={{ color: "#64748B" }}>결과 공개 시점</span>
+        <strong>개찰 완료 후</strong>
       </div>
     </div>
   );
 }
 
-// ── 메인 페이지 ─────────────────────────────────────────────────
 export default function VBidPipelinePage() {
   const [selectedBidId, setSelectedBidId] = useState(V_MY_BIDS[0].bidId);
   const [currentStep, setCurrentStep] = useState(V_MY_BIDS[0].step);
 
-  const selectedMyBid = V_MY_BIDS.find((b) => b.bidId === selectedBidId);
+  const selectedMyBid = V_MY_BIDS.find((item) => item.bidId === selectedBidId) ?? V_MY_BIDS[0];
+  const disqualified = selectedMyBid.status === "DISQUALIFIED";
+  const qualified = selectedMyBid.status === "QUALIFIED";
+  const awarded = selectedMyBid.status === "AWARDED";
 
-  const handleSelectBid = (bidId: string) => {
+  function handleSelectBid(bidId: string) {
+    const found = V_MY_BIDS.find((item) => item.bidId === bidId);
+    if (!found) return;
     setSelectedBidId(bidId);
-    const found = V_MY_BIDS.find((b) => b.bidId === bidId);
-    setCurrentStep(found ? found.step : 0);
-  };
+    setCurrentStep(found.step);
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <PageHeader title="입찰 파이프라인" />
+      <PageHeader
+        title="입찰 파이프라인"
+        actions={<StatusGuide screenName="SCR-S-07 협력업체 입찰 파이프라인" sections={BID_PIPELINE_GUIDE} />}
+      />
 
-      {/* 공고 선택 드롭다운 */}
-      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: "16px 20px", display: "flex", alignItems: "center", gap: 12 }}>
-        <span style={{ fontSize: 16, fontWeight: 600, color: "#555", whiteSpace: "nowrap" }}>참여 중인 입찰</span>
+      <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", gap: 12 }}>
+        <span style={{ fontSize: 16, fontWeight: 700, color: "#334155", whiteSpace: "nowrap" }}>참여 중인 입찰</span>
         <select
-          style={{ flex: 1, padding: "6px 10px", border: "1px solid #ccc", borderRadius: 4, fontSize: 16, fontFamily: "inherit", background: "#ffffff" }}
           value={selectedBidId}
-          onChange={(e) => handleSelectBid(e.target.value)}
+          onChange={(event) => handleSelectBid(event.target.value)}
+          style={{ flex: 1, padding: "7px 10px", borderRadius: 6, border: "1px solid #CBD5E1", fontSize: 16, fontFamily: "inherit" }}
         >
-          {V_MY_BIDS.map((b) => (
-            <option key={b.bidId} value={b.bidId}>
-              {b.bidId} — {b.title} ({b.stepLabel})
+          {V_MY_BIDS.map((bid) => (
+            <option key={bid.bidId} value={bid.bidId}>
+              {bid.bidId} · {bid.title} ({bid.stepLabel})
             </option>
           ))}
         </select>
-        {selectedMyBid && <StatusBadge status={selectedMyBid.status} />}
+        <StatusBadge status={selectedMyBid.status} />
       </div>
 
-      {/* 스텝바 */}
-      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 8, padding: "20px 24px" }}>
-        <Stepper steps={PIPELINE_STEPS} current={currentStep} />
+      <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 12, padding: "14px 18px", fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
+        비교 시연 포인트:
+        <strong> BID-2026-005</strong>는 자가심사 탈락,
+        <strong> BID-2026-004</strong>는 자가심사 통과,
+        <strong> BID-2026-003</strong>은 투찰 제출 완료 상태로 준비했습니다.
+      </div>
 
-        {/* 단계별 클릭 버튼 (완료 단계 복귀) */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
-          {PIPELINE_STEPS.map((step, i) => (
+      <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: "20px 24px" }}>
+        <Stepper steps={PIPELINE_STEPS} current={currentStep} />
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+          {PIPELINE_STEPS.map((step, index) => (
             <button
-              key={i}
-              onClick={() => i <= currentStep && setCurrentStep(i)}
+              key={step.label}
+              onClick={() => index <= currentStep && setCurrentStep(index)}
               style={{
-                padding: "4px 12px", fontSize: 15, borderRadius: 4, cursor: i <= currentStep ? "pointer" : "not-allowed",
-                border: "1px solid #e0e0e0", background: i === currentStep ? "#00a7ea" : "#fff",
-                color: i === currentStep ? "#fff" : i < currentStep ? "#00a7ea" : "#bbb",
+                padding: "4px 12px",
+                borderRadius: 999,
+                border: "1px solid #CBD5E1",
+                background: index === currentStep ? "#654024" : "#fff",
+                color: index === currentStep ? "#fff" : index <= currentStep ? "#654024" : "#94A3B8",
+                cursor: index <= currentStep ? "pointer" : "not-allowed",
+                fontSize: 14,
+                fontWeight: 700,
                 fontFamily: "inherit",
               }}
             >
-              {i < currentStep ? `✓ ${step.label}` : step.label}
+              {step.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* 단계별 콘텐츠 패널 */}
-      {currentStep === 0 && (
-        <Step0Panel bidId={selectedBidId} onApply={() => setCurrentStep(1)} />
-      )}
-      {currentStep === 1 && (
-        <Step1Panel
-          onSubmit={() => setCurrentStep(2)}
-          onPrev={() => setCurrentStep(0)}
-        />
-      )}
-      {currentStep === 2 && (
-        <Step2Panel
-          onNext={() => setCurrentStep(3)}
-          onPrev={() => setCurrentStep(1)}
-        />
-      )}
-      {currentStep === 3 && (
-        <Step3Panel
-          onSubmit={() => setCurrentStep(4)}
-          onPrev={() => setCurrentStep(2)}
-        />
-      )}
-      {currentStep === 4 && <Step4Panel />}
+      {currentStep === 0 && <BidNoticePanel bid={selectedMyBid} onApply={() => setCurrentStep(1)} />}
+      {currentStep === 1 && <ApplyPanel onPrev={() => setCurrentStep(0)} onSubmit={() => setCurrentStep(2)} />}
+      {currentStep === 2 && <SelfReviewPanel qualified={qualified} disqualified={disqualified} onPrev={() => setCurrentStep(1)} onPass={() => setCurrentStep(3)} />}
+      {currentStep === 3 && <BidPanel closed={disqualified} onPrev={() => setCurrentStep(2)} onSubmitted={() => setCurrentStep(4)} />}
+      {currentStep === 4 && <ResultPanel awarded={awarded} />}
     </div>
   );
 }
