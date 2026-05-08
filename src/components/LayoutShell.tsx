@@ -3,9 +3,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import Breadcrumb from "@/components/Breadcrumb";
 import { useRole } from "@/lib/role";
-import { getBreadcrumb } from "@/lib/menu";
 import { canAccessPath } from "@/lib/access";
 import ForbiddenView from "@/components/ForbiddenView";
 import { ToastProvider } from "@/components/Toast";
@@ -29,18 +27,15 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
     return <ToastProvider>{children}</ToastProvider>;
   }
 
-  const crumbs = getBreadcrumb(role, pathname);
-
   return (
     <ToastProvider>
       <div className="flex min-h-screen" style={{ paddingTop: 48 }}>
-        <Header onMenuClick={() => setIsOpen(true)} />
+        <Header onMenuClick={() => setIsOpen((v) => !v)} />
         <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
         {isOpen && (
           <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setIsOpen(false)} />
         )}
-        <main style={{ flex: 1, minWidth: 0, background: "#ffffff", padding: "1.5rem" }}>
-          {crumbs.length > 0 && <Breadcrumb items={crumbs} />}
+        <main style={{ flex: 1, minWidth: 0, background: "#ffffff", padding: "24px 32px 40px" }}>
           {unauthorized ? <ForbiddenView /> : children}
         </main>
       </div>

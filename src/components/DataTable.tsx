@@ -33,115 +33,103 @@ export default function DataTable({
   actionButton,
   onRowClick,
 }: DataTableProps) {
+  const count = totalCount ?? data.length;
+
   return (
-    <div>
-      {/* Table Header Bar */}
+    <div
+      style={{
+        background: "#fff",
+        border: "1px solid #E8E8E8",
+        borderRadius: 12,
+        padding: 24,
+        minWidth: 0,
+      }}
+    >
+      {/* Header bar */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: "8px",
+          marginBottom: 16,
           flexWrap: "wrap",
-          gap: "8px",
+          gap: 8,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", minHeight: "28px" }}>
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              fontSize: "13px",
-              fontWeight: 700,
-              color: "#333",
-              lineHeight: 1,
-            }}
-          >
-            <span
-              aria-hidden="true"
-              style={{
-                width: "8px",
-                height: "8px",
-                borderTop: "2px solid #00a7ea",
-                borderRight: "2px solid #00a7ea",
-                transform: "rotate(45deg)",
-                display: "inline-block",
-                flex: "0 0 auto",
-              }}
-            />
-            <span>
-            {sectionLabel} (총{" "}
-            <span style={{ color: "#00a7ea", fontWeight: 700 }}>
-              {(totalCount ?? data.length).toLocaleString()}
-            </span>
-            건)
-            </span>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+          <span style={{ fontSize: 17, fontWeight: 700, color: "#1a1a1a" }}>{sectionLabel}</span>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#D58040" }}>
+            {count.toLocaleString()}건
           </span>
           {notice && (
-            <span
-              style={{
-                fontSize: "12px",
-                color: "#fd7e14",
-                display: "flex",
-                alignItems: "center",
-                gap: "4px",
-              }}
-            >
-              ⚠ {notice}
-            </span>
+            <span style={{ fontSize: 12, color: "#fd7e14", marginLeft: 8 }}>⚠ {notice}</span>
           )}
         </div>
-        <div style={{ display: "flex", gap: "6px", alignItems: "center", minHeight: "28px" }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {actionButton}
           {showExcel && (
             <button
+              type="button"
               style={{
                 background: "#ffffff",
-                color: "#654024",
+                color: "#1a1a1a",
                 border: "1px solid #CFCFCF",
-                borderRadius: "4px",
-                height: "28px",
+                borderRadius: 6,
+                height: 32,
                 padding: "0 12px",
-                fontSize: "12px",
-                fontWeight: 400,
+                fontSize: 13,
+                fontWeight: 500,
                 cursor: "pointer",
                 fontFamily: "inherit",
-                minWidth: 84,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
               }}
             >
-              엑셀다운로드
+              <span
+                aria-hidden
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 18,
+                  height: 18,
+                  borderRadius: 3,
+                  background: "#16A34A",
+                  color: "#fff",
+                  fontSize: 11,
+                  fontWeight: 800,
+                }}
+              >
+                X
+              </span>
+              다운로드
             </button>
           )}
         </div>
       </div>
 
       {/* Table */}
-      <div
-        style={{
-          overflowX: "auto",
-          border: "1px solid #dee2e6",
-          borderRadius: "8px",
-        }}
-      >
+      <div style={{ overflowX: "auto" }}>
         <table
           style={{
             width: "100%",
             borderCollapse: "collapse",
-            fontSize: "12px",
-            minWidth: "600px",
-            background: "#fff",
+            fontSize: 13,
+            minWidth: 600,
           }}
         >
           <thead>
-            <tr style={{ background: "#f8f9fa" }}>
+            <tr style={{ borderTop: "1px solid #E8E8E8", borderBottom: "2px solid #1a1a1a" }}>
               {showCheckbox && (
                 <th
                   style={{
-                    width: "40px",
-                    padding: "0.6rem 0.5rem",
-                    borderBottom: "2px solid #dee2e6",
+                    width: 40,
+                    padding: "12px 8px",
                     textAlign: "center",
+                    fontWeight: 500,
+                    color: "#555",
+                    fontSize: 13,
                   }}
                 >
                   <input type="checkbox" />
@@ -151,15 +139,13 @@ export default function DataTable({
                 <th
                   key={col.key}
                   style={{
-                    padding: "0.6rem 0.75rem",
-                    borderBottom: "2px solid #dee2e6",
+                    padding: "12px 12px",
                     textAlign: col.align || "center",
-                    fontWeight: 600,
-                    color: "#333",
+                    fontWeight: 500,
+                    color: "#555",
                     whiteSpace: "nowrap",
                     width: col.width,
-                    fontSize: "12px",
-                    background: "#f8f9fa",
+                    fontSize: 13,
                   }}
                 >
                   {col.label}
@@ -173,13 +159,14 @@ export default function DataTable({
                 <td
                   colSpan={columns.length + (showCheckbox ? 1 : 0)}
                   style={{
-                    padding: "2rem",
+                    height: 48,
+                    padding: 32,
                     textAlign: "center",
-                    color: "#6c757d",
-                    fontSize: "12px",
+                    color: "#9CA3AF",
+                    fontSize: 13,
                   }}
                 >
-                  No Found Data.
+                  데이터가 없습니다.
                 </td>
               </tr>
             ) : (
@@ -189,10 +176,11 @@ export default function DataTable({
                   style={{
                     background: "#fff",
                     cursor: onRowClick ? "pointer" : "default",
+                    borderBottom: "1px solid #F3F4F6",
                   }}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLTableRowElement).style.background = "#f5f7fa";
+                    (e.currentTarget as HTMLTableRowElement).style.background = "#FBF7F0";
                   }}
                   onMouseLeave={(e) => {
                     (e.currentTarget as HTMLTableRowElement).style.background = "#fff";
@@ -201,25 +189,24 @@ export default function DataTable({
                   {showCheckbox && (
                     <td
                       style={{
-                        padding: "0.5rem",
-                        borderBottom: "1px solid #dee2e6",
+                        height: 48,
+                        padding: "0 8px",
                         textAlign: "center",
-                        verticalAlign: "middle",
                       }}
                     >
-                      <input type="checkbox" />
+                      <input type="checkbox" onClick={(e) => e.stopPropagation()} />
                     </td>
                   )}
                   {columns.map((col) => (
                     <td
                       key={col.key}
                       style={{
-                        padding: "0.5rem 0.75rem",
-                        borderBottom: "1px solid #dee2e6",
+                        height: 48,
+                        padding: "0 12px",
                         textAlign: col.align || "center",
-                        color: "#333",
+                        color: "#1a1a1a",
                         whiteSpace: "nowrap",
-                        verticalAlign: "middle",
+                        fontSize: 13,
                       }}
                     >
                       {col.render
