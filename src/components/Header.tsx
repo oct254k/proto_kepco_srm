@@ -52,14 +52,14 @@ export default function Header({ onMenuClick }: HeaderProps) {
       style={{
         position: "fixed",
         top: 0, left: 0, right: 0,
-        height: 48,
+        height: 80,
         background: "#ffffff",
         display: "flex",
         alignItems: "center",
         padding: "0 1.5rem 0 0",
         zIndex: 150,
         gap: 0,
-        borderBottom: "1px solid #e6ebf0",
+        borderBottom: "none",
       }}
     >
       {/* 로고 영역 (사이드바 너비와 동일) */}
@@ -68,7 +68,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
         style={{
           width: 250, minWidth: 250, height: "100%",
           display: "flex", alignItems: "center", padding: "0 30px",
-          background: "#ffffff", borderRight: "1px solid #E8E8E8",
+          background: "#ffffff", borderRight: "none",
           textDecoration: "none", whiteSpace: "nowrap", gap: 0,
         }}
       >

@@ -71,12 +71,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         isOpen ? "translate-x-0" : "-translate-x-full",
       ].join(" ")}
       style={{
-        top: 48,
+        top: 80,
         width: 250,
         minWidth: 250,
-        height: "calc(100vh - 48px)",
+        height: "calc(100vh - 80px)",
         background: "#ffffff",
-        borderRight: "1px solid #E8E8E8",
+        borderRight: "none",
       }}
     >
       {/* 메뉴 검색 */}
@@ -112,6 +112,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           return (
             <React.Fragment key={group.href}>
+              <div style={{ marginBottom: 5 }}>
               {group.divider && (
                 <div aria-hidden style={{ height: 1, background: "#E7EBEF", margin: "8px 0" }} />
               )}
@@ -178,7 +179,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                           display: "flex",
                           alignItems: "center",
                           gap: 8,
-                          padding: "11px 20px",
+                          padding: "0 20px",
+                          height: 40,
                           fontSize: 14,
                           fontWeight: subActive ? 700 : 400,
                           color: SUB_FG,
@@ -207,6 +209,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   })}
                 </div>
               )}
+              </div>
             </React.Fragment>
           );
         })}

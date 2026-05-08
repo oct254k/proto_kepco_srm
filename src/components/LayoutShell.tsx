@@ -29,7 +29,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
 
   return (
     <ToastProvider>
-      <div className="flex min-h-screen" style={{ paddingTop: 48 }}>
+      <div className="flex min-h-screen" style={{ paddingTop: 80 }}>
         <Header onMenuClick={() => setIsOpen((v) => !v)} />
         <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
         {isOpen && (

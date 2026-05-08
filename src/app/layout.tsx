@@ -19,7 +19,7 @@ export default function RootLayout({
           margin: 0,
           padding: 0,
           background: "#ffffff",
-          fontFamily: '"Nanum Gothic", "Pretendard", "돋움", dotum, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", Helvetica, sans-serif',
+          fontFamily: '"Pretendard", sans-serif',
         }}
       >
         <LayoutShell>{children}</LayoutShell>

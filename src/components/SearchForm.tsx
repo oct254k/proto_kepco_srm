@@ -52,8 +52,8 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
       style={{
         background: "#FAF7F2",
         borderRadius: 8,
-        padding: "20px 24px",
-        marginBottom: 16,
+        padding: "16px 24px",
+        marginBottom: 8,
       }}
     >
       <form onSubmit={handleSubmit}>

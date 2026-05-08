@@ -44,6 +44,7 @@ export default function DataTable({
         borderRadius: 12,
         padding: 24,
         minWidth: 0,
+        outline: "none",
       }}
     >
       {/* Header bar */}
@@ -127,7 +128,7 @@ export default function DataTable({
                   key={col.key}
                   style={{
                     padding: "12px 12px",
-                    textAlign: col.align || "center",
+                    textAlign: "center",
                     fontWeight: 600,
                     color: "#555",
                     whiteSpace: "nowrap",
