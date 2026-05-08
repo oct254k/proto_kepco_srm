@@ -15,7 +15,7 @@ export default function Drawer({ open, onClose, title, children, width = 580 }: 
     <>
       {open && (
         <div
-          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 50 }}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 200 }}
           onClick={onClose}
         />
       )}
@@ -27,10 +27,10 @@ export default function Drawer({ open, onClose, title, children, width = 580 }: 
           width,
           height: "100vh",
           background: "#fff",
-          boxShadow: "-4px 0 20px rgba(0,0,0,0.15)",
-          zIndex: 51,
+          boxShadow: "-4px 0 16px rgba(0,0,0,0.15)",
+          zIndex: 201,
           transform: open ? "translateX(0)" : `translateX(${width}px)`,
-          transition: "transform 0.25s ease",
+          transition: "transform 300ms ease",
           display: "flex",
           flexDirection: "column",
         }}
@@ -40,20 +40,21 @@ export default function Drawer({ open, onClose, title, children, width = 580 }: 
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "16px 20px",
-            borderBottom: "1px solid #e0e0e0",
+            padding: "0.875rem 1.25rem",
+            borderBottom: "1px solid #dee2e6",
+            background: "#f8f9fa",
             flexShrink: 0,
           }}
         >
-          <span style={{ fontSize: 19, fontWeight: 700, color: "#222" }}>{title}</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "#333" }}>{title}</span>
           <button
             onClick={onClose}
             style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}
           >
-            <X size={20} color="#555" />
+            <X size={16} color="#555" />
           </button>
         </div>
-        <div style={{ flex: 1, overflow: "auto", padding: "20px" }}>{children}</div>
+        <div style={{ flex: 1, overflow: "auto", padding: "1.25rem" }}>{children}</div>
       </div>
     </>
   );

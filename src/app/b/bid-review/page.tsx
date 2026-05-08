@@ -13,10 +13,10 @@ import { useToast } from "@/components/Toast";
 import { B_ASSIGNED_REVIEWS, B_REVIEW_VENDORS, EVAL_CRITERIA } from "@/lib/mock/bids";
 
 const btn = (variant: "primary" | "secondary" | "danger" | "ghost" = "primary"): React.CSSProperties => ({
-  padding: "6px 16px", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-  border: variant === "primary" ? "none" : variant === "danger" ? "none" : variant === "ghost" ? "1px solid #e0e0e0" : "1px solid #01ACC8",
-  background: variant === "primary" ? "#01ACC8" : variant === "danger" ? "#DC2626" : "#fff",
-  color: variant === "primary" ? "#fff" : variant === "danger" ? "#fff" : variant === "ghost" ? "#555" : "#01ACC8",
+  padding: "6px 16px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: variant === "primary" ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
+  background: variant === "primary" ? "#654024" : "#ffffff",
+  color: variant === "primary" ? "#ffffff" : "#654024",
 });
 
 const REVIEW_STEPS = [
@@ -97,7 +97,7 @@ function ScoreInputModal({ open, onClose, vendorName }: { open: boolean; onClose
                     }}
                   />
                 </td>
-                <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center", color: "#01ACC8" }}>
+                <td style={{ padding: "8px 10px", border: "1px solid #e0e0e0", textAlign: "center", color: "#00a7ea" }}>
                   {scores[c.id] ?? 0}
                 </td>
               </tr>
@@ -106,7 +106,7 @@ function ScoreInputModal({ open, onClose, vendorName }: { open: boolean; onClose
         </table>
 
         <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderTop: "1px solid #e0e0e0", fontSize: 16 }}>
-          <span>현재 합산: <strong style={{ color: "#01ACC8", fontSize: 18 }}>{total.toFixed(1)}점</strong></span>
+          <span>현재 합산: <strong style={{ color: "#00a7ea", fontSize: 18 }}>{total.toFixed(1)}점</strong></span>
           <span style={{ color: "#888" }}>/ 100점</span>
         </div>
 
@@ -241,7 +241,7 @@ function ReviewDrawer({ bidId, open, onClose }: { bidId: string | null; open: bo
               <>
                 {/* 업체 목록 */}
                 <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-                  <button style={{ ...btn("primary"), fontSize: 15 }} onClick={() => setStatusModalOpen(true)}>심사현황</button>
+                  <button style={{ ...btn("primary"), fontSize: 12 }} onClick={() => setStatusModalOpen(true)}>심사현황</button>
                 </div>
 
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 16, marginBottom: 12 }}>
@@ -274,7 +274,7 @@ function ReviewDrawer({ bidId, open, onClose }: { bidId: string | null; open: bo
                         </td>
                         <td style={{ padding: "6px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>
                           <button
-                            style={{ ...btn("primary"), padding: "3px 10px", fontSize: 15 }}
+                            style={{ ...btn("primary"), padding: "3px 10px", fontSize: 12 }}
                             onClick={() => {
                               setSelectedVendorId(v.id);
                               setScoreModalOpen(true);
@@ -314,7 +314,7 @@ function ReviewDrawer({ bidId, open, onClose }: { bidId: string | null; open: bo
                   <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>업체 제출 자료 (참고용)</div>
                   <div style={{ fontSize: 16, color: "#555", marginBottom: 6 }}>자가심사 결과: 품질관리B / 납기이행A / 재정건전성B</div>
                   <div style={{ fontSize: 16, color: "#555" }}>
-                    첨부서류: <button style={{ ...btn("secondary"), padding: "2px 8px", fontSize: 14, marginLeft: 6 }}>자가심사_증빙.pdf</button>
+                    첨부서류: <button style={{ ...btn("secondary"), padding: "2px 8px", fontSize: 12, marginLeft: 6 }}>자가심사_증빙.pdf</button>
                   </div>
                 </div>
                 <button style={btn("primary")} onClick={() => setScoreModalOpen(true)}>점수 입력</button>
@@ -388,7 +388,7 @@ export default function BBidReviewPage() {
       {/* 목록 행 아래 스텝 진행 상태 표시 */}
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {B_ASSIGNED_REVIEWS.map((r) => (
-          <div key={r.bidId} style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 6, padding: "12px 20px" }}>
+          <div key={r.bidId} style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 6, padding: "12px 20px" }}>
             <div style={{ fontSize: 16, fontWeight: 600, color: "#333", marginBottom: 10 }}>{r.bidId} — {r.title}</div>
             <Stepper steps={REVIEW_STEPS} current={r.step} />
           </div>

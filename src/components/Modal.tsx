@@ -15,24 +15,24 @@ export default function Modal({ open, onClose, title, children, width = 520, foo
   if (!open) return null;
   return (
     <div
-      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center" }}
+      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center" }}
       onClick={onClose}
     >
       <div
-        style={{ background: "#fff", borderRadius: 8, width, maxHeight: "80vh", display: "flex", flexDirection: "column", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}
+        style={{ background: "#fff", borderRadius: 8, width, maxWidth: "90vw", maxHeight: "90vh", display: "flex", flexDirection: "column", boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #e0e0e0", flexShrink: 0 }}>
-          <span style={{ fontSize: 19, fontWeight: 700 }}>{title}</span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", borderBottom: "1px solid #dee2e6", flexShrink: 0 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "#333" }}>{title}</span>
           <button onClick={onClose} style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}>
-            <X size={18} color="#555" />
+            <X size={16} color="#555" />
           </button>
         </div>
-        <div style={{ flex: 1, overflow: "auto", padding: "20px" }}>{children}</div>
+        <div style={{ flex: 1, overflow: "auto", padding: "1.25rem" }}>{children}</div>
         {footer && (
-          <div style={{ padding: "12px 20px", borderTop: "1px solid #e0e0e0", display: "flex", justifyContent: "flex-end", gap: 8, flexShrink: 0 }}>
+          <div style={{ padding: "0.875rem 1.25rem", borderTop: "1px solid #dee2e6", display: "flex", justifyContent: "flex-end", gap: 6, flexShrink: 0 }}>
             {footer}
           </div>
         )}

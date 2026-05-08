@@ -46,14 +46,14 @@ export default function DataTable({
           gap: "8px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", minHeight: "30px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", minHeight: "28px" }}>
           <span
             style={{
               display: "inline-flex",
               alignItems: "center",
               gap: "8px",
               fontSize: "13px",
-              fontWeight: 600,
+              fontWeight: 700,
               color: "#333",
               lineHeight: 1,
             }}
@@ -61,10 +61,10 @@ export default function DataTable({
             <span
               aria-hidden="true"
               style={{
-                width: "9px",
-                height: "9px",
-                borderTop: "3px solid #01ACC8",
-                borderRight: "3px solid #01ACC8",
+                width: "8px",
+                height: "8px",
+                borderTop: "2px solid #00a7ea",
+                borderRight: "2px solid #00a7ea",
                 transform: "rotate(45deg)",
                 display: "inline-block",
                 flex: "0 0 auto",
@@ -72,7 +72,7 @@ export default function DataTable({
             />
             <span>
             {sectionLabel} (총{" "}
-            <span style={{ color: "#01ACC8", fontWeight: 700 }}>
+            <span style={{ color: "#00a7ea", fontWeight: 700 }}>
               {(totalCount ?? data.length).toLocaleString()}
             </span>
             건)
@@ -82,31 +82,32 @@ export default function DataTable({
             <span
               style={{
                 fontSize: "12px",
-                color: "#e8840a",
+                color: "#fd7e14",
                 display: "flex",
                 alignItems: "center",
                 gap: "4px",
               }}
             >
-              ⚠️ {notice}
+              ⚠ {notice}
             </span>
           )}
         </div>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center", minHeight: "30px" }}>
+        <div style={{ display: "flex", gap: "6px", alignItems: "center", minHeight: "28px" }}>
           {actionButton}
           {showExcel && (
             <button
               style={{
-                background: "#fff",
-                color: "#01ACC8",
-                border: "1px solid #01ACC8",
+                background: "#ffffff",
+                color: "#654024",
+                border: "1px solid #CFCFCF",
                 borderRadius: "4px",
-                minHeight: "30px",
-                padding: "0 14px",
+                height: "28px",
+                padding: "0 12px",
                 fontSize: "12px",
-                fontWeight: 600,
+                fontWeight: 400,
                 cursor: "pointer",
                 fontFamily: "inherit",
+                minWidth: 84,
               }}
             >
               엑셀다운로드
@@ -119,26 +120,27 @@ export default function DataTable({
       <div
         style={{
           overflowX: "auto",
-          border: "1px solid #d8dfe3",
-          borderRadius: "4px",
+          border: "1px solid #dee2e6",
+          borderRadius: "8px",
         }}
       >
         <table
           style={{
             width: "100%",
             borderCollapse: "collapse",
-            fontSize: "13px",
+            fontSize: "12px",
             minWidth: "600px",
+            background: "#fff",
           }}
         >
           <thead>
-            <tr style={{ background: "#f5f5f5" }}>
+            <tr style={{ background: "#f8f9fa" }}>
               {showCheckbox && (
                 <th
                   style={{
                     width: "40px",
-                    padding: "10px 8px",
-                    borderBottom: "1px solid #d8dfe3",
+                    padding: "0.6rem 0.5rem",
+                    borderBottom: "2px solid #dee2e6",
                     textAlign: "center",
                   }}
                 >
@@ -149,15 +151,15 @@ export default function DataTable({
                 <th
                   key={col.key}
                   style={{
-                    padding: "10px 12px",
-                    borderBottom: "1px solid #d8dfe3",
+                    padding: "0.6rem 0.75rem",
+                    borderBottom: "2px solid #dee2e6",
                     textAlign: col.align || "center",
                     fontWeight: 600,
-                    color: "#444",
+                    color: "#333",
                     whiteSpace: "nowrap",
                     width: col.width,
-                    fontSize: "13px",
-                    background: "#f5f5f5",
+                    fontSize: "12px",
+                    background: "#f8f9fa",
                   }}
                 >
                   {col.label}
@@ -171,11 +173,10 @@ export default function DataTable({
                 <td
                   colSpan={columns.length + (showCheckbox ? 1 : 0)}
                   style={{
-                    height: "44px",
-                    padding: "32px",
+                    padding: "2rem",
                     textAlign: "center",
-                    color: "#888",
-                    fontSize: "13px",
+                    color: "#6c757d",
+                    fontSize: "12px",
                   }}
                 >
                   No Found Data.
@@ -191,7 +192,7 @@ export default function DataTable({
                   }}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLTableRowElement).style.background = "#f0f8fb";
+                    (e.currentTarget as HTMLTableRowElement).style.background = "#f5f7fa";
                   }}
                   onMouseLeave={(e) => {
                     (e.currentTarget as HTMLTableRowElement).style.background = "#fff";
@@ -200,10 +201,10 @@ export default function DataTable({
                   {showCheckbox && (
                     <td
                       style={{
-                        height: "44px",
-                        padding: "0 8px",
-                        borderBottom: "1px solid #eef1f3",
+                        padding: "0.5rem",
+                        borderBottom: "1px solid #dee2e6",
                         textAlign: "center",
+                        verticalAlign: "middle",
                       }}
                     >
                       <input type="checkbox" />
@@ -213,12 +214,12 @@ export default function DataTable({
                     <td
                       key={col.key}
                       style={{
-                        height: "44px",
-                        padding: "0 12px",
-                        borderBottom: "1px solid #eef1f3",
+                        padding: "0.5rem 0.75rem",
+                        borderBottom: "1px solid #dee2e6",
                         textAlign: col.align || "center",
-                        color: "#444",
+                        color: "#333",
                         whiteSpace: "nowrap",
+                        verticalAlign: "middle",
                       }}
                     >
                       {col.render

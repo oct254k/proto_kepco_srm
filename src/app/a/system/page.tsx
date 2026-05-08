@@ -27,37 +27,22 @@ import type { Notice } from "@/lib/types";
 
 // ────────── 스타일 헬퍼 ─────────────────────────────────────────────────────
 const btnPrimary: React.CSSProperties = {
-  background: "#01ACC8",
-  color: "#fff",
-  border: "none",
-  borderRadius: 4,
-  padding: "6px 14px",
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: "pointer",
-  fontFamily: "inherit",
+  padding: "6px 14px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: "1px solid #DFE8F0",
+  background: "#654024",
+  color: "#ffffff",
 };
 const btnOutline: React.CSSProperties = {
-  background: "#fff",
-  color: "#01ACC8",
-  border: "1px solid #01ACC8",
-  borderRadius: 4,
-  padding: "6px 14px",
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: "pointer",
-  fontFamily: "inherit",
+  padding: "6px 14px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: "1px solid #CFCFCF",
+  background: "#ffffff",
+  color: "#654024",
 };
 const btnDanger: React.CSSProperties = {
-  background: "#fff",
-  color: "#dc2626",
-  border: "1px solid #dc2626",
-  borderRadius: 4,
-  padding: "6px 14px",
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: "pointer",
-  fontFamily: "inherit",
+  padding: "6px 14px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: "1px solid #CFCFCF",
+  background: "#ffffff",
+  color: "#654024",
 };
 const labelStyle: React.CSSProperties = {
   fontSize: 16,
@@ -128,7 +113,7 @@ function DashboardTab({ onTabChange }: { onTabChange: (id: string) => void }) {
             key={c.label}
             onClick={() => c.tabId && onTabChange(c.tabId)}
             style={{
-              background: "#fff",
+              background: "#FAF7F2",
               border: "1px solid #e0e0e0",
               borderRadius: 8,
               padding: "20px 24px",
@@ -137,13 +122,13 @@ function DashboardTab({ onTabChange }: { onTabChange: (id: string) => void }) {
               boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
             }}
           >
-            <div style={{ fontSize: 28, fontWeight: 700, color: "#01ACC8" }}>{c.value}</div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: "#00a7ea" }}>{c.value}</div>
             <div style={{ fontSize: 16, color: "#555", marginTop: 4 }}>{c.label}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 6, padding: 16 }}>
+      <div style={{ background: "#FAF7F2", border: "1px solid #e0e0e0", borderRadius: 6, padding: 16 }}>
         <div
           style={{
             display: "flex",
@@ -154,7 +139,7 @@ function DashboardTab({ onTabChange }: { onTabChange: (id: string) => void }) {
         >
           <span style={{ fontSize: 17, fontWeight: 700, color: "#333" }}>최근 감사로그</span>
           <button
-            style={{ ...btnOutline, padding: "4px 12px", fontSize: 15 }}
+            style={{ ...btnOutline, padding: "4px 12px", fontSize: 12 }}
             onClick={() => onTabChange("audit")}
           >
             전체 보기
@@ -502,7 +487,7 @@ function ManualsTab() {
       align: "center",
       render: () => (
         <button
-          style={{ ...btnOutline, padding: "3px 8px", fontSize: 14 }}
+          style={{ ...btnOutline, padding: "3px 8px", fontSize: 12 }}
           onClick={(e) => e.stopPropagation()}
         >
           다운로드
@@ -623,7 +608,7 @@ function SystemSettingsTab() {
     <div>
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           border: "1px solid #e0e0e0",
           borderRadius: 6,
           padding: 20,
@@ -656,7 +641,7 @@ function SystemSettingsTab() {
                   height: 26,
                   borderRadius: 13,
                   border: "none",
-                  background: s.value === "true" ? "#01ACC8" : "#ccc",
+                  background: s.value === "true" ? "#00a7ea" : "#ccc",
                   cursor: "pointer",
                   position: "relative",
                   flexShrink: 0,
@@ -672,7 +657,7 @@ function SystemSettingsTab() {
                     width: 20,
                     height: 20,
                     borderRadius: "50%",
-                    background: "#fff",
+                    background: "#FAF7F2",
                     transition: "left 0.2s",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
                   }}
@@ -812,7 +797,7 @@ function CommonCodesTab() {
         style={{
           width: 200,
           flexShrink: 0,
-          background: "#fff",
+          background: "#FAF7F2",
           border: "1px solid #e0e0e0",
           borderRadius: 6,
           overflow: "hidden",
@@ -832,7 +817,7 @@ function CommonCodesTab() {
         >
           <span>코드그룹</span>
           <button
-            style={{ ...btnPrimary, padding: "2px 8px", fontSize: 14 }}
+            style={{ ...btnPrimary, padding: "2px 8px", fontSize: 12 }}
             onClick={handleAddGroup}
           >
             + 그룹
@@ -848,15 +833,15 @@ function CommonCodesTab() {
                 width: "100%",
                 textAlign: "left",
                 padding: "10px 14px",
-                border: "none",
+                border: "1px solid #CFCFCF",
                 borderBottom: "1px solid #f0f0f0",
                 background: isSelected ? "#e6f7fa" : "#fff",
                 cursor: "pointer",
                 fontFamily: "inherit",
                 fontSize: 16,
                 fontWeight: isSelected ? 700 : 400,
-                color: isSelected ? "#01ACC8" : "#333",
-                borderLeft: isSelected ? "3px solid #01ACC8" : "3px solid transparent",
+                color: isSelected ? "#00a7ea" : "#333",
+                borderLeft: isSelected ? "3px solid #00a7ea" : "3px solid transparent",
               }}
             >
               <div>{g.groupName}</div>
@@ -1120,7 +1105,7 @@ export default function SystemPage() {
           display: "flex",
           borderBottom: "2px solid #e0e0e0",
           marginBottom: 20,
-          background: "#fff",
+          background: "#FAF7F2",
           borderRadius: "6px 6px 0 0",
           overflow: "hidden",
           border: "1px solid #e0e0e0",
@@ -1138,13 +1123,13 @@ export default function SystemPage() {
                 padding: "12px 22px",
                 fontSize: 17,
                 fontWeight: isActive ? 700 : 400,
-                color: isActive ? "#01ACC8" : "#555",
-                borderBottom: isActive ? "2px solid #01ACC8" : "2px solid transparent",
+                color: isActive ? "#00a7ea" : "#555",
+                borderBottom: isActive ? "2px solid #00a7ea" : "2px solid transparent",
                 background: isActive ? "#f0fbfd" : "transparent",
-                border: "none",
+                border: "1px solid #CFCFCF",
                 borderBottomWidth: 2,
                 borderBottomStyle: "solid",
-                borderBottomColor: isActive ? "#01ACC8" : "transparent",
+                borderBottomColor: isActive ? "#00a7ea" : "transparent",
                 cursor: "pointer",
                 marginBottom: -2,
                 fontFamily: "inherit",

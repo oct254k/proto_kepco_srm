@@ -11,14 +11,16 @@ export default function StatusBadge({ status, label }: StatusBadgeProps) {
   return (
     <span
       style={{
-        display: "inline-block",
+        display: "inline-flex",
+        alignItems: "center",
         background: style.bg,
         color: style.color,
-        borderRadius: "999px",
-        padding: "2px 10px",
-        fontSize: "12px",
-        fontWeight: 600,
+        borderRadius: 9999,
+        padding: "2px 8px",
+        fontSize: "11px",
+        fontWeight: 700,
         whiteSpace: "nowrap",
+        lineHeight: 1.4,
       }}
     >
       {style.label}

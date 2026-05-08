@@ -158,7 +158,7 @@ function MiniCalendar({ events = [] }: { events?: CalendarEvent[] }) {
                             width: 22,
                             height: 22,
                             borderRadius: "50%",
-                            background: isToday ? "#01ACC8" : "transparent",
+                            background: isToday ? "#00a7ea" : "transparent",
                             color: isToday ? "#fff" : di === 0 ? "#DC2626" : di === 6 ? "#2563EB" : "#333",
                             fontWeight: isToday ? 700 : 400,
                             fontSize: 15,
@@ -206,7 +206,7 @@ function Widget({ title, children, style }: { title: string; children: React.Rea
   return (
     <div
       style={{
-        background: "#fff",
+        background: "#FAF7F2",
         border: "1px solid #E5E7EB",
         borderRadius: 8,
         padding: "20px",
@@ -226,7 +226,7 @@ function Widget({ title, children, style }: { title: string; children: React.Rea
           gap: 6,
         }}
       >
-        <span style={{ width: 3, height: 14, background: "#01ACC8", borderRadius: 2, display: "inline-block" }} />
+        <span style={{ width: 3, height: 14, background: "#654024", borderRadius: 2, display: "inline-block" }} />
         {title}
       </div>
       {children}
@@ -511,11 +511,11 @@ export default function ContractDashboardPage() {
               width: "100%",
               marginTop: 12,
               padding: "8px",
-              background: "transparent",
-              border: "1px solid #E5E7EB",
+              background: "#ffffff",
+              border: "1px solid #CFCFCF",
               borderRadius: 6,
               fontSize: 16,
-              color: "#01ACC8",
+              color: "#654024",
               cursor: "pointer",
               fontFamily: "inherit",
               fontWeight: 500,
@@ -539,9 +539,9 @@ export default function ContractDashboardPage() {
             <button
               style={{
                 padding: "5px 14px",
-                background: "#01ACC8",
+                background: "#654024",
                 color: "#fff",
-                border: "none",
+                border: "1px solid #DFE8F0",
                 borderRadius: 4,
                 fontSize: 15,
                 cursor: "pointer",
@@ -618,10 +618,10 @@ export default function ContractDashboardPage() {
           <div>
             <button
               style={{
-                background: "transparent",
-                border: "none",
+                background: "#ffffff",
+                border: "1px solid #CFCFCF",
                 cursor: "pointer",
-                color: "#01ACC8",
+                color: "#654024",
                 fontSize: 16,
                 padding: "0 0 12px",
                 fontFamily: "inherit",

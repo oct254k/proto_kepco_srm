@@ -128,19 +128,19 @@ function QuoteWriteModal({ open, onClose }: QuoteWriteModalProps) {
         <>
           <button
             onClick={onClose}
-            style={{ padding: "8px 20px", border: "1px solid #ccc", borderRadius: 4, background: "#fff", fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "8px 20px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
           >
             닫기
           </button>
           <button
             onClick={handleSave}
-            style={{ padding: "8px 20px", border: "1px solid #01ACC8", borderRadius: 4, background: "#fff", color: "#01ACC8", fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "8px 20px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", color: "#654024", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             임시저장
           </button>
           <button
             onClick={handleSend}
-            style={{ padding: "8px 20px", border: "none", borderRadius: 4, background: "#01ACC8", color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "8px 20px", border: "1px solid #DFE8F0", borderRadius: 4, background: "#654024", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             발송하기
           </button>
@@ -173,7 +173,7 @@ function QuoteWriteModal({ open, onClose }: QuoteWriteModalProps) {
                 style={{ ...inputStyle, flex: 1 }}
               />
               <button
-                style={{ padding: "6px 12px", border: "1px solid #01ACC8", borderRadius: 4, background: "#fff", color: "#01ACC8", fontSize: 15, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit" }}
+                style={{ padding: "6px 12px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", color: "#654024", fontSize: 12, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit" }}
               >
                 연계조회
               </button>
@@ -220,7 +220,7 @@ function QuoteWriteModal({ open, onClose }: QuoteWriteModalProps) {
             <span style={{ fontSize: 17, fontWeight: 700, color: "#222" }}>품목 목록</span>
             <button
               onClick={addItem}
-              style={{ padding: "5px 12px", border: "1px solid #01ACC8", borderRadius: 4, background: "#fff", color: "#01ACC8", fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+              style={{ padding: "5px 12px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", color: "#654024", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
             >
               + 행 추가
             </button>
@@ -254,7 +254,7 @@ function QuoteWriteModal({ open, onClose }: QuoteWriteModalProps) {
                       <input value={item.spec} onChange={(e) => updateItem(item.id, "spec", e.target.value)} placeholder="규격" style={{ width: "100px", padding: "4px 6px", border: "1px solid #ccc", borderRadius: 3, fontSize: 15, fontFamily: "inherit" }} />
                     </td>
                     <td style={{ padding: "6px 8px", borderBottom: "1px solid #eee", textAlign: "center" }}>
-                      <button onClick={() => removeItem(item.id)} style={{ background: "#FEE2E2", color: "#991B1B", border: "none", borderRadius: 3, padding: "3px 8px", fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>삭제</button>
+                      <button onClick={() => removeItem(item.id)} style={{ background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 3, padding: "3px 8px", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>삭제</button>
                     </td>
                   </tr>
                 ))}
@@ -276,7 +276,7 @@ function QuoteWriteModal({ open, onClose }: QuoteWriteModalProps) {
             />
             <button
               onClick={addVendor}
-              style={{ padding: "6px 14px", border: "1px solid #01ACC8", borderRadius: 4, background: "#01ACC8", color: "#fff", fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}
+              style={{ padding: "6px 14px", border: "1px solid #DFE8F0", borderRadius: 4, background: "#654024", color: "#fff", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
             >
               추가
             </button>
@@ -286,7 +286,7 @@ function QuoteWriteModal({ open, onClose }: QuoteWriteModalProps) {
             {vendors.map((v) => (
               <span key={v} style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#DBEAFE", color: "#1E40AF", borderRadius: 999, padding: "4px 12px", fontSize: 15, fontWeight: 600 }}>
                 {v}
-                <button onClick={() => removeVendor(v)} style={{ background: "transparent", border: "none", color: "#1E40AF", cursor: "pointer", padding: 0, lineHeight: 1, fontSize: 17 }}>×</button>
+                <button onClick={() => removeVendor(v)} style={{ background: "transparent", border: "none", color: "#1E40AF", cursor: "pointer", padding: 0, lineHeight: 1, fontSize: 12 }}>×</button>
               </span>
             ))}
             {vendors.length === 0 && <span style={{ color: "#aaa", fontSize: 15 }}>선택된 업체가 없습니다.</span>}
@@ -355,7 +355,7 @@ function QuoteDetailDrawer({ quote, open, onClose, role }: QuoteDetailDrawerProp
                 </div>
                 {role === "B" && quote.status !== "CLOSED" && quote.status !== "CANCELLED" && (
                   <div style={{ marginTop: 8 }}>
-                    <button style={{ padding: "7px 16px", background: "#FEE2E2", color: "#991B1B", border: "1px solid #FECACA", borderRadius: 4, fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}>
+                    <button style={{ padding: "7px 16px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
                       취소하기
                     </button>
                   </div>
@@ -432,7 +432,7 @@ function QuoteDetailDrawer({ quote, open, onClose, role }: QuoteDetailDrawerProp
                 </div>
                 {role === "B" && (
                   <div style={{ marginTop: 16, textAlign: "right" }}>
-                    <button style={{ padding: "8px 18px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                    <button style={{ padding: "8px 18px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
                       발주요청 작성으로 이동 →
                     </button>
                   </div>
@@ -535,7 +535,7 @@ export default function BQuoteRequestsPage() {
         actions={
           <button
             onClick={() => setModalOpen(true)}
-            style={{ padding: "8px 18px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "8px 18px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             + 견적요청 작성
           </button>

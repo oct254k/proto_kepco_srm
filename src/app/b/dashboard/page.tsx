@@ -31,13 +31,13 @@ interface SummaryCardProps {
   href?: string;
 }
 
-function SummaryCard({ label, value, unit = "건", accent = "#01ACC8", href }: SummaryCardProps) {
+function SummaryCard({ label, value, unit = "건", accent = "#00a7ea", href }: SummaryCardProps) {
   const inner = (
     <div
       role="region"
       aria-label={label}
       style={{
-        background: "#fff",
+        background: "#FAF7F2",
         borderRadius: 8,
         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
         display: "flex",
@@ -93,7 +93,7 @@ function StatWidget({ title, rows, linkLabel, linkHref }: StatWidgetProps) {
       role="region"
       aria-label={title}
       style={{
-        background: "#fff",
+        background: "#FAF7F2",
         borderRadius: 8,
         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
         overflow: "hidden",
@@ -101,7 +101,7 @@ function StatWidget({ title, rows, linkLabel, linkHref }: StatWidgetProps) {
         flexDirection: "column",
       }}
     >
-      <div style={{ height: 5, background: "#01ACC8" }} />
+      <div style={{ height: 5, background: "#654024" }} />
       <div style={{ padding: "16px 20px", borderBottom: "1px solid #f0f0f0" }}>
         <span style={{ fontSize: 17, fontWeight: 700, color: "#222" }}>{title}</span>
       </div>
@@ -122,7 +122,7 @@ function StatWidget({ title, rows, linkLabel, linkHref }: StatWidgetProps) {
               style={{
                 fontSize: 19,
                 fontWeight: 700,
-                color: row.highlight ? "#DC2626" : "#01ACC8",
+                color: row.highlight ? "#DC2626" : "#00a7ea",
               }}
             >
               {row.value}
@@ -136,7 +136,7 @@ function StatWidget({ title, rows, linkLabel, linkHref }: StatWidgetProps) {
           href={linkHref}
           style={{
             fontSize: 16,
-            color: "#01ACC8",
+            color: "#00a7ea",
             fontWeight: 600,
             textDecoration: "none",
             display: "flex",
@@ -234,7 +234,7 @@ function MiniCalendar() {
                     padding: "4px 2px",
                     borderRadius: 4,
                     cursor: events ? "pointer" : "default",
-                    background: isToday ? "#01ACC8" : "transparent",
+                    background: isToday ? "#00a7ea" : "transparent",
                   }}
                   onMouseEnter={(e) => {
                     if (events && !isToday)
@@ -367,13 +367,13 @@ function NoticeDrawerContent({ notices }: NoticeDrawerContentProps) {
           onClick={() => setSelected(null)}
           style={{
             marginBottom: 16,
-            background: "transparent",
-            border: "1px solid #e0e0e0",
+            background: "#ffffff",
+            border: "1px solid #CFCFCF",
             borderRadius: 4,
             padding: "4px 12px",
             fontSize: 16,
             cursor: "pointer",
-            color: "#555",
+            color: "#654024",
             fontFamily: "inherit",
           }}
         >
@@ -404,7 +404,7 @@ function NoticeDrawerContent({ notices }: NoticeDrawerContentProps) {
             href="#"
             style={{
               fontSize: 16,
-              color: "#01ACC8",
+              color: "#00a7ea",
               textDecoration: "none",
               background: "#e0f5f9",
               padding: "4px 10px",
@@ -430,14 +430,14 @@ function NoticeDrawerContent({ notices }: NoticeDrawerContentProps) {
             }}
             disabled={notices.indexOf(selected) === 0}
             style={{
-              background: "transparent",
-              border: "1px solid #e0e0e0",
+              background: "#ffffff",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               padding: "5px 14px",
               fontSize: 16,
               cursor: "pointer",
               fontFamily: "inherit",
-              color: "#555",
+              color: "#654024",
             }}
           >
             &#8249; 이전
@@ -449,14 +449,14 @@ function NoticeDrawerContent({ notices }: NoticeDrawerContentProps) {
             }}
             disabled={notices.indexOf(selected) === notices.length - 1}
             style={{
-              background: "transparent",
-              border: "1px solid #e0e0e0",
+              background: "#ffffff",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               padding: "5px 14px",
               fontSize: 16,
               cursor: "pointer",
               fontFamily: "inherit",
-              color: "#555",
+              color: "#654024",
             }}
           >
             다음 &#8250;
@@ -488,9 +488,9 @@ function NoticeDrawerContent({ notices }: NoticeDrawerContentProps) {
         <button
           style={{
             padding: "7px 14px",
-            background: "#01ACC8",
+            background: "#654024",
             color: "#fff",
-            border: "none",
+            border: "1px solid #DFE8F0",
             borderRadius: 4,
             fontSize: 16,
             fontWeight: 600,
@@ -507,11 +507,11 @@ function NoticeDrawerContent({ notices }: NoticeDrawerContentProps) {
           onChange={(e) => setTypeFilter(e.target.value)}
           style={{
             padding: "6px 10px",
-            border: "1px solid #e0e0e0",
+            border: "1px solid #CFCFCF",
             borderRadius: 4,
             fontSize: 16,
             fontFamily: "inherit",
-            background: "#fff",
+            background: "#ffffff",
             cursor: "pointer",
           }}
         >
@@ -570,7 +570,7 @@ function NoticeDrawerContent({ notices }: NoticeDrawerContentProps) {
                   key={n.id}
                   onClick={() => setSelected(n)}
                   style={{ cursor: "pointer", borderTop: "1px solid #eee" }}
-                  onMouseEnter={(e) => ((e.currentTarget as HTMLTableRowElement).style.background = "#f0f8fb")}
+                  onMouseEnter={(e) => ((e.currentTarget as HTMLTableRowElement).style.background = "#e6f6fd")}
                   onMouseLeave={(e) => ((e.currentTarget as HTMLTableRowElement).style.background = "#fff")}
                 >
                   <td style={{ padding: "10px 12px", textAlign: "center", color: "#888" }}>
@@ -684,7 +684,7 @@ export default function BDashboardPage() {
   ];
 
   const today = "2026-04-22(수)";
-  const CARD_ACCENTS = ["#01ACC8", "#41C1D6", "#80D6E4", "#C0EAF1"];
+  const CARD_ACCENTS = ["#00a7ea", "#41C1D6", "#80D6E4", "#C0EAF1"];
 
   return (
     <div style={{ width: "100%" }}>
@@ -786,13 +786,13 @@ export default function BDashboardPage() {
           role="region"
           aria-label="입찰 일정 캘린더"
           style={{
-            background: "#fff",
+            background: "#FAF7F2",
             borderRadius: 8,
             boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
             overflow: "hidden",
           }}
         >
-          <div style={{ height: 5, background: "#01ACC8" }} />
+          <div style={{ height: 5, background: "#654024" }} />
           <div
             style={{
               padding: "14px 20px",
@@ -817,7 +817,7 @@ export default function BDashboardPage() {
           role="region"
           aria-label="최근 공지사항"
           style={{
-            background: "#fff",
+            background: "#FAF7F2",
             borderRadius: 8,
             boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
             overflow: "hidden",
@@ -825,7 +825,7 @@ export default function BDashboardPage() {
             flexDirection: "column",
           }}
         >
-          <div style={{ height: 5, background: "#01ACC8" }} />
+          <div style={{ height: 5, background: "#654024" }} />
           <div
             style={{
               padding: "14px 20px",
@@ -845,7 +845,7 @@ export default function BDashboardPage() {
                 }}
                 onClick={() => setDrawerOpen(true)}
                 onMouseEnter={(e) =>
-                  ((e.currentTarget as HTMLDivElement).style.background = "#f0f8fb")
+                  ((e.currentTarget as HTMLDivElement).style.background = "#e6f6fd")
                 }
                 onMouseLeave={(e) =>
                   ((e.currentTarget as HTMLDivElement).style.background = "transparent")
@@ -886,9 +886,9 @@ export default function BDashboardPage() {
             <button
               onClick={() => setDrawerOpen(true)}
               style={{
-                background: "transparent",
-                border: "none",
-                color: "#01ACC8",
+                background: "#ffffff",
+                border: "1px solid #CFCFCF",
+                color: "#654024",
                 fontSize: 16,
                 fontWeight: 600,
                 cursor: "pointer",
@@ -907,14 +907,14 @@ export default function BDashboardPage() {
         role="region"
         aria-label="입찰 목록"
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           borderRadius: 8,
           boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
           overflow: "hidden",
           marginBottom: 20,
         }}
       >
-        <div style={{ height: 5, background: "#01ACC8" }} />
+        <div style={{ height: 5, background: "#654024" }} />
         <div style={{ padding: "14px 20px 0" }}>
           <span style={{ fontSize: 17, fontWeight: 700, color: "#222" }}>입찰 목록</span>
         </div>
@@ -941,7 +941,7 @@ export default function BDashboardPage() {
                 {activeTab === "bidsummary" && (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, paddingTop: 4 }}>
                     {B_DASHBOARD_BIDS.map((bid) => (
-                      <div key={bid.id} style={{ background: "#f9f9f9", borderRadius: 6, padding: "14px 16px", borderLeft: "3px solid #01ACC8" }}>
+                      <div key={bid.id} style={{ background: "#f9f9f9", borderRadius: 6, padding: "14px 16px", borderLeft: "3px solid #00a7ea" }}>
                         <p style={{ margin: "0 0 6px", fontSize: 15, color: "#888", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{bid.id}</p>
                         <p style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "#333", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{bid.title}</p>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

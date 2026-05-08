@@ -230,14 +230,14 @@ function OrderWriteModal({
             {step < steps.length - 1 ? (
               <button
                 onClick={handleNext}
-                style={{ padding: "8px 18px", borderRadius: 6, border: "none", background: "#01ACC8", color: "#fff", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}
+                style={{ padding: "8px 18px", borderRadius: 6, border: "1px solid #DFE8F0", background: "#654024", color: "#fff", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}
               >
                 다음
               </button>
             ) : (
               <button
                 onClick={handleSubmit}
-                style={{ padding: "8px 18px", borderRadius: 6, border: "none", background: "#065F46", color: "#fff", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}
+                style={{ padding: "8px 18px", borderRadius: 6, border: "1px solid #CFCFCF", background: "#ffffff", color: "#654024", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}
               >
                 발주계약요청 제출
               </button>
@@ -594,7 +594,7 @@ export default function BOrdersPage() {
             <StatusGuide screenName="SCR-S-05 발주계약요청" sections={ORDER_STATUS_GUIDE} />
             <button
               onClick={() => setModalOpen(true)}
-              style={{ padding: "8px 18px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 6, fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+              style={{ padding: "8px 18px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 6, fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
             >
               + 발주계약요청 작성
             </button>

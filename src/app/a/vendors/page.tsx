@@ -39,8 +39,8 @@ function Btn({
     whiteSpace: "nowrap" as const,
   };
   const variants: Record<string, React.CSSProperties> = {
-    primary: { background: "#01ACC8", color: "#fff", borderColor: "#01ACC8" },
-    outline: { background: "#fff", color: "#01ACC8", borderColor: "#01ACC8" },
+    primary: { background: "#654024", color: "#fff", borderColor: "#654024" },
+    outline: { background: "#fff", color: "#00a7ea", borderColor: "#654024" },
     danger: { background: "#fff", color: "#DC2626", borderColor: "#DC2626" },
     success: { background: "#059669", color: "#fff", borderColor: "#059669" },
     warning: { background: "#D97706", color: "#fff", borderColor: "#D97706" },
@@ -179,7 +179,7 @@ function PendingVendorDrawer({
                     <DetailRow
                       label="사업자등록증"
                       value={
-                        <span style={{ fontSize: 16, color: "#01ACC8", cursor: "pointer" }}>
+                        <span style={{ fontSize: 16, color: "#00a7ea", cursor: "pointer" }}>
                           📎 사업자등록증.pdf [다운로드]
                         </span>
                       }
@@ -551,7 +551,7 @@ function VendorListDrawer({
                         <div
                           key={s.label}
                           style={{
-                            background: "#fff",
+                            background: "#FAF7F2",
                             border: "1px solid #e0e0e0",
                             borderRadius: 6,
                             padding: "10px",
@@ -559,7 +559,7 @@ function VendorListDrawer({
                           }}
                         >
                           <p style={{ fontSize: 14, color: "#888", marginBottom: 3 }}>{s.label}</p>
-                          <p style={{ fontSize: 21, fontWeight: 700, color: "#01ACC8" }}>{s.value}</p>
+                          <p style={{ fontSize: 21, fontWeight: 700, color: "#00a7ea" }}>{s.value}</p>
                         </div>
                       ))}
                     </div>
@@ -999,7 +999,7 @@ export default function AdminVendorsPage() {
                     style={{
                       textAlign: "center",
                       padding: "60px 20px",
-                      background: "#fff",
+                      background: "#FAF7F2",
                       border: "1px solid #e0e0e0",
                       borderRadius: 6,
                       color: "#888",

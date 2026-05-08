@@ -132,7 +132,7 @@ function BondSubmitModal({
       footer={
         <>
           <button onClick={onClose} style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #CBD5E1", background: "#fff", cursor: "pointer", fontFamily: "inherit" }}>취소</button>
-          <button disabled={!reason.trim()} onClick={onSubmit} style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: reason.trim() ? "#01ACC8" : "#9CA3AF", color: "#fff", cursor: reason.trim() ? "pointer" : "not-allowed", fontFamily: "inherit" }}>제출</button>
+          <button disabled={!reason.trim()} onClick={onSubmit} style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #DFE8F0", background: reason.trim() ? "#654024" : "#9CA3AF", color: "#fff", cursor: reason.trim() ? "pointer" : "not-allowed", fontFamily: "inherit" }}>제출</button>
         </>
       }
     >
@@ -174,7 +174,7 @@ function ContractOpsTab({
         </div>
       )}
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <button onClick={onOpenSubmit} style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: "#01ACC8", color: "#fff", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}>
+        <button onClick={onOpenSubmit} style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #DFE8F0", background: "#654024", color: "#fff", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}>
           {rejected ? "보증서 재제출" : "보증서 제출"}
         </button>
       </div>

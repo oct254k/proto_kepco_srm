@@ -125,7 +125,7 @@ function PlanTab({ order, onConfirm }: PlanTabProps) {
           {syncStatus === "FAILED" && (
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
               <span style={{ color: "#991B1B" }}>오류 코드: CONN_TIMEOUT</span>
-              <button style={{ padding: "3px 10px", background: "#FEE2E2", color: "#991B1B", border: "1px solid #FECACA", borderRadius: 3, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>
+              <button style={{ padding: "3px 10px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 3, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
                 재연동
               </button>
             </div>
@@ -137,7 +137,7 @@ function PlanTab({ order, onConfirm }: PlanTabProps) {
         <div style={{ textAlign: "right" }}>
           <button
             onClick={handleConfirm}
-            style={{ padding: "9px 22px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "9px 22px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             발주계획 확정
           </button>
@@ -194,13 +194,13 @@ function OrderDetailDrawer({ order, open, onClose, onPlanConfirm }: OrderDetailD
                 </div>
                 {/* C 역할 액션 버튼 */}
                 <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <button style={{ padding: "7px 16px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 4, fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                  <button style={{ padding: "7px 16px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
                     접수처리
                   </button>
-                  <button style={{ padding: "7px 16px", background: "#FEF3C7", color: "#92400E", border: "1px solid #FDE68A", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "inherit" }}>
+                  <button style={{ padding: "7px 16px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
                     자료보완요청
                   </button>
-                  <button style={{ padding: "7px 16px", background: "#FEE2E2", color: "#991B1B", border: "1px solid #FECACA", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "inherit" }}>
+                  <button style={{ padding: "7px 16px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
                     반려
                   </button>
                 </div>
@@ -327,7 +327,7 @@ export default function COrdersPage() {
               e.stopPropagation();
               toast.show(`${row.id as string} 발주계획 확정 처리`, "info");
             }}
-            style={{ padding: "4px 10px", background: "#01ACC8", color: "#fff", border: "none", borderRadius: 3, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+            style={{ padding: "4px 10px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 3, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             계획확정
           </button>
@@ -371,7 +371,7 @@ export default function COrdersPage() {
         <span style={{ fontSize: 16, color: "#374151" }}>마지막 동기화: {PMS_SYNC_INFO.lastSync}</span>
         <span style={{ fontSize: 16, color: "#374151" }}>대기중 발주 {PMS_SYNC_INFO.pendingCount}건</span>
         <button
-          style={{ marginLeft: "auto", padding: "6px 14px", background: "#1E40AF", color: "#fff", border: "none", borderRadius: 4, fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+          style={{ marginLeft: "auto", padding: "6px 14px", background: "#ffffff", color: "#654024", border: "1px solid #CFCFCF", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
         >
           PMS 수동 동기화
         </button>

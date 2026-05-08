@@ -188,7 +188,7 @@ export default function VBidHistoryPage() {
               event.stopPropagation();
               router.push("/v/contracts/");
             }}
-            style={{ padding: "6px 12px", borderRadius: 6, border: "none", background: "#01ACC8", color: "#fff", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}
+            style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #DFE8F0", background: "#654024", color: "#fff", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}
           >
             계약 진행
           </button>

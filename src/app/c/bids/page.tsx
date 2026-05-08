@@ -14,16 +14,11 @@ import { MOCK_BIDS, METHOD_LABELS, BID_PARTICIPANTS } from "@/lib/mock/bids";
 import type { Bid } from "@/lib/types";
 
 // ── 인라인 스타일 헬퍼 ──────────────────────────────────────────
-const btn = (variant: "primary" | "secondary" | "danger" = "primary"): React.CSSProperties => ({
-  padding: "6px 16px",
-  borderRadius: 4,
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: "pointer",
-  fontFamily: "inherit",
-  border: variant === "primary" ? "none" : variant === "danger" ? "none" : "1px solid #01ACC8",
-  background: variant === "primary" ? "#01ACC8" : variant === "danger" ? "#DC2626" : "#fff",
-  color: variant === "primary" ? "#fff" : variant === "danger" ? "#fff" : "#01ACC8",
+const btn = (variant: "primary" | "secondary" | "danger" | "ghost" = "primary"): React.CSSProperties => ({
+  padding: "6px 16px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+  border: variant === "primary" ? "1px solid #DFE8F0" : "1px solid #CFCFCF",
+  background: variant === "primary" ? "#654024" : "#ffffff",
+  color: variant === "primary" ? "#ffffff" : "#654024",
 });
 
 const fieldRow: React.CSSProperties = { display: "flex", alignItems: "center", gap: 8, marginBottom: 14 };
@@ -34,7 +29,7 @@ const input: React.CSSProperties = {
 };
 const sectionTitle: React.CSSProperties = {
   fontSize: 17, fontWeight: 700, color: "#222", margin: "20px 0 12px",
-  paddingBottom: 8, borderBottom: "2px solid #01ACC8",
+  paddingBottom: 8, borderBottom: "2px solid #00a7ea",
 };
 
 // ── 계획 등록 폼 ────────────────────────────────────────────────
@@ -57,13 +52,13 @@ function PlanForm({ onSave }: { onSave: () => void }) {
   const radio: React.CSSProperties = { display: "flex", alignItems: "center", gap: 4, fontSize: 16, cursor: "pointer" };
 
   return (
-    <div style={{ background: "#fff", padding: 24, borderRadius: 6, border: "1px solid #e0e0e0" }}>
+    <div style={{ background: "#FAF7F2", padding: 24, borderRadius: 6, border: "1px solid #e0e0e0" }}>
       <div style={sectionTitle}>입찰계획 등록</div>
 
       <div style={fieldRow}>
         <span style={label}>발주계획 연계</span>
         <input style={{ ...input, flex: "none", width: 200 }} placeholder="발주계획 검색" readOnly />
-        <button style={{ ...btn("secondary"), fontSize: 15 }}>🔍 검색</button>
+        <button style={{ ...btn("secondary"), fontSize: 12 }}>🔍 검색</button>
         <span style={{ fontSize: 15, color: "#888" }}>ORD-PLAN-2026-010 — 태양광 인버터 구매</span>
       </div>
 
@@ -107,11 +102,11 @@ function PlanForm({ onSave }: { onSave: () => void }) {
           <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>지명경쟁 대상 업체 지정</div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <input style={{ ...input, flex: "none", width: 160 }} placeholder="업체명 검색" />
-            <button style={{ ...btn("secondary"), fontSize: 15 }}>🔍 검색</button>
+            <button style={{ ...btn("secondary"), fontSize: 12 }}>🔍 검색</button>
           </div>
           <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
             {["(주)대성전기", "(주)한진산업"].map((v) => (
-              <span key={v} style={{ background: "#01ACC8", color: "#fff", borderRadius: 4, padding: "2px 8px", fontSize: 15 }}>
+              <span key={v} style={{ background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, padding: "2px 8px", fontSize: 15 }}>
                 {v} ✕
               </span>
             ))}
@@ -168,7 +163,7 @@ function NoticeForm() {
   };
 
   return (
-    <div style={{ background: "#fff", padding: 24, borderRadius: 6, border: "1px solid #e0e0e0" }}>
+    <div style={{ background: "#FAF7F2", padding: 24, borderRadius: 6, border: "1px solid #e0e0e0" }}>
       <div style={sectionTitle}>공고 등록</div>
       <div style={{ background: "#F0F9FF", borderRadius: 6, padding: "8px 14px", marginBottom: 16, fontSize: 16, color: "#1E40AF" }}>
         공고 대상: BID-2026-005 — 태양광 설비 물품 구매 (계획에서 자동 연계)
@@ -222,13 +217,13 @@ function NoticeForm() {
                   <input type="number" style={{ ...input, flex: "none", width: 110 }} value={item.unitPrice} onChange={(e) => setItems(items.map((it, idx) => idx === i ? { ...it, unitPrice: Number(e.target.value) } : it))} />
                 </td>
                 <td style={{ padding: "6px 10px", border: "1px solid #e0e0e0", textAlign: "center" }}>
-                  <button style={{ ...btn("danger"), padding: "2px 8px", fontSize: 15 }} onClick={() => setItems(items.filter((_, idx) => idx !== i))}>삭제</button>
+                  <button style={{ ...btn("danger"), padding: "2px 8px", fontSize: 12 }} onClick={() => setItems(items.filter((_, idx) => idx !== i))}>삭제</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <button style={{ ...btn("secondary"), fontSize: 15, marginTop: 6 }} onClick={() => setItems([...items, { name: "", spec: "", qty: 1, unit: "EA", unitPrice: 0 }])}>
+        <button style={{ ...btn("secondary"), fontSize: 12, marginTop: 6 }} onClick={() => setItems([...items, { name: "", spec: "", qty: 1, unit: "EA", unitPrice: 0 }])}>
           + 행 추가
         </button>
       </div>
@@ -452,8 +447,8 @@ export default function CBidsPage() {
             onClick={() => setActiveTab(t.id)}
             style={{
               padding: "10px 20px", fontSize: 17, fontWeight: activeTab === t.id ? 700 : 400,
-              color: activeTab === t.id ? "#01ACC8" : "#555", background: "transparent",
-              border: "none", borderBottom: `2px solid ${activeTab === t.id ? "#01ACC8" : "transparent"}`,
+              color: activeTab === t.id ? "#00a7ea" : "#555", background: "transparent",
+              border: "none", borderBottom: `2px solid ${activeTab === t.id ? "#00a7ea" : "transparent"}`,
               cursor: "pointer", marginBottom: -2, fontFamily: "inherit",
             }}
           >

@@ -1,11 +1,19 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useRole } from "@/lib/role";
 import { MENUS } from "@/lib/menu";
 
 interface SidebarProps { isOpen: boolean; onClose: () => void; }
+
+const ACTIVE_BG = "#D58040";
+const HOVER_BG = "#fae6d4";
+const ACTIVE_FG = "#ffffff";
+const HOVER_FG = "#654024";
+const REST_FG = "#555555";
+const ITEM_RADIUS = 20;
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
@@ -27,37 +35,60 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     });
   }
 
-  function isActive(href: string) {
-    const clean = href.replace(/\/$/, "");
-    return pathname === clean || pathname === href;
-  }
+  const activeHref = useMemo(() => {
+    const allHrefs = groups.flatMap((g) =>
+      g.items.map((i) => i.href.replace(/\/$/, "")).filter((h): h is string => Boolean(h))
+    );
+    const cleanPath = pathname.replace(/\/$/, "");
+    return allHrefs
+      .filter((h) => cleanPath === h || cleanPath.startsWith(h + "/"))
+      .sort((a, b) => b.length - a.length)[0];
+  }, [pathname, groups]);
+
+  const isActive = (href: string) => href.replace(/\/$/, "") === activeHref;
 
   return (
     <aside
       className={[
-        "fixed top-14 left-0 bottom-0 w-[220px] bg-white border-r border-[#e0e0e0] overflow-y-auto z-40",
+        "fixed left-0 bottom-0 w-[220px] bg-white border-r overflow-y-auto z-40",
         "transition-transform duration-200",
-        "lg:sticky lg:top-14 lg:h-[calc(100vh-56px)] lg:shrink-0 lg:translate-x-0",
+        "lg:sticky lg:shrink-0 lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full",
       ].join(" ")}
+      style={{
+        top: 48,
+        height: "calc(100vh - 48px)",
+        borderRightColor: "#e6ebf0",
+      }}
     >
-      <nav>
+      <nav style={{ padding: "0.25rem 0" }}>
         {groups.map((group) => {
           const open = openGroups.has(group.label);
           return (
-            <div key={group.label} style={{ borderBottom: "1px solid #eee" }}>
+            <div key={group.label}>
               <button
                 onClick={() => toggleGroup(group.label)}
                 style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  width: "100%", padding: "10px 16px", fontSize: 17, fontWeight: 600,
-                  color: open ? "#fff" : "#333",
-                  background: open ? "#01ACC8" : "transparent",
-                  border: "none", cursor: "pointer", fontFamily: "inherit", textAlign: "left",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  width: "100%",
+                  padding: "0.625rem 1rem",
+                  fontSize: 15,
+                  fontWeight: 400,
+                  color: "#1a1a1a",
+                  background: "#f5f7fa",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  textAlign: "left",
+                  userSelect: "none",
                 }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#ebeef2"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#f5f7fa"; }}
               >
+                {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                 <span>{group.label}</span>
-                <span style={{ fontSize: 17 }}>{open ? "−" : "+"}</span>
               </button>
               {open && (
                 <div>
@@ -69,12 +100,30 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                         href={item.href}
                         onClick={onClose}
                         style={{
-                          display: "block", padding: "8px 16px 8px 24px", fontSize: 16,
-                          color: active ? "#01ACC8" : "#444",
-                          background: active ? "#f0f8fb" : "transparent",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          padding: "0.5rem 1rem 0.5rem 2.5rem",
+                          margin: "2px 0.5rem",
+                          borderRadius: ITEM_RADIUS,
+                          fontSize: 14,
+                          color: active ? ACTIVE_FG : REST_FG,
+                          background: active ? ACTIVE_BG : "transparent",
                           textDecoration: "none",
-                          borderLeft: active ? "3px solid #01ACC8" : "3px solid transparent",
-                          fontWeight: active ? 600 : 400,
+                          fontWeight: active ? 700 : 400,
+                          transition: "background-color 0.12s ease, color 0.12s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!active) {
+                            (e.currentTarget as HTMLAnchorElement).style.background = HOVER_BG;
+                            (e.currentTarget as HTMLAnchorElement).style.color = HOVER_FG;
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!active) {
+                            (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                            (e.currentTarget as HTMLAnchorElement).style.color = REST_FG;
+                          }
                         }}
                       >
                         {item.label}
@@ -83,6 +132,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   })}
                 </div>
               )}
+              <div style={{ height: 1, background: "#e6ebf0", margin: "0.25rem 0" }} />
             </div>
           );
         })}

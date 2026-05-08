@@ -30,7 +30,7 @@ function SummaryCard({ label, value, unit = "건", accent, href }: SummaryCardPr
   const inner = (
     <div
       style={{
-        background: "#fff",
+        background: "#FAF7F2",
         borderRadius: 8,
         boxShadow: "0 1px 4px rgba(0,0,0,0.10)",
         overflow: "hidden",
@@ -73,7 +73,7 @@ function WidgetCard({
   return (
     <div
       style={{
-        background: "#fff",
+        background: "#FAF7F2",
         borderRadius: 8,
         boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
         overflow: "hidden",
@@ -166,7 +166,7 @@ function MiniCalendar() {
                             width: 22,
                             height: 22,
                             borderRadius: "50%",
-                            background: isToday ? "#01ACC8" : "transparent",
+                            background: isToday ? "#00a7ea" : "transparent",
                             color: isToday ? "#fff" : di === 0 ? "#EF4444" : di === 6 ? "#3B82F6" : "#374151",
                             fontWeight: isToday ? 700 : 400,
                             fontSize: 15,
@@ -236,7 +236,7 @@ function NoticeDrawerContent({
           style={{
             background: "transparent",
             border: "none",
-            color: "#01ACC8",
+            color: "#00a7ea",
             cursor: "pointer",
             fontSize: 16,
             padding: "0 0 12px",
@@ -320,9 +320,9 @@ function NoticeDrawerContent({
         />
         <button
           style={{
-            background: "#01ACC8",
+            background: "#654024",
             color: "#fff",
-            border: "none",
+            border: "1px solid #DFE8F0",
             borderRadius: 4,
             padding: "7px 16px",
             fontSize: 16,
@@ -572,7 +572,7 @@ export default function VendorDashboardPage() {
         <WidgetCard
           title="견적요청 수신 현황"
           action={
-            <Link href="/v/quotes/" style={{ fontSize: 15, color: "#01ACC8", textDecoration: "none", fontWeight: 600 }}>
+            <Link href="/v/quotes/" style={{ fontSize: 15, color: "#00a7ea", textDecoration: "none", fontWeight: 600 }}>
               견적작성 바로가기 →
             </Link>
           }
@@ -607,7 +607,7 @@ export default function VendorDashboardPage() {
         <WidgetCard
           title="나의 입찰 참여 현황"
           action={
-            <Link href="/v/bid-pipeline/" style={{ fontSize: 15, color: "#01ACC8", textDecoration: "none", fontWeight: 600 }}>
+            <Link href="/v/bid-pipeline/" style={{ fontSize: 15, color: "#00a7ea", textDecoration: "none", fontWeight: 600 }}>
               입찰참여 바로가기 →
             </Link>
           }
@@ -657,7 +657,7 @@ export default function VendorDashboardPage() {
                 background: "transparent",
                 border: "none",
                 fontSize: 15,
-                color: "#01ACC8",
+                color: "#00a7ea",
                 cursor: "pointer",
                 fontWeight: 600,
                 padding: 0,
@@ -722,7 +722,7 @@ export default function VendorDashboardPage() {
         <WidgetCard
           title="나의 견적요청 현황"
           action={
-            <Link href="/v/quotes/" style={{ fontSize: 15, color: "#01ACC8", textDecoration: "none", fontWeight: 600 }}>
+            <Link href="/v/quotes/" style={{ fontSize: 15, color: "#00a7ea", textDecoration: "none", fontWeight: 600 }}>
               전체보기 →
             </Link>
           }
@@ -743,7 +743,7 @@ export default function VendorDashboardPage() {
         <WidgetCard
           title="참여 가능 입찰공고"
           action={
-            <Link href="/v/bid-pipeline/" style={{ fontSize: 15, color: "#01ACC8", textDecoration: "none", fontWeight: 600 }}>
+            <Link href="/v/bid-pipeline/" style={{ fontSize: 15, color: "#00a7ea", textDecoration: "none", fontWeight: 600 }}>
               전체보기 →
             </Link>
           }
@@ -788,7 +788,7 @@ export default function VendorDashboardPage() {
                 {V_ACTIVE_BID_ITEMS.map((item, idx) => (
                   <tr
                     key={item.id}
-                    style={{ background: "#fff", cursor: "pointer" }}
+                    style={{ background: "#ffffff", cursor: "pointer" }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLTableRowElement).style.background = "#F0F9FF";
                     }}
@@ -869,7 +869,7 @@ export default function VendorDashboardPage() {
         <WidgetCard
           title="진행 중 계약"
           action={
-            <Link href="/v/contracts/" style={{ fontSize: 15, color: "#01ACC8", textDecoration: "none", fontWeight: 600 }}>
+            <Link href="/v/contracts/" style={{ fontSize: 15, color: "#00a7ea", textDecoration: "none", fontWeight: 600 }}>
               전체보기 →
             </Link>
           }

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
 @import "tailwindcss";
 
 @font-face {
@@ -8,58 +9,116 @@
 }
 
 @theme {
-  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-sans: "Nanum Gothic", "Pretendard", "돋움", dotum, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", Helvetica, sans-serif;
 
-  --color-primary: #01ACC8;
-  --color-primary-hover: #0195ae;
-  --color-primary-light: #e5f6ff;
+  /* ── 브랜드 (PMS) ── */
+  --color-primary: #00a7ea;
+  --color-primary-hover: #009bd8;
+  --color-primary-active: #0b88c8;
+  --color-primary-light: #e6f6fd;
 
-  --color-sidebar-active: #01ACC8;
+  /* ── 사이드바 (PMS Light) ── */
+  --color-sidebar-bg: #ffffff;
+  --color-sidebar-menu1-bg: #f5f7fa;
+  --color-sidebar-menu1-hover: #ebeef2;
+  --color-sidebar-menu2-bg: #ffffff;
+  --color-sidebar-menu2-hover: #f0f4f8;
+  --color-sidebar-divider: #e6ebf0;
+  --color-sidebar-menu1-text: #1a1a1a;
+  --color-sidebar-menu2-text: #555555;
+  --color-sidebar-active: #D58040;
   --color-sidebar-active-text: #ffffff;
-  --color-sidebar-subactive-bg: #f0f8fb;
-  --color-sidebar-hover-bg: #f5f5f5;
+  --color-sidebar-active-bg: #D58040;
+  --color-sidebar-subactive-bg: #fdf3eb;
+  --color-sidebar-hover-bg: #f0f4f8;
+  --color-sidebar-border: #e6ebf0;
 
-  --color-text-primary: #222222;
+  /* ── 카드 ── */
+  --color-card-bg: #FAF7F2;
+  --color-card-fg: #ffffff;
+  --color-card-border: #E8E8E8;
+
+  /* ── 텍스트 ── */
+  --color-text-primary: #1a1a1a;
   --color-text-secondary: #555555;
-  --color-text-muted: #888888;
-  --color-text-required: #e53e3e;
+  --color-text-muted: #6c757d;
+  --color-text-required: #ff0b3a;
 
-  --color-border: #e0e0e0;
-  --color-border-light: #eeeeee;
-  --color-table-header-bg: #f5f5f5;
-  --color-table-row-hover: #f0f8fb;
+  /* ── 보더/배경 ── */
+  --color-border: #dee2e6;
+  --color-border-light: #e9ecef;
+  --color-table-header-bg: #f8f9fa;
+  --color-table-row-hover: #f5f7fa;
 
-  --color-status-completed-bg: #D1FAE5;
-  --color-status-completed-text: #065F46;
-  --color-status-progress-bg: #DBEAFE;
-  --color-status-progress-text: #1E40AF;
-  --color-status-rejected-bg: #FEE2E2;
-  --color-status-rejected-text: #991B1B;
-  --color-status-pending-bg: #FEF3C7;
-  --color-status-pending-text: #92400E;
-  --color-status-submitted-bg: #DBEAFE;
-  --color-status-submitted-text: #1E40AF;
-  --color-status-active-bg: #D1FAE5;
-  --color-status-active-text: #065F46;
-  --color-status-draft-bg: #F3F4F6;
-  --color-status-draft-text: #374151;
-  --color-status-failed-bg: #FEE2E2;
-  --color-status-failed-text: #991B1B;
-  --color-status-closed-bg: #E5E7EB;
-  --color-status-closed-text: #374151;
-  --color-status-cancelled-bg: #FEE2E2;
-  --color-status-cancelled-text: #7F1D1D;
-  --color-status-synced-bg: #D1FAE5;
-  --color-status-synced-text: #065F46;
-  --color-status-awarded-bg: #EDE9FE;
-  --color-status-awarded-text: #5B21B6;
-  --color-status-opened-bg: #DBEAFE;
-  --color-status-opened-text: #1E40AF;
+  /* ── 버튼 ── */
+  --color-btn-primary-bg: #654024;
+  --color-btn-primary-text: #ffffff;
+  --color-btn-primary-border: #DFE8F0;
+  --color-btn-primary-hover: #4f3119;
+  --color-btn-secondary-bg: #ffffff;
+  --color-btn-secondary-text: #654024;
+  --color-btn-secondary-border: #CFCFCF;
+  --color-btn-secondary-hover: #f5f0eb;
+  --color-btn-action-bg: #417498;
+  --color-btn-download-bg: #7cadbe;
+  --color-btn-disabled-bg: #e9ecef;
+
+  /* ── 입력 ── */
+  --color-input-border: #becacf;
+  --color-input-display-border: #bfcacf;
+  --color-input-display-bg: #f2f4f5;
+  --color-input-focus-border: #00a9e0;
+  --color-input-required-border: #fdaa84;
+  --color-input-error-border: #ff0b3a;
+  --color-input-error-bg: #fff2f4;
+
+  /* ── 상태 배지 (PMS 톤) ── */
+  --color-status-completed-bg: #d4edda;
+  --color-status-completed-text: #155724;
+  --color-status-progress-bg: #cce5ff;
+  --color-status-progress-text: #004085;
+  --color-status-rejected-bg: #f8d7da;
+  --color-status-rejected-text: #721c24;
+  --color-status-pending-bg: #fff3cd;
+  --color-status-pending-text: #856404;
+  --color-status-submitted-bg: #cce5ff;
+  --color-status-submitted-text: #004085;
+  --color-status-active-bg: #d4edda;
+  --color-status-active-text: #155724;
+  --color-status-draft-bg: #e2e3e5;
+  --color-status-draft-text: #383d41;
+  --color-status-failed-bg: #f8d7da;
+  --color-status-failed-text: #721c24;
+  --color-status-closed-bg: #e2e3e5;
+  --color-status-closed-text: #383d41;
+  --color-status-cancelled-bg: #f8d7da;
+  --color-status-cancelled-text: #7f1d1d;
+  --color-status-synced-bg: #d4edda;
+  --color-status-synced-text: #155724;
+  --color-status-awarded-bg: #ede9fe;
+  --color-status-awarded-text: #5b21b6;
+  --color-status-opened-bg: #cce5ff;
+  --color-status-opened-text: #004085;
+
+  /* ── 시스템 피드백 ── */
+  --color-feedback-success: #198754;
+  --color-feedback-warning: #fd7e14;
+  --color-feedback-danger: #dc3545;
+  --color-feedback-info: #0d6efd;
+  --color-feedback-neutral: #6c757d;
+
+  /* ── 라운드 ── */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
 }
 
 :root {
-  --background: #f5f5f5;
-  --foreground: #222222;
+  --background: #ffffff;
+  --foreground: #1a1a1a;
 }
 
 *, *::before, *::after {
@@ -70,9 +129,10 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: var(--font-sans);
-  font-size: 17px;
-  color: #222;
-  background: #f5f5f5;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #333;
+  background: #ffffff;
   overscroll-behavior: contain;
 }
 
@@ -100,6 +160,69 @@ button, input, select, textarea {
   background: #aaa;
 }
 
+/* ── PMS 공용 클래스(필요한 페이지에서 활용) ── */
+.content-box-wrap {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.content-box-wrap.type-02 {
+  background: var(--color-card-fg);
+}
+
+.kpi-card {
+  background: var(--color-card-fg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-xl);
+  padding: 1rem 1.25rem;
+}
+
+.title-row-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.title-row-wrap h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* ── SRM 한 줄 필터 ── */
+.srm-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.srm-filter-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.srm-filter-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-left: auto;
+}
+
+@media (max-width: 760px) {
+  .srm-filter-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/* ── SRM 검색폼 레이아웃 (legacy grid, 보존) ── */
 .srm-search-layout {
   display: flex;
   align-items: flex-start;

@@ -35,7 +35,7 @@ function ProfileCard() {
   return (
     <div
       style={{
-        background: "#fff",
+        background: "#FAF7F2",
         border: "1px solid #e5e7eb",
         borderRadius: 8,
         padding: "20px 24px",
@@ -51,7 +51,7 @@ function ProfileCard() {
           width: 52,
           height: 52,
           borderRadius: "50%",
-          background: "#01ACC8",
+          background: "#654024",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -137,9 +137,9 @@ function OrderStatusTab() {
           onClick={() => window.location.assign("/b/orders/")}
           style={{
             padding: "8px 18px",
-            background: "#01ACC8",
+            background: "#654024",
             color: "#fff",
-            border: "none",
+            border: "1px solid #DFE8F0",
             borderRadius: 4,
             fontSize: 15,
             fontWeight: 600,
@@ -185,10 +185,10 @@ function OrderStatusTab() {
                   onClick={() => setDrawerTab(t.id)}
                   style={{
                     padding: "10px 20px",
-                    border: "none",
-                    background: "none",
-                    borderBottom: drawerTab === t.id ? "2px solid #01ACC8" : "2px solid transparent",
-                    color: drawerTab === t.id ? "#01ACC8" : "#6B7280",
+                    border: "1px solid #CFCFCF",
+                    background: "#ffffff",
+                    borderBottom: drawerTab === t.id ? "2px solid #00a7ea" : "2px solid transparent",
+                    color: drawerTab === t.id ? "#00a7ea" : "#6B7280",
                     fontWeight: drawerTab === t.id ? 700 : 400,
                     fontSize: 16,
                     cursor: "pointer",
@@ -262,14 +262,14 @@ function OrderStatusTab() {
                         width: 12,
                         height: 12,
                         borderRadius: "50%",
-                        background: "#01ACC8",
+                        background: "#654024",
                         border: "2px solid #fff",
-                        boxShadow: "0 0 0 2px #01ACC8",
+                        boxShadow: "0 0 0 2px #00a7ea",
                       }}
                     />
-                    <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 6, padding: "10px 14px" }}>
+                    <div style={{ background: "#FAF7F2", border: "1px solid #e5e7eb", borderRadius: 6, padding: "10px 14px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                        <span style={{ fontSize: 14, fontWeight: 700, color: "#01ACC8" }}>{h.status}</span>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: "#00a7ea" }}>{h.status}</span>
                         <span style={{ fontSize: 14, color: "#9CA3AF" }}>{h.date}</span>
                       </div>
                       <span style={{ fontSize: 15, color: "#374151" }}>{h.actor}</span>
@@ -384,7 +384,7 @@ function SystemRequestTab() {
                   value={t}
                   checked={formType === t}
                   onChange={() => setFormType(t)}
-                  style={{ accentColor: "#01ACC8" }}
+                  style={{ accentColor: "#00a7ea" }}
                 />
                 {t}
               </label>
@@ -435,9 +435,9 @@ function SystemRequestTab() {
             onClick={handleSubmit}
             style={{
               padding: "8px 24px",
-              background: "#01ACC8",
+              background: "#654024",
               color: "#fff",
-              border: "none",
+              border: "1px solid #DFE8F0",
               borderRadius: 4,
               fontSize: 16,
               fontWeight: 600,
@@ -529,9 +529,9 @@ function MailSendTab() {
             <button
               style={{
                 padding: "8px 18px",
-                background: "#374151",
-                color: "#fff",
-                border: "none",
+                background: "#ffffff",
+                color: "#654024",
+                border: "1px solid #CFCFCF",
                 borderRadius: 4,
                 fontSize: 15,
                 cursor: "pointer",
@@ -554,7 +554,7 @@ function MailSendTab() {
                   value={t.value}
                   checked={targetType === t.value}
                   onChange={() => setTargetType(t.value)}
-                  style={{ accentColor: "#01ACC8" }}
+                  style={{ accentColor: "#00a7ea" }}
                 />
                 {t.label}
               </label>
@@ -613,9 +613,9 @@ function MailSendTab() {
           <button
             style={{
               padding: "8px 18px",
-              background: "#fff",
-              color: "#374151",
-              border: "1px solid #d1d5db",
+              background: "#ffffff",
+              color: "#654024",
+              border: "1px solid #CFCFCF",
               borderRadius: 4,
               fontSize: 15,
               cursor: "pointer",
@@ -628,9 +628,9 @@ function MailSendTab() {
             onClick={handleSend}
             style={{
               padding: "8px 24px",
-              background: "#01ACC8",
+              background: "#654024",
               color: "#fff",
-              border: "none",
+              border: "1px solid #DFE8F0",
               borderRadius: 4,
               fontSize: 15,
               fontWeight: 600,
@@ -698,7 +698,7 @@ export default function BMypagePage() {
       <ProfileCard />
       <div
         style={{
-          background: "#fff",
+          background: "#FAF7F2",
           borderRadius: 8,
           border: "1px solid #e5e7eb",
           padding: "20px 24px",

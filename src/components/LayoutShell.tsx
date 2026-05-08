@@ -33,13 +33,13 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
 
   return (
     <ToastProvider>
-      <div className="flex min-h-screen pt-14">
+      <div className="flex min-h-screen" style={{ paddingTop: 48 }}>
         <Header onMenuClick={() => setIsOpen(true)} />
         <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
         {isOpen && (
           <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setIsOpen(false)} />
         )}
-        <main style={{ flex: 1, minWidth: 0, background: "#f5f5f5", padding: "20px 24px" }}>
+        <main style={{ flex: 1, minWidth: 0, background: "#ffffff", padding: "1.5rem" }}>
           {crumbs.length > 0 && <Breadcrumb items={crumbs} />}
           {unauthorized ? <ForbiddenView /> : children}
         </main>

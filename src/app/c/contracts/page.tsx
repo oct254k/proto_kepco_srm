@@ -260,8 +260,8 @@ function ContractInfoTab({
               style={{
                 padding: "8px 14px",
                 borderRadius: 6,
-                border: "none",
-                background: "#065F46",
+                border: "1px solid #DFE8F0",
+                background: "#654024",
                 color: "#fff",
                 cursor: "pointer",
                 fontFamily: "inherit",
@@ -640,7 +640,7 @@ export default function CContractsPage() {
         footer={
           <>
             <button style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #CBD5E1", background: "#fff", cursor: "pointer", fontFamily: "inherit" }} onClick={() => setChangeModalOpen(false)}>취소</button>
-            <button style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: changeReason.trim() ? "#01ACC8" : "#9CA3AF", color: "#fff", cursor: changeReason.trim() ? "pointer" : "not-allowed", fontFamily: "inherit" }} disabled={!changeReason.trim()} onClick={handleSubmitChange}>변경 요청 등록</button>
+            <button style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #DFE8F0", background: changeReason.trim() ? "#654024" : "#9CA3AF", color: "#fff", cursor: changeReason.trim() ? "pointer" : "not-allowed", fontFamily: "inherit" }} disabled={!changeReason.trim()} onClick={handleSubmitChange}>변경 요청 등록</button>
           </>
         }
       >

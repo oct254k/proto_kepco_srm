@@ -79,8 +79,8 @@ const btn = (variant: "primary" | "secondary" | "danger" | "ghost" = "primary"):
   fontWeight: 700,
   cursor: "pointer",
   fontFamily: "inherit",
-  border: variant === "primary" ? "none" : variant === "danger" ? "1px solid #FCA5A5" : "1px solid #CBD5E1",
-  background: variant === "primary" ? "#01ACC8" : variant === "danger" ? "#FEF2F2" : "#fff",
+  border: variant === "primary" ? "1px solid #DFE8F0" : variant === "danger" ? "1px solid #FCA5A5" : "1px solid #CBD5E1",
+  background: variant === "primary" ? "#654024" : variant === "danger" ? "#FEF2F2" : "#fff",
   color: variant === "primary" ? "#fff" : variant === "danger" ? "#B91C1C" : "#334155",
 });
 
@@ -434,8 +434,8 @@ export default function VBidPipelinePage() {
                 padding: "4px 12px",
                 borderRadius: 999,
                 border: "1px solid #CBD5E1",
-                background: index === currentStep ? "#01ACC8" : "#fff",
-                color: index === currentStep ? "#fff" : index <= currentStep ? "#0F766E" : "#94A3B8",
+                background: index === currentStep ? "#654024" : "#fff",
+                color: index === currentStep ? "#fff" : index <= currentStep ? "#654024" : "#94A3B8",
                 cursor: index <= currentStep ? "pointer" : "not-allowed",
                 fontSize: 14,
                 fontWeight: 700,
