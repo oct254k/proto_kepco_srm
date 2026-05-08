@@ -7,6 +7,7 @@ import DataTable from "@/components/DataTable";
 import StatusBadge from "@/components/StatusBadge";
 import Drawer from "@/components/Drawer";
 import Tabs from "@/components/Tabs";
+import QuoteWriteModal from "@/components/QuoteWriteModal";
 import { MOCK_QUOTES } from "@/lib/mock/quotes";
 import type { Quote } from "@/lib/types";
 
@@ -169,10 +170,11 @@ function QuoteDetailDrawer({ quote, open, onClose }: QuoteDetailDrawerProps) {
   );
 }
 
-// ─── 메인 페이지 (C 역할 — 조회 전용) ───
+// ─── 메인 페이지 (C 역할 — SRM-C-005~007: 견적요청 작성·조회·상세) ───
 export default function CQuoteRequestsPage() {
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleRowClick = (row: Record<string, unknown>) => {
     const quote = MOCK_QUOTES.find((q) => q.id === (row.id as string));
@@ -224,7 +226,17 @@ export default function CQuoteRequestsPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <PageHeader title="견적요청 조회" />
+      <PageHeader
+        title="견적요청 관리"
+        actions={
+          <button
+            onClick={() => setModalOpen(true)}
+            style={{ padding: "8px 18px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+          >
+            + 견적요청 작성
+          </button>
+        }
+      />
 
       <SearchForm fields={searchFields} onSearch={() => {}} />
 
@@ -242,6 +254,11 @@ export default function CQuoteRequestsPage() {
         quote={selectedQuote}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
+      />
+
+      <QuoteWriteModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
       />
     </div>
   );

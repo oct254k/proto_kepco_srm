@@ -265,9 +265,10 @@ function ContractInfoTab({
                 color: "#fff",
                 cursor: "pointer",
                 fontFamily: "inherit",
+                fontWeight: 700,
               }}
             >
-              계약 최종 확정
+              계약 승인 (최종 확정)
             </button>
           )}
           {canChange && (

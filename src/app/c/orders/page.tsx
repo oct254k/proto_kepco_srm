@@ -7,6 +7,7 @@ import DataTable from "@/components/DataTable";
 import StatusBadge from "@/components/StatusBadge";
 import Drawer from "@/components/Drawer";
 import Tabs from "@/components/Tabs";
+import OrderWriteModal from "@/components/OrderWriteModal";
 import { useToast } from "@/components/Toast";
 import { MOCK_ORDERS, METHOD_LABELS, PMS_SYNC_INFO } from "@/lib/mock/orders";
 import type { Order } from "@/lib/types";
@@ -278,9 +279,11 @@ export default function COrdersPage() {
   const toast = useToast();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [writeModalOpen, setWriteModalOpen] = useState(false);
+  const [orders, setOrders] = useState(MOCK_ORDERS);
 
   const handleRowClick = (row: Record<string, unknown>) => {
-    const order = MOCK_ORDERS.find((o) => o.id === (row.id as string));
+    const order = orders.find((o) => o.id === (row.id as string));
     if (order) {
       setSelectedOrder(order);
       setDrawerOpen(true);
@@ -291,6 +294,10 @@ export default function COrdersPage() {
     setTimeout(() => {
       toast.show("발주계획이 확정되었습니다. PMS 연동이 완료되었습니다.", "success");
     }, 4000);
+  };
+
+  const handleOrderSubmitted = (draft: Order) => {
+    setOrders((prev) => [draft, ...prev]);
   };
 
   const columns = [
@@ -309,7 +316,7 @@ export default function COrdersPage() {
       align: "right" as const,
       render: (val: unknown) => `₩${(val as number).toLocaleString()}`,
     },
-    { key: "assignee", label: "담당팀", width: "100px" },
+    { key: "assignee", label: "요청자/담당팀", width: "120px" },
     {
       key: "status",
       label: "상태",
@@ -321,7 +328,7 @@ export default function COrdersPage() {
       label: "처리",
       width: "120px",
       render: (_val: unknown, row: Record<string, unknown>) => (
-        row.status === "SUBMITTED" ? (
+        ["SUBMITTED", "RECEIVED", "DRAFT"].includes(row.status as string) ? (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -329,9 +336,11 @@ export default function COrdersPage() {
             }}
             style={{ padding: "4px 10px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 3, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
-            계획확정
+            발주계획 등록
           </button>
-        ) : null
+        ) : (
+          <span style={{ fontSize: 12, color: "#94A3B8" }}>—</span>
+        )
       ),
     },
   ];
@@ -360,7 +369,17 @@ export default function COrdersPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <PageHeader title="발주계획 관리 (계약담당자)" />
+      <PageHeader
+        title="발주계획 관리 (계약담당자)"
+        actions={
+          <button
+            onClick={() => setWriteModalOpen(true)}
+            style={{ padding: "8px 18px", background: "#654024", color: "#fff", border: "1px solid #DFE8F0", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+          >
+            + 발주계약요청 작성
+          </button>
+        }
+      />
 
       {/* PMS 연동 상태 카드 */}
       <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 8, padding: "14px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
@@ -381,8 +400,8 @@ export default function COrdersPage() {
 
       <DataTable
         columns={columns}
-        data={MOCK_ORDERS as unknown as Record<string, unknown>[]}
-        totalCount={MOCK_ORDERS.length}
+        data={orders as unknown as Record<string, unknown>[]}
+        totalCount={orders.length}
         sectionLabel="발주계약요청 목록 (전체)"
         showExcel={true}
         showCheckbox={false}
@@ -394,6 +413,13 @@ export default function COrdersPage() {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         onPlanConfirm={handlePlanConfirm}
+      />
+
+      <OrderWriteModal
+        open={writeModalOpen}
+        onClose={() => setWriteModalOpen(false)}
+        onSubmitted={handleOrderSubmitted}
+        role="C"
       />
     </div>
   );

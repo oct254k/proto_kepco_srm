@@ -179,7 +179,7 @@ function CompanyInfoTab() {
                   fontFamily: "inherit",
                 }}
               >
-                ✎ 수정
+                ✎ 수정/저장
               </button>
             )}
           </div>

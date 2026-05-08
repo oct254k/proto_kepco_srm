@@ -161,7 +161,7 @@ export default function BBidsPage() {
 
   const columns: Column[] = [
     { key: "id", label: "공고번호", width: "130px", align: "center" },
-    { key: "title", label: "공고명", align: "left" },
+    { key: "title", label: "계약명/공고명", align: "left" },
     { key: "method", label: "선정방법", width: "110px", align: "center", render: (val) => METHOD_LABELS[String(val)] ?? String(val) },
     { key: "estAmount", label: "예정금액", width: "130px", align: "right", render: (val) => `${Number(val).toLocaleString()}원` },
     { key: "publishedAt", label: "공고일", width: "100px", align: "center" },

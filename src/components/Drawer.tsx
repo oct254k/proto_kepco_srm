@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { X } from "lucide-react";
 
 interface DrawerProps {
@@ -11,6 +11,15 @@ interface DrawerProps {
 }
 
 export default function Drawer({ open, onClose, title, children, width = 580 }: DrawerProps) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
   return (
     <>
       {open && (

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { X } from "lucide-react";
 
 interface ModalProps {
@@ -12,6 +12,15 @@ interface ModalProps {
 }
 
 export default function Modal({ open, onClose, title, children, width = 520, footer }: ModalProps) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
   if (!open) return null;
   return (
     <div

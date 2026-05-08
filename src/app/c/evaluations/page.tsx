@@ -248,6 +248,10 @@ function ResultTab() {
   const toast = useToast();
   const [aggregated, setAggregated] = useState(false);
   const [notifyModalOpen, setNotifyModalOpen] = useState(false);
+  const [reannounceModalOpen, setReannounceModalOpen] = useState(false);
+
+  const passCount = EVAL_PARTICIPANTS_STATUS.filter((p) => p.pass).length;
+  const isFailed = aggregated && passCount === 0;
 
   const handleAggregate = () => {
     setAggregated(true);
@@ -256,12 +260,16 @@ function ResultTab() {
 
   const handleNotify = () => {
     setNotifyModalOpen(false);
-    // 설계서 FN-P-14 §6: srm-bid-proposals Webhook 시뮬레이션 (기술평가 완료 후 업체별 제안 데이터 전송)
     setTimeout(() => toast.show(
       "심사 결과 발송 완료 — srm-bid-proposals 이벤트가 PMS로 전송되었습니다. " +
       "PMS Pipeline PL-003(대전공장 HVAC)의 제안비교(c) 탭에 업체별 신용·부채·납기 데이터가 반영됩니다.",
       "success"
     ), 500);
+  };
+
+  const handleReannounce = () => {
+    setReannounceModalOpen(false);
+    toast.show("재공고가 등록되었습니다. 동일 절차로 입찰이 재진행됩니다.", "success");
   };
 
   return (
@@ -313,13 +321,54 @@ function ResultTab() {
 
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
         <button
+          style={{ ...btn("danger"), opacity: !aggregated ? 0.5 : isFailed ? 1 : 0.6 }}
+          disabled={!aggregated}
+          onClick={() => setReannounceModalOpen(true)}
+          title={!aggregated ? "집계 실행 후 사용 가능" : isFailed ? "유찰 — 재공고 가능" : "합격 업체 존재 — 일반적으로 사용 안 함"}
+        >
+          재공고
+        </button>
+        <button
           style={{ ...btn("primary"), opacity: !aggregated ? 0.5 : 1 }}
           disabled={!aggregated}
           onClick={() => setNotifyModalOpen(true)}
         >
-          결과 통보 발송
+          결과 메일발송
         </button>
       </div>
+
+      <Modal
+        open={reannounceModalOpen}
+        onClose={() => setReannounceModalOpen(false)}
+        title="재공고 등록"
+        footer={
+          <>
+            <button style={btn("secondary")} onClick={() => setReannounceModalOpen(false)}>취소</button>
+            <button style={btn("primary")} onClick={handleReannounce}>재공고 발행</button>
+          </>
+        }
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: 6, padding: "10px 14px", fontSize: 15, color: "#92400E" }}>
+            ⚠ 합격업체가 없어 유찰되었습니다. 동일 절차(입찰계획→공고→참여신청→자가심사→투찰)로 재진행됩니다.
+          </div>
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>재공고 사유</div>
+            <select style={{ width: "100%", padding: "6px 10px", border: "1px solid #ccc", borderRadius: 4, fontSize: 16, fontFamily: "inherit" }}>
+              <option>전체 탈락 (유찰)</option>
+              <option>참여업체 미달</option>
+              <option>심사기준 변경</option>
+              <option>기타</option>
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>참여업체 통보</div>
+            <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 16 }}>
+              <input type="checkbox" defaultChecked /> 기존 참여업체 대상 재공고 안내메일 발송
+            </label>
+          </div>
+        </div>
+      </Modal>
 
       <Modal
         open={notifyModalOpen}

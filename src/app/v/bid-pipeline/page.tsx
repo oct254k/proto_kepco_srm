@@ -264,6 +264,9 @@ function BidPanel({
   ]);
   const [draftSaved, setDraftSaved] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [abandonOpen, setAbandonOpen] = useState(false);
+  const [abandonReason, setAbandonReason] = useState("");
+  const [abandonReasonText, setAbandonReasonText] = useState("");
 
   const total = useMemo(() => items.reduce((sum, item) => sum + item.amount, 0), [items]);
 
@@ -276,6 +279,15 @@ function BidPanel({
     setConfirmOpen(false);
     toast.show("투찰이 최종 제출되었습니다.", "success");
     onSubmitted();
+  }
+
+  function handleAbandon() {
+    if (!abandonReason) {
+      toast.show("입찰포기 사유를 선택하세요.", "error");
+      return;
+    }
+    setAbandonOpen(false);
+    toast.show("입찰포기 처리되었습니다. 사유가 발주처에 통보됩니다.", "info");
   }
 
   return (
@@ -326,7 +338,7 @@ function BidPanel({
         <button style={btn("secondary")} onClick={onPrev}>이전</button>
         <div style={{ display: "flex", gap: 8 }}>
           <button style={btn("secondary")} disabled={closed} onClick={handleTempSave}>임시저장</button>
-          <button style={btn("danger")} disabled={closed}>투찰 포기</button>
+          <button style={btn("danger")} disabled={closed} onClick={() => setAbandonOpen(true)}>입찰포기</button>
           <button style={btn("primary")} disabled={closed} onClick={() => setConfirmOpen(true)}>최종 제출</button>
         </div>
       </div>
@@ -343,6 +355,51 @@ function BidPanel({
       >
         <div style={{ fontSize: 16, color: "#334155", lineHeight: 1.7 }}>
           제출 후에는 마감 전까지만 수정할 수 있습니다. 투찰 금액을 최종 제출하시겠습니까?
+        </div>
+      </Modal>
+
+      <Modal
+        open={abandonOpen}
+        onClose={() => setAbandonOpen(false)}
+        title="입찰포기"
+        footer={
+          <>
+            <button style={btn("secondary")} onClick={() => setAbandonOpen(false)}>취소</button>
+            <button style={btn("danger")} onClick={handleAbandon}>입찰포기 제출</button>
+          </>
+        }
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 8, padding: "12px 14px", fontSize: 15, color: "#991B1B" }}>
+            ⚠ 입찰포기는 취소할 수 없습니다. 제출 후 동일 입찰에 재참여 불가합니다.
+          </div>
+          <div>
+            <label style={{ display: "block", fontSize: 15, fontWeight: 700, marginBottom: 6 }}>
+              포기 사유 <span style={{ color: "#DC2626" }}>*</span>
+            </label>
+            <select
+              value={abandonReason}
+              onChange={(event) => setAbandonReason(event.target.value)}
+              style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: "1px solid #CBD5E1", fontSize: 15, fontFamily: "inherit" }}
+            >
+              <option value="">사유를 선택하세요</option>
+              <option value="PRICE">투찰가격 산정 곤란</option>
+              <option value="CAPACITY">생산/이행능력 부족</option>
+              <option value="DELIVERY">납기 미준수 우려</option>
+              <option value="DOC">제출서류 준비 미비</option>
+              <option value="OTHER">기타</option>
+            </select>
+          </div>
+          <div>
+            <label style={{ display: "block", fontSize: 15, fontWeight: 700, marginBottom: 6 }}>상세 사유 (선택)</label>
+            <textarea
+              rows={3}
+              value={abandonReasonText}
+              onChange={(event) => setAbandonReasonText(event.target.value)}
+              placeholder="발주처에 전달할 추가 사유를 입력하세요"
+              style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: "1px solid #CBD5E1", fontSize: 15, fontFamily: "inherit", resize: "vertical", boxSizing: "border-box" }}
+            />
+          </div>
         </div>
       </Modal>
     </div>
@@ -414,6 +471,26 @@ export default function VBidPipelinePage() {
           ))}
         </select>
         <StatusBadge status={selectedMyBid.status} />
+        {selectedMyBid.status !== "AWARDED" && selectedMyBid.status !== "ABANDONED" && (
+          <button
+            onClick={() => setCurrentStep(3)}
+            title="투찰 단계로 이동하여 입찰포기를 처리합니다"
+            style={{
+              padding: "6px 14px",
+              borderRadius: 6,
+              border: "1px solid #FCA5A5",
+              background: "#FEF2F2",
+              color: "#B91C1C",
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: "pointer",
+              fontFamily: "inherit",
+              whiteSpace: "nowrap",
+            }}
+          >
+            입찰포기
+          </button>
+        )}
       </div>
 
       <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 12, padding: "14px 18px", fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
@@ -421,6 +498,9 @@ export default function VBidPipelinePage() {
         <strong> BID-2026-005</strong>는 자가심사 탈락,
         <strong> BID-2026-004</strong>는 자가심사 통과,
         <strong> BID-2026-003</strong>은 투찰 제출 완료 상태로 준비했습니다.
+        <span style={{ display: "block", marginTop: 6, fontSize: 14, color: "#64748B" }}>
+          ※ 입찰포기 시 사유 입력이 필수이며, 한 번 제출하면 동일 입찰에 재참여할 수 없습니다.
+        </span>
       </div>
 
       <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: "20px 24px" }}>

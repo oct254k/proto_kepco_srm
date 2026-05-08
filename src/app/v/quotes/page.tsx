@@ -18,7 +18,7 @@ interface QuoteListTabProps {
 
 function QuoteListTab({ onRowClick }: QuoteListTabProps) {
   const columns = [
-    { key: "id", label: "요청번호", width: "150px" },
+    { key: "id", label: "견적요청번호", width: "150px" },
     { key: "title", label: "요청제목", align: "left" as const },
     { key: "deadline", label: "마감일", width: "110px" },
     {
@@ -255,6 +255,20 @@ function QuoteWriteTab() {
               </tr>
             </tfoot>
           </table>
+        </div>
+      </div>
+
+      {/* 첨부파일 섹션 */}
+      <div>
+        <p style={sectionTitle}>상세견적서 첨부 (선택)</p>
+        <div style={{ border: "1px dashed #CBD5E1", borderRadius: 6, padding: "16px 20px", background: "#F8FAFC", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontSize: 15, color: "#64748B" }}>PDF · Excel · 한글 등 제출 (최대 10MB)</span>
+          <button
+            disabled={submitted}
+            style={{ padding: "6px 14px", border: "1px solid #CFCFCF", borderRadius: 4, background: "#ffffff", color: "#654024", fontSize: 12, fontWeight: 600, cursor: submitted ? "not-allowed" : "pointer", fontFamily: "inherit" }}
+          >
+            파일 첨부
+          </button>
         </div>
       </div>
 

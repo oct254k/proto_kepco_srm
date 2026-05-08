@@ -83,6 +83,11 @@ function StatusSummaryBar({ contract }: { contract: Contract }) {
 }
 
 function ContractDetailTab({ contract }: { contract: Contract }) {
+  const toast = useToast();
+  const [approveOpen, setApproveOpen] = useState(false);
+  const [approved, setApproved] = useState(false);
+  const canApprove = !approved && contract.contractStatus !== "REJECTED";
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <StatusSummaryBar contract={contract} />
@@ -93,8 +98,12 @@ function ContractDetailTab({ contract }: { contract: Contract }) {
         <strong>{contract.title}</strong>
         <span style={{ color: "#64748B" }}>계약금액</span>
         <strong>{fmt(contract.amount)}</strong>
+        <span style={{ color: "#64748B" }}>업체 승인</span>
+        <strong style={{ color: approved ? "#065F46" : "#92400E" }}>
+          {approved ? "✅ 승인 완료" : "⏳ 승인 대기"}
+        </strong>
       </div>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
         <button
           style={{
             padding: "8px 14px",
@@ -108,7 +117,52 @@ function ContractDetailTab({ contract }: { contract: Contract }) {
         >
           계약서 다운로드
         </button>
+        <button
+          disabled={!canApprove}
+          onClick={() => setApproveOpen(true)}
+          style={{
+            padding: "8px 14px",
+            borderRadius: 6,
+            border: "1px solid #DFE8F0",
+            background: canApprove ? "#654024" : "#9CA3AF",
+            color: "#fff",
+            cursor: canApprove ? "pointer" : "not-allowed",
+            fontWeight: 700,
+            fontFamily: "inherit",
+          }}
+        >
+          {approved ? "승인 완료" : "계약 승인"}
+        </button>
       </div>
+      <Modal
+        open={approveOpen}
+        onClose={() => setApproveOpen(false)}
+        title="계약 승인 확인"
+        footer={
+          <>
+            <button onClick={() => setApproveOpen(false)} style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #CBD5E1", background: "#fff", cursor: "pointer", fontFamily: "inherit" }}>취소</button>
+            <button
+              onClick={() => {
+                setApproved(true);
+                setApproveOpen(false);
+                toast.show("계약을 승인했습니다. 발주처에 통보됩니다.", "success");
+              }}
+              style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #DFE8F0", background: "#654024", color: "#fff", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}
+            >
+              승인
+            </button>
+          </>
+        }
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: 8, padding: "10px 14px", fontSize: 15, color: "#92400E" }}>
+            ⚠ 승인 후에는 취소할 수 없습니다. 계약서 내용을 충분히 확인했는지 확인하세요.
+          </div>
+          <div style={{ fontSize: 15, color: "#334155", lineHeight: 1.7 }}>
+            <strong>{contract.title}</strong> ({fmt(contract.amount)}) 계약을 승인합니다. 승인 후 발주처(계약담당자)에게 자동 통보됩니다.
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -175,7 +229,7 @@ function ContractOpsTab({
       )}
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button onClick={onOpenSubmit} style={{ padding: "8px 14px", borderRadius: 6, border: "1px solid #DFE8F0", background: "#654024", color: "#fff", cursor: "pointer", fontWeight: 700, fontFamily: "inherit" }}>
-          {rejected ? "보증서 재제출" : "보증서 제출"}
+          {rejected ? "보증서 재업로드" : "보증서 업로드"}
         </button>
       </div>
       <DataTable columns={columns} data={bonds as unknown as Record<string, unknown>[]} sectionLabel="보증서 현황" showCheckbox={false} showExcel={false} />
