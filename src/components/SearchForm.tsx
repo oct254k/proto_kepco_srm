@@ -58,10 +58,10 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
       }}
     >
       <form onSubmit={handleSubmit}>
-        <div className="srm-search-row">
-          <div className="srm-search-grid">
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 16, width: "100%", flexWrap: "wrap" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px 20px", flex: "1 1 auto", minWidth: 0 }}>
             {fields.map((field) => (
-              <div key={field.name} className="srm-search-cell">
+              <div key={field.name} style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
                 <label
                   style={{
                     fontSize: 12,
@@ -170,7 +170,7 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
             ))}
           </div>
 
-          <div className="srm-search-actions-r">
+          <div style={{ display: "flex", flexDirection: "row", gap: 8, flexShrink: 0 }}>
             <button
               type="button"
               onClick={handleReset}

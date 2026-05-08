@@ -66,7 +66,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
       <Link
         href={MENUS[role]?.[0]?.href ?? "/"}
         style={{
-          width: 220, minWidth: 220, height: "100%",
+          width: 250, minWidth: 250, height: "100%",
           display: "flex", alignItems: "center", padding: "0 16px",
           background: "#ffffff", borderRight: "1px solid #E8E8E8",
           textDecoration: "none", whiteSpace: "nowrap", gap: 0,
