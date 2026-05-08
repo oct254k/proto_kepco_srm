@@ -93,22 +93,22 @@ export default function Header({ onMenuClick }: HeaderProps) {
               display: "flex",
               alignItems: "center",
               gap: 8,
-              height: 32,
-              padding: "0 14px 0 14px",
+              height: 36,
+              padding: "0 14px",
               background: "#ffffff",
-              border: "1px solid #E8E8E8",
-              borderRadius: 6,
+              border: "1px solid #E6D5B8",
+              borderRadius: 999,
               fontSize: 13,
-              color: "#1a1a1a",
+              color: "#654024",
               cursor: "pointer",
               fontFamily: "inherit",
-              fontWeight: 500,
+              fontWeight: 600,
               minWidth: 160,
               justifyContent: "space-between",
             }}
           >
             <span>업무시스템 이동</span>
-            <ChevronDown size={14} color="#6c757d" />
+            <ChevronDown size={14} color="#654024" />
           </button>
           {showSystem && (
             <div
@@ -217,29 +217,30 @@ export default function Header({ onMenuClick }: HeaderProps) {
             display: "flex",
             alignItems: "center",
             gap: 8,
-            height: 32,
-            padding: "0 12px 0 6px",
+            height: 36,
+            padding: "0 14px 0 6px",
             background: "#FAF7F2",
-            border: "1px solid #F2E6CD",
+            border: "1px solid #C9A87C",
             borderRadius: 999,
-            color: "#1a1a1a",
+            color: "#654024",
             fontSize: 13,
-            fontWeight: 500,
+            fontWeight: 600,
             textDecoration: "none",
           }}
         >
           <span
             aria-hidden
             style={{
-              width: 22, height: 22,
+              width: 26, height: 26,
               borderRadius: "50%",
               background: "#D58040",
               color: "#fff",
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: 700,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              flexShrink: 0,
             }}
           >
             {initial}
@@ -252,7 +253,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
           href="/login/"
           style={{
             fontSize: 13,
-            color: "#6c757d",
+            color: "#654024",
+            fontWeight: 600,
             textDecoration: "none",
             padding: "0 4px",
           }}

@@ -74,13 +74,13 @@ export default function DataTable({
               type="button"
               style={{
                 background: "#ffffff",
-                color: "#1a1a1a",
-                border: "1px solid #CFCFCF",
+                color: "#654024",
+                border: "1px solid #E6D5B8",
                 borderRadius: 8,
                 height: 36,
                 padding: "0 14px",
                 fontSize: 13,
-                fontWeight: 500,
+                fontWeight: 600,
                 cursor: "pointer",
                 fontFamily: "inherit",
                 display: "inline-flex",

@@ -64,7 +64,7 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
                 <label
                   style={{
                     fontSize: 13,
-                    color: "#555",
+                    color: "#9F988C",
                     fontWeight: 500,
                     fontFamily: "inherit",
                   }}
