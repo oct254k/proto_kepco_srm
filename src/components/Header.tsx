@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Bell, ChevronDown, Menu } from "lucide-react";
+import { Bell, ChevronDown } from "lucide-react";
 import { useRole } from "@/lib/role";
 import { ROLE_LABELS } from "@/lib/types";
 import { MENUS } from "@/lib/menu";
@@ -67,31 +67,14 @@ export default function Header({ onMenuClick }: HeaderProps) {
         href={MENUS[role]?.[0]?.href ?? "/"}
         style={{
           width: 250, minWidth: 250, height: "100%",
-          display: "flex", alignItems: "center", padding: "0 16px",
+          display: "flex", alignItems: "center", padding: "0 30px",
           background: "#ffffff", borderRight: "1px solid #E8E8E8",
           textDecoration: "none", whiteSpace: "nowrap", gap: 0,
         }}
       >
-        <Image src="/logo.svg" alt="KEPCO ES" width={140} height={32} style={{ objectFit: "contain", height: 32, width: "auto" }} priority unoptimized />
+        <Image src="/logo.svg" alt="KEPCO ES" width={187} height={27} style={{ objectFit: "contain", width: 187, height: 27 }} priority unoptimized />
       </Link>
 
-      {/* 햄버거 (데스크탑/모바일 공통) */}
-      <button
-        onClick={onMenuClick}
-        style={{
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          color: "#1a1a1a",
-          padding: "0 16px",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-        }}
-        aria-label="메뉴"
-      >
-        <Menu size={20} />
-      </button>
 
       <div style={{ flex: 1 }} />
 

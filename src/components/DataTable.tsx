@@ -58,8 +58,9 @@ export default function DataTable({
       >
         <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
           <span style={{ fontSize: 17, fontWeight: 700, color: "#1a1a1a" }}>{sectionLabel}</span>
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#D58040" }}>
-            {count.toLocaleString()}건
+          <span style={{ fontSize: 16, fontWeight: 700 }}>
+            <span style={{ color: "#D58040" }}>{count.toLocaleString()}</span>
+            <span style={{ color: "#1a1a1a" }}>건</span>
           </span>
           {notice && (
             <span style={{ fontSize: 12, color: "#fd7e14", marginLeft: 8 }}>⚠ {notice}</span>
@@ -127,9 +128,10 @@ export default function DataTable({
                     width: 40,
                     padding: "12px 8px",
                     textAlign: "center",
-                    fontWeight: 500,
+                    fontWeight: 600,
                     color: "#555",
                     fontSize: 13,
+                    fontFamily: "inherit",
                   }}
                 >
                   <input type="checkbox" />
@@ -141,11 +143,12 @@ export default function DataTable({
                   style={{
                     padding: "12px 12px",
                     textAlign: col.align || "center",
-                    fontWeight: 500,
+                    fontWeight: 600,
                     color: "#555",
                     whiteSpace: "nowrap",
                     width: col.width,
                     fontSize: 13,
+                    fontFamily: "inherit",
                   }}
                 >
                   {col.label}

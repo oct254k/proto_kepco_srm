@@ -80,7 +80,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       }}
     >
       {/* 메뉴 검색 */}
-      <div style={{ padding: "20px 30px 10px" }}>
+      <div style={{ padding: "20px 25px 10px" }}>
         <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
           <input
             value={query}
@@ -104,7 +104,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       </div>
 
       {/* 메뉴 목록 */}
-      <nav style={{ padding: "6px 30px 20px" }}>
+      <nav style={{ padding: "6px 25px 20px" }}>
         {filtered.map((group) => {
           const groupActive = isGroupActive(group);
           const svgSrc = SVG_ICON_MAP[group.icon];

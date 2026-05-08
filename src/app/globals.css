@@ -141,7 +141,7 @@ a {
   color: inherit;
 }
 
-button, input, select, textarea {
+button, input, select, textarea, th, td, label {
   font-family: inherit;
 }
 

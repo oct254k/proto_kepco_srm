@@ -51,7 +51,6 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
     <div
       style={{
         background: "#FAF7F2",
-        border: "1px solid #E8E8E8",
         borderRadius: 8,
         padding: "20px 24px",
         marginBottom: 16,
@@ -64,10 +63,10 @@ export default function SearchForm({ fields, onSearch }: SearchFormProps) {
               <div key={field.name} style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
                 <label
                   style={{
-                    fontSize: 12,
+                    fontSize: 13,
                     color: "#555",
                     fontWeight: 500,
-                    letterSpacing: "-0.01em",
+                    fontFamily: "inherit",
                   }}
                 >
                   {field.label}
