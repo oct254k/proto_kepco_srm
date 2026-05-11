@@ -3,18 +3,13 @@ import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, LayoutDashboard, Users, Building2, Database, Settings, ChevronRight } from "lucide-react";
+import {
+  Search, LayoutDashboard, Users, Building2, Database, Settings,
+} from "lucide-react";
 import type { LucideProps } from "lucide-react";
 
 import { useRole } from "@/lib/role";
-import {
-  MENUS,
-  isMenuItemActive,
-  isMenuLeafActive,
-  type GroupMenuItem,
-  type MenuIconName,
-  type MenuItem,
-} from "@/lib/menu";
+import { MENUS, getMenuLeaves, type MenuIconName, type MenuItem } from "@/lib/menu";
 
 const LUCIDE_FALLBACK: Partial<Record<MenuIconName, React.ComponentType<LucideProps>>> = {
   LayoutDashboard,
@@ -42,95 +37,38 @@ const ACTIVE_FG = "#ffffff";
 const REST_FG = "#3B414E";
 const HOVER_BG = "#FFF3E8";
 const SUB_FG = "#483930";
-const SEARCH_BG = "#F9F9F9";
 
-function MenuIcon({ icon, active }: { icon: MenuIconName; active: boolean }) {
-  const svgSrc = SVG_ICON_MAP[icon];
-  if (svgSrc) {
-    return (
-      <Image
-        src={svgSrc}
-        width={24}
-        height={24}
-        alt=""
-        unoptimized
-        style={{
-          filter: active ? "brightness(0) invert(1)" : "none",
-          flexShrink: 0,
-        }}
-      />
-    );
-  }
-
-  const FallbackIcon = LUCIDE_FALLBACK[icon];
-  return FallbackIcon ? (
-    <FallbackIcon
-      size={24}
-      strokeWidth={2}
-      color={active ? ACTIVE_FG : REST_FG}
-      style={{ flexShrink: 0 }}
-    />
-  ) : null;
+function normalizePath(pathname: string) {
+  return pathname.replace(/\/$/, "");
 }
 
-function GroupLeaves({ item, pathname, onClose }: { item: GroupMenuItem; pathname: string; onClose: () => void }) {
-  return (
-    <div>
-      {item.items.map((leaf) => {
-        const active = isMenuLeafActive(item, pathname, leaf.href);
-        return (
-          <Link
-            key={leaf.href}
-            href={leaf.href}
-            onClick={onClose}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "0 20px",
-              height: 40,
-              fontSize: 14,
-              fontWeight: active ? 700 : 400,
-              color: SUB_FG,
-              textDecoration: "none",
-            }}
-          >
-            <span
-              aria-hidden
-              style={{
-                flexShrink: 0,
-                width: 24,
-                height: 24,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                opacity: active ? 1 : 0,
-              }}
-            >
-              <svg width="8" height="10" viewBox="0 0 8 10" fill="none">
-                <path d="M1 1L7 5L1 9" fill="#483930" />
-              </svg>
-            </span>
-            {leaf.label}
-          </Link>
-        );
-      })}
-    </div>
-  );
+function isPathMatch(currentPath: string, targetPath: string) {
+  const current = normalizePath(currentPath);
+  const target = normalizePath(targetPath);
+  return current === target || current.startsWith(`${target}/`);
 }
 
-function MenuRenderer({ item, pathname, onClose }: { item: MenuItem; pathname: string; onClose: () => void }) {
-  const active = isMenuItemActive(item, pathname);
-  const showLeaves = item.type === "group";
+function MenuRenderer({
+  menu,
+  pathname,
+  onClose,
+}: {
+  menu: MenuItem;
+  pathname: string;
+  onClose: () => void;
+}) {
+  const menuActive = isPathMatch(pathname, menu.href) || getMenuLeaves(menu).some((leaf) => isPathMatch(pathname, leaf.href));
+  const leaves = getMenuLeaves(menu);
+  const svgSrc = SVG_ICON_MAP[menu.icon];
 
   return (
     <div style={{ marginBottom: 5 }}>
-      {item.divider && (
+      {menu.divider && (
         <div aria-hidden style={{ height: 1, background: "#E7EBEF", margin: "8px 0" }} />
       )}
 
       <Link
-        href={item.href}
+        href={menu.href}
         onClick={onClose}
         style={{
           display: "flex",
@@ -140,62 +78,106 @@ function MenuRenderer({ item, pathname, onClose }: { item: MenuItem; pathname: s
           borderRadius: 360,
           fontSize: 16,
           fontWeight: 600,
-          color: active ? ACTIVE_FG : REST_FG,
-          background: active ? ACTIVE_BG : "transparent",
+          color: menuActive ? ACTIVE_FG : REST_FG,
+          background: menuActive ? ACTIVE_BG : "transparent",
           textDecoration: "none",
           transition: "background 0.12s ease, color 0.12s ease",
         }}
-        onMouseEnter={(event) => {
-          if (!active) event.currentTarget.style.background = HOVER_BG;
+        onMouseEnter={(e) => {
+          if (!menuActive) (e.currentTarget as HTMLAnchorElement).style.background = HOVER_BG;
         }}
-        onMouseLeave={(event) => {
-          if (!active) event.currentTarget.style.background = "transparent";
+        onMouseLeave={(e) => {
+          if (!menuActive) (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
         }}
       >
-        <MenuIcon icon={item.icon} active={active} />
-        <span style={{ flex: 1 }}>{item.label}</span>
-        {showLeaves ? <ChevronRight size={16} color={active ? ACTIVE_FG : REST_FG} style={{ flexShrink: 0 }} /> : null}
+        {svgSrc ? (
+          <Image
+            src={svgSrc}
+            width={24}
+            height={24}
+            alt=""
+            unoptimized
+            style={{
+              filter: menuActive ? "brightness(0) invert(1)" : "none",
+              flexShrink: 0,
+            }}
+          />
+        ) : (() => {
+          const FallbackIcon = LUCIDE_FALLBACK[menu.icon];
+          return FallbackIcon ? (
+            <FallbackIcon
+              size={24}
+              strokeWidth={2}
+              color={menuActive ? ACTIVE_FG : REST_FG}
+              style={{ flexShrink: 0 }}
+            />
+          ) : null;
+        })()}
+        <span style={{ flex: 1 }}>{menu.label}</span>
       </Link>
 
-      {item.type === "group" ? <GroupLeaves item={item} pathname={pathname} onClose={onClose} /> : null}
+      {menu.type === "group" && (
+        <div>
+          {leaves.map((sub) => {
+            const subActive = isPathMatch(pathname, sub.href);
+            return (
+              <Link
+                key={sub.href}
+                href={sub.href}
+                onClick={onClose}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "0 20px",
+                  height: 40,
+                  fontSize: 14,
+                  fontWeight: subActive ? 700 : 400,
+                  color: SUB_FG,
+                  textDecoration: "none",
+                }}
+              >
+                <span
+                  aria-hidden
+                  style={{
+                    flexShrink: 0,
+                    width: 24,
+                    height: 24,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: subActive ? 1 : 0,
+                  }}
+                >
+                  <svg width="8" height="10" viewBox="0 0 8 10" fill="none">
+                    <path d="M1 1L7 5L1 9" fill="#483930"/>
+                  </svg>
+                </span>
+                {sub.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
-}
-
-function filterMenuItems(items: MenuItem[], query: string): MenuItem[] {
-  const normalizedQuery = query.trim().toLowerCase();
-  if (!normalizedQuery) return items;
-
-  return items.reduce<MenuItem[]>((acc, item) => {
-    const labelMatch = item.label.toLowerCase().includes(normalizedQuery);
-
-    if (item.type === "single") {
-      if (labelMatch) acc.push(item);
-      return acc;
-    }
-
-    const matchingLeaves = item.items.filter((leaf) => leaf.label.toLowerCase().includes(normalizedQuery));
-    if (!labelMatch && matchingLeaves.length === 0) {
-      return acc;
-    }
-
-    acc.push(
-      {
-        ...item,
-        items: labelMatch ? item.items : matchingLeaves,
-      },
-    );
-    return acc;
-  }, []);
 }
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [role] = useRole();
-  const items = MENUS[role];
+  const menus = MENUS[role];
   const [query, setQuery] = useState("");
 
-  const filteredItems = useMemo(() => filterMenuItems(items, query), [items, query]);
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return menus;
+
+    return menus.filter((menu) => {
+      if (menu.label.toLowerCase().includes(q)) return true;
+      return getMenuLeaves(menu).some((leaf) => leaf.label.toLowerCase().includes(q));
+    });
+  }, [menus, query]);
 
   return (
     <aside
@@ -238,8 +220,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       </div>
 
       <nav>
-        {filteredItems.map((item) => (
-          <MenuRenderer key={item.href} item={item} pathname={pathname} onClose={onClose} />
+        {filtered.map((menu) => (
+          <MenuRenderer key={`${menu.label}-${menu.href}`} menu={menu} pathname={pathname} onClose={onClose} />
         ))}
       </nav>
     </aside>
