@@ -16,6 +16,7 @@ import {
   PENDING_VENDORS,
   PERM_GROUPS,
 } from "@/lib/mock/admin_users";
+import { getAllMenuLabels, getRoleMenuLabels } from "@/lib/menu";
 import type { PermGroup } from "@/lib/mock/admin_users";
 import type { User, Vendor } from "@/lib/types";
 
@@ -23,7 +24,7 @@ import type { User, Vendor } from "@/lib/types";
 const ROLE_COLORS: Record<string, { bg: string; color: string; label: string }> = {
   B: { bg: "#DBEAFE", color: "#1E40AF", label: "B-사업담당" },
   C: { bg: "#D1FAE5", color: "#065F46", label: "C-계약담당" },
-  EXEC: { bg: "#EDE9FE", color: "#5B21B6", label: "EXEC-임원" },
+  V: { bg: "#FEF3C7", color: "#92400E", label: "V-협력업체" },
   A: { bg: "#FEE2E2", color: "#991B1B", label: "A-관리자" },
 };
 
@@ -128,18 +129,16 @@ function UserDrawer({
   const ROLE_OPTIONS = [
     { value: "B", label: "B-사업담당자" },
     { value: "C", label: "C-계약담당자" },
-    { value: "EXEC", label: "EXEC-임원" },
     { value: "A", label: "A-관리자" },
   ];
 
   const MENU_PERMS: Record<string, string[]> = {
-    B: ["견적관리", "발주관리", "입찰공고", "마이페이지"],
-    C: ["계약관리", "발주관리", "입찰공고", "낙찰관리", "참여업체평가", "계약체결", "마이페이지"],
-    EXEC: ["계약관리", "발주관리", "입찰공고", "낙찰관리", "참여업체평가", "계약체결", "복수예비기초금액결정"],
-    A: ["사용자관리", "협력업체관리", "기준정보관리", "시스템환경", "관리자메뉴"],
+    B: getRoleMenuLabels("B"),
+    C: getRoleMenuLabels("C"),
+    A: getRoleMenuLabels("A"),
   };
 
-  const allMenus = ["계약관리", "발주관리", "입찰공고", "낙찰관리", "참여업체평가", "계약체결", "견적관리", "마이페이지", "기준정보관리", "관리자메뉴", "복수예비기초금액결정"];
+  const allMenus = getAllMenuLabels();
 
   if (!user) return null;
 
@@ -725,7 +724,6 @@ function UserRegisterModal({
             {[
               { value: "B", label: "사업담당자(B)" },
               { value: "C", label: "계약담당자(C)" },
-              { value: "EXEC", label: "임원(EXEC)" },
               { value: "A", label: "관리자(A)" },
             ].map((opt) => (
               <label
@@ -832,7 +830,6 @@ function PermGroupAddModal({
           >
             <option value="B">B-사업담당자</option>
             <option value="C">C-계약담당자</option>
-            <option value="EXEC">EXEC-임원</option>
             <option value="A">A-관리자</option>
           </select>
         </div>
@@ -1002,7 +999,6 @@ export default function AdminUsersPage() {
                       options: [
                         { label: "사업담당자(B)", value: "B" },
                         { label: "계약담당자(C)", value: "C" },
-                        { label: "임원(EXEC)", value: "EXEC" },
                         { label: "관리자(A)", value: "A" },
                       ],
                     },

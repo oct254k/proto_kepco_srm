@@ -111,6 +111,18 @@ export function getMenuLabel(role: Role, pathname: string): string | null {
   return null;
 }
 
+export function getRoleMenuLabels(role: Role): string[] {
+  return MENUS[role].map((group) => group.label);
+}
+
+export function getAllMenuLabels(): string[] {
+  return Array.from(
+    new Set(
+      (Object.keys(MENUS) as Role[]).flatMap((role) => getRoleMenuLabels(role)),
+    ),
+  );
+}
+
 export function getBreadcrumb(role: Role, pathname: string): string[] {
   const label = getMenuLabel(role, pathname);
   return label ? [label] : [];
