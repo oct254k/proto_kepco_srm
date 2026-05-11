@@ -37,6 +37,7 @@ const ACTIVE_FG = "#ffffff";
 const REST_FG = "#3B414E";
 const HOVER_BG = "#FFF3E8";
 const SUB_FG = "#483930";
+const SEARCH_BG = "#F9F9F9";
 
 function normalizePath(pathname: string) {
   return pathname.replace(/\/$/, "");
