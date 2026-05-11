@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Bell, ChevronDown } from "lucide-react";
 import { useRole } from "@/lib/role";
 import { ROLE_LABELS } from "@/lib/types";
-import { MENUS } from "@/lib/menu";
 import { getDefaultPath } from "@/lib/access";
 import RoleSwitcher from "@/components/RoleSwitcher";
 import ContractAuthoritySwitcher from "@/components/ContractAuthoritySwitcher";
@@ -64,7 +63,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
     >
       {/* 로고 영역 (사이드바 너비와 동일) */}
       <Link
-        href={MENUS[role]?.[0]?.href ?? "/"}
+        href={getDefaultPath(role)}
         style={{
           width: 250, minWidth: 250, height: "100%",
           display: "flex", alignItems: "center", padding: "0 30px",

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { Role } from "@/lib/types";
 import { ROLE_LABELS } from "@/lib/types";
+import { getDefaultPath } from "@/lib/access";
 import { setRole } from "@/lib/role";
 import Tabs from "@/components/Tabs";
 import Stepper from "@/components/Stepper";
@@ -60,7 +61,7 @@ export default function LoginPage() {
 
   function handleLogin() {
     setRole(selectedRole);
-    router.push(`/${selectedRole.toLowerCase()}/dashboard/`);
+    router.push(getDefaultPath(selectedRole));
   }
 
   if (showSignup) {
