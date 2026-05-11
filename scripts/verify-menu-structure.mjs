@@ -9,11 +9,12 @@ const appRoot = path.join(repoRoot, 'src/app');
 const EXPECTED = {
   B: {
     defaultPath: '/b/dashboard/',
-    groups: [
-      { label: '대시보드', href: '/b/dashboard/', items: [{ label: '대시보드', href: '/b/dashboard/' }] },
-      { label: '견적', href: '/b/quote-requests/', items: [{ label: '견적요청 관리', href: '/b/quote-requests/' }] },
-      { label: '발주', href: '/b/orders/', items: [{ label: '발주계약요청', href: '/b/orders/' }] },
+    items: [
+      { type: 'single', label: '대시보드', href: '/b/dashboard/' },
+      { type: 'single', label: '견적', href: '/b/quote-requests/' },
+      { type: 'single', label: '발주', href: '/b/orders/' },
       {
+        type: 'group',
         label: '입찰',
         href: '/b/bids/',
         items: [
@@ -21,15 +22,16 @@ const EXPECTED = {
           { label: '입찰심사', href: '/b/bid-review/' },
         ],
       },
-      { label: '마이페이지', href: '/b/mypage/', items: [{ label: '마이페이지', href: '/b/mypage/' }] },
+      { type: 'single', label: '마이페이지', href: '/b/mypage/' },
     ],
   },
   V: {
     defaultPath: '/v/dashboard/',
-    groups: [
-      { label: '대시보드', href: '/v/dashboard/', items: [{ label: '대시보드', href: '/v/dashboard/' }] },
-      { label: '견적', href: '/v/quotes/', items: [{ label: '견적작성·현황', href: '/v/quotes/' }] },
+    items: [
+      { type: 'single', label: '대시보드', href: '/v/dashboard/' },
+      { type: 'single', label: '견적', href: '/v/quotes/' },
       {
+        type: 'group',
         label: '입찰참여',
         href: '/v/bid-pipeline/',
         items: [
@@ -37,15 +39,16 @@ const EXPECTED = {
           { label: '입찰·투찰 현황', href: '/v/bid-history/' },
         ],
       },
-      { label: '계약·보증', href: '/v/contracts/', items: [{ label: '계약·보증 관리', href: '/v/contracts/' }] },
-      { label: '마이페이지', href: '/v/company/', items: [{ label: '기업정보', href: '/v/company/' }] },
+      { type: 'single', label: '계약·보증', href: '/v/contracts/' },
+      { type: 'single', label: '마이페이지', href: '/v/company/' },
     ],
   },
   C: {
     defaultPath: '/c/dashboard/',
-    groups: [
-      { label: '대시보드', href: '/c/dashboard/', items: [{ label: '대시보드', href: '/c/dashboard/' }] },
+    items: [
+      { type: 'single', label: '대시보드', href: '/c/dashboard/' },
       {
+        type: 'group',
         label: '발주관리',
         href: '/c/orders/',
         items: [
@@ -53,20 +56,20 @@ const EXPECTED = {
           { label: '견적요청 관리', href: '/c/quote-requests/' },
         ],
       },
-      { label: '입찰관리', href: '/c/bids/', items: [{ label: '입찰계획·공고', href: '/c/bids/' }] },
-      { label: '참여업체평가', href: '/c/evaluations/', items: [{ label: '평가·심사관리', href: '/c/evaluations/' }] },
-      { label: '낙찰관리', href: '/c/awards/', items: [{ label: '낙찰관리', href: '/c/awards/' }] },
-      { label: '계약관리', href: '/c/contracts/', items: [{ label: '계약관리', href: '/c/contracts/' }] },
-      { label: '마이페이지', href: '/c/mypage/', items: [{ label: '마이페이지', href: '/c/mypage/' }] },
+      { type: 'single', label: '입찰관리', href: '/c/bids/' },
+      { type: 'single', label: '참여업체평가', href: '/c/evaluations/' },
+      { type: 'single', label: '낙찰관리', href: '/c/awards/' },
+      { type: 'single', label: '계약관리', href: '/c/contracts/' },
+      { type: 'single', label: '마이페이지', href: '/c/mypage/' },
     ],
   },
   A: {
     defaultPath: '/a/system/',
-    groups: [
-      { label: '사용자관리', href: '/a/users/', items: [{ label: '사용자·협력업체 관리', href: '/a/users/' }] },
-      { label: '협력업체관리', href: '/a/vendors/', items: [{ label: '협력업체 승인관리', href: '/a/vendors/' }] },
-      { label: '기준정보(품목)', href: '/a/items/', items: [{ label: '품목 기준정보', href: '/a/items/' }] },
-      { label: '시스템환경', href: '/a/system/', items: [{ label: '시스템 환경설정', href: '/a/system/' }] },
+    items: [
+      { type: 'single', label: '사용자관리', href: '/a/users/' },
+      { type: 'single', label: '협력업체관리', href: '/a/vendors/' },
+      { type: 'single', label: '기준정보(품목)', href: '/a/items/' },
+      { type: 'single', label: '시스템환경', href: '/a/system/' },
     ],
   },
 };
@@ -147,33 +150,69 @@ function ensure(condition, message, errors) {
 
 const menuSource = fs.readFileSync(menuFile, 'utf8');
 const accessSource = fs.readFileSync(accessFile, 'utf8');
-const menus = evaluateLiteral(extractLiteralBlock(menuSource, 'export const MENUS', '{', '}'));
+const menus = {
+  B: evaluateLiteral(extractLiteralBlock(menuSource, 'export const roleBMenu', '[', ']')),
+  V: evaluateLiteral(extractLiteralBlock(menuSource, 'export const roleVMenu', '[', ']')),
+  C: evaluateLiteral(extractLiteralBlock(menuSource, 'export const roleCMenu', '[', ']')),
+  A: evaluateLiteral(extractLiteralBlock(menuSource, 'export const roleAMenu', '[', ']')),
+};
 const defaultPaths = evaluateLiteral(extractLiteralBlock(accessSource, 'const DEFAULT_PATHS', '{', '}'));
 const pathRoleMap = evaluateLiteral(extractLiteralBlock(accessSource, 'const PATH_ROLE_MAP', '[', ']'));
 const pageRoutes = collectPageRoutes(appRoot);
 const pageRouteSet = new Set(pageRoutes.map(normalizeHref));
 const errors = [];
 const passes = [];
+const requiredRoleMenus = {
+  B: 'export const roleBMenu',
+  V: 'export const roleVMenu',
+  C: 'export const roleCMenu',
+  A: 'export const roleAMenu',
+};
+
+for (const declaration of Object.values(requiredRoleMenus)) {
+  ensure(menuSource.includes(declaration), `menu.ts: ${declaration} 선언이 필요합니다.`, errors);
+  if (menuSource.includes(declaration)) {
+    passes.push(`menu.ts: ${declaration} 선언 확인`);
+  }
+}
 
 for (const [role, spec] of Object.entries(EXPECTED)) {
-  const actualGroups = menus[role];
-  ensure(Array.isArray(actualGroups), `${role}: MENUS 정의가 없습니다.`, errors);
-  if (!Array.isArray(actualGroups)) continue;
+  const actualItems = menus[role];
+  ensure(Array.isArray(actualItems), `${role}: MENUS 정의가 없습니다.`, errors);
+  if (!Array.isArray(actualItems)) continue;
 
-  const simplifiedActualGroups = actualGroups.map((group) => ({
-    label: group.label,
-    href: group.href,
-    items: group.items.map((item) => ({ label: item.label, href: item.href })),
-  }));
-  const simplifiedExpectedGroups = spec.groups.map((group) => ({
-    label: group.label,
-    href: group.href,
-    items: group.items.map((item) => ({ label: item.label, href: item.href })),
-  }));
+  const simplifiedActualItems = actualItems.map((item) => (
+    item.type === 'group'
+      ? {
+          type: item.type,
+          label: item.label,
+          href: item.href,
+          items: item.items.map((leaf) => ({ label: leaf.label, href: leaf.href })),
+        }
+      : {
+          type: item.type,
+          label: item.label,
+          href: item.href,
+        }
+  ));
+  const simplifiedExpectedItems = spec.items.map((item) => (
+    item.type === 'group'
+      ? {
+          type: item.type,
+          label: item.label,
+          href: item.href,
+          items: item.items.map((leaf) => ({ label: leaf.label, href: leaf.href })),
+        }
+      : {
+          type: item.type,
+          label: item.label,
+          href: item.href,
+        }
+  ));
 
-  ensure(JSON.stringify(simplifiedActualGroups) === JSON.stringify(simplifiedExpectedGroups), `${role}: 메뉴 정의가 기준값과 다릅니다.`, errors);
-  if (JSON.stringify(simplifiedActualGroups) === JSON.stringify(simplifiedExpectedGroups)) {
-    passes.push(`${role}: 메뉴 라벨/링크/서브메뉴가 기준과 일치`);
+  ensure(JSON.stringify(simplifiedActualItems) === JSON.stringify(simplifiedExpectedItems), `${role}: 메뉴 정의가 기준값과 다릅니다.`, errors);
+  if (JSON.stringify(simplifiedActualItems) === JSON.stringify(simplifiedExpectedItems)) {
+    passes.push(`${role}: single/group 메뉴 구조가 기준과 일치`);
   }
 
   ensure(defaultPaths[role] === spec.defaultPath, `${role}: 기본 경로가 ${spec.defaultPath} 이어야 합니다.`, errors);
@@ -181,16 +220,32 @@ for (const [role, spec] of Object.entries(EXPECTED)) {
     passes.push(`${role}: 기본 경로 ${spec.defaultPath} 확인`);
   }
 
-  for (const group of actualGroups) {
-    ensure(pageRouteSet.has(normalizeHref(group.href)), `${role}: 그룹 경로 ${group.href} 에 대응하는 page.tsx 가 없습니다.`, errors);
-    for (const item of group.items) {
-      ensure(pageRouteSet.has(normalizeHref(item.href)), `${role}: 서브 경로 ${item.href} 에 대응하는 page.tsx 가 없습니다.`, errors);
-      const matchedRole = pathRoleMap.find(({ prefix }) => normalizeHref(item.href).startsWith(prefix))?.role ?? null;
+  for (const item of actualItems) {
+    ensure(pageRouteSet.has(normalizeHref(item.href)), `${role}: 메뉴 경로 ${item.href} 에 대응하는 page.tsx 가 없습니다.`, errors);
+    const requiredPaths = item.type === 'group'
+      ? [item.href, ...item.items.map((leaf) => leaf.href)]
+      : [item.href];
+
+    if (item.type === 'single') {
+      ensure(!('items' in item), `${role}: single 메뉴 ${item.label} 에 items 가 있으면 안 됩니다.`, errors);
+    } else {
+      ensure(item.items.length >= 2, `${role}: group 메뉴 ${item.label} 는 2개 이상의 2Depth 항목이 필요합니다.`, errors);
+    }
+
+    for (const href of requiredPaths) {
+      ensure(pageRouteSet.has(normalizeHref(href)), `${role}: 경로 ${href} 에 대응하는 page.tsx 가 없습니다.`, errors);
+      const matchedRole = pathRoleMap.find(({ prefix }) => normalizeHref(href).startsWith(prefix))?.role ?? null;
       ensure(matchedRole === role, `${role}: ${item.href} 접근 역할이 ${role} 과 다릅니다.`, errors);
     }
   }
 
-  const menuRouteSet = new Set(actualGroups.flatMap((group) => [group.href, ...group.items.map((item) => item.href)]).map(normalizeHref));
+  const menuRouteSet = new Set(
+    actualItems.flatMap((item) => (
+      item.type === 'group'
+        ? [item.href, ...item.items.map((leaf) => leaf.href)]
+        : [item.href]
+    )).map(normalizeHref),
+  );
   const orphanRoutes = pageRoutes.filter((route) => route.startsWith(`/${role.toLowerCase()}/`) && !menuRouteSet.has(normalizeHref(route)));
   ensure(orphanRoutes.length === 0, `${role}: 메뉴에 연결되지 않은 라우트가 있습니다: ${orphanRoutes.join(', ')}`, errors);
   if (orphanRoutes.length === 0) {
