@@ -9,7 +9,7 @@ import {
 import type { LucideProps } from "lucide-react";
 
 import { useRole } from "@/lib/role";
-import { MENUS, getMenuLeaves, type MenuIconName, type MenuItem } from "@/lib/menu";
+import { MENUS, getMenuLeaves, isMenuActive, isPathMatch, type MenuIconName, type MenuItem } from "@/lib/menu";
 
 const LUCIDE_FALLBACK: Partial<Record<MenuIconName, React.ComponentType<LucideProps>>> = {
   LayoutDashboard,
@@ -39,16 +39,6 @@ const HOVER_BG = "#FFF3E8";
 const SUB_FG = "#483930";
 const SEARCH_BG = "#F9F9F9";
 
-function normalizePath(pathname: string) {
-  return pathname.replace(/\/$/, "");
-}
-
-function isPathMatch(currentPath: string, targetPath: string) {
-  const current = normalizePath(currentPath);
-  const target = normalizePath(targetPath);
-  return current === target || current.startsWith(`${target}/`);
-}
-
 function MenuRenderer({
   menu,
   pathname,
@@ -58,7 +48,7 @@ function MenuRenderer({
   pathname: string;
   onClose: () => void;
 }) {
-  const menuActive = isPathMatch(pathname, menu.href) || getMenuLeaves(menu).some((leaf) => isPathMatch(pathname, leaf.href));
+  const menuActive = isMenuActive(menu, pathname);
   const leaves = getMenuLeaves(menu);
   const svgSrc = SVG_ICON_MAP[menu.icon];
 

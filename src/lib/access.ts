@@ -4,7 +4,7 @@ const DEFAULT_PATHS: Record<Role, string> = {
   B: "/b/dashboard/",
   V: "/v/dashboard/",
   C: "/c/dashboard/",
-  A: "/a/system/",
+  A: "/a/dashboard/",
 };
 
 const PATH_ROLE_MAP: Array<{ prefix: string; role: Role }> = [

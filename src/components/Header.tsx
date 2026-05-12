@@ -30,7 +30,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const [showNotif, setShowNotif] = useState(false);
   const [showSystem, setShowSystem] = useState(false);
   const unreadCount = MOCK_NOTIFICATIONS.filter((n) => !n.read).length;
-  const myPageHref = role === "A" ? getDefaultPath(role) : `/${role.toLowerCase()}/mypage/`;
+  const myPageHref = role === "A" ? getDefaultPath(role) : role === "V" ? "/v/bid-history/" : `/${role.toLowerCase()}/mypage/`;
   const userName = `${ROLE_DEPT[role] ?? "조직"} 홍길동`;
   const initial = "H";
 

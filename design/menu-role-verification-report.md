@@ -97,3 +97,51 @@
 node scripts/verify-menu-structure.mjs
 npx tsc --noEmit
 ```
+
+
+## 7. 2026-05-11 LNB 구조 재정비 코드 품질 리뷰 추가 메모
+
+### 7.1 이번 리뷰 범위
+- 리뷰 대상: `src/components/Sidebar.tsx`, `src/lib/menu.ts`, `src/lib/access.ts`, `src/components/Header.tsx`, `src/components/Breadcrumb.tsx`
+- 확인 기준: 역할별 메뉴 config 분리, `single/group` 타입 구조, 공통 렌더링, active route / parent active 처리, 2Depth 노출 정책, 검증 스크립트 신뢰성
+
+### 7.2 유지해야 할 현재 기준
+- `src/lib/menu.ts`의 `roleBMenu / roleVMenu / roleCMenu / roleAMenu` 분리는 현재 역할별 LNB 기준선과 일치한다.
+- 그룹 메뉴는 현재 `B: 입찰`, `C: 발주관리`만 유지하고, 나머지는 단일 메뉴로 두는 구조가 현재 프로토타입 기준선과 맞는다.
+- `single/group` 타입 분리와 breadcrumb 계산 로직은 현재 IA 축약판 기준으로는 합리적이다.
+- 문서 대비 차이(B/V/C 메뉴 통합, A 용어 축약)는 신규 결함이라기보다 기존 프로토타입 의사결정의 연장선이다.
+
+### 7.3 코드 품질 이슈
+
+#### 이슈 1. `Sidebar.tsx` 타입 오류
+- 현상: `src/components/Sidebar.tsx`에서 `SEARCH_BG`를 사용하지만 상수가 선언되어 있지 않아 TypeScript 에러가 발생한다.
+- 확인 결과: `TS2552: Cannot find name 'SEARCH_BG'`
+- 영향: 전체 `npx tsc --noEmit` 실패
+- 안전한 수정 방향:
+  - `const SEARCH_BG = "#F9F9F9";` 추가 또는
+  - 해당 속성을 기존 literal 값으로 복원
+- 비고: 이 이슈는 `menu.ts` 충돌 이슈와 별개이며, Sidebar 쪽 국소 수정으로 해결 가능하다.
+
+#### 이슈 2. `scripts/verify-menu-structure.mjs`의 false negative
+- 현상: 문서상 PASS로 기록된 `node scripts/verify-menu-structure.mjs`가 현재 코드에서는 FAIL을 반환한다.
+- 원인: `extractLiteralBlock(menuSource, 'export const roleBMenu', '[', ']')`가 실제 배열 literal이 아니라 타입 표기 `MenuItem[]`의 `[]`를 먼저 잡는다.
+- 결과:
+  - 역할별 메뉴 정의 비교가 모두 FAIL로 표시됨
+  - orphan route 검사도 연쇄적으로 FAIL처럼 보임
+- 영향: 메뉴 구조 검증 자동화 결과를 현재 그대로 신뢰할 수 없음
+- 안전한 수정 방향:
+  - declaration 이후 첫 `=`를 기준으로 literal 시작점을 잡도록 스크립트 수정
+  - 또는 TS AST/정규식이 아닌 더 안전한 파서 기반으로 전환
+
+### 7.4 종합 판정
+- 메뉴 구조 자체(`src/lib/menu.ts`)는 현재 기준선 유지가 우선이다.
+- 즉시 조치가 필요한 것은 `menu.ts` 재충돌 해소가 아니라:
+  1. `Sidebar.tsx`의 `SEARCH_BG` 타입 오류 제거
+  2. `verify-menu-structure.mjs`의 literal 추출 버그 수정
+- 위 두 건이 정리돼야 LNB 재정비 결과를 안정적으로 검증했다고 말할 수 있다.
+
+### 7.5 후속 권고
+1. `menu.ts`는 현재 기준을 유지하고 강제 재해석하지 않는다.
+2. Sidebar 수정은 UI 정책(2Depth 항상 노출, 단일 메뉴 직접 이동)을 바꾸지 않는 범위에서 최소 수정으로 끝낸다.
+3. 검증 스크립트는 타입 주석이 포함된 선언문에서도 정상 동작하도록 먼저 보정한다.
+4. 향후 문서 보고서는 “실제 메뉴 구조 기준선”과 “문서 IA 이상형”을 계속 분리해 기록한다.
